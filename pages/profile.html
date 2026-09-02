@@ -215,11 +215,36 @@
                 </section>
 
 
+                <section class="profile-card profile-posts-card">
+
+                    <div class="card-heading">
+                        <span>04</span>
+                        <h2>Wall</h2>
+                    </div>
+
+                    <form id="profilePostForm" class="profile-post-form" hidden>
+                        <label for="profilePostText">Write on your profile</label>
+                        <textarea
+                            id="profilePostText"
+                            maxlength="500"
+                            rows="3"
+                            placeholder="Share a note with your circle..."
+                        ></textarea>
+                        <button type="submit" class="btn btn-primary">Post to Wall</button>
+                    </form>
+
+                    <div id="profilePosts" class="profile-posts" aria-live="polite">
+                        <p class="empty-state">No posts yet.</p>
+                    </div>
+
+                </section>
+
+
                 <!-- Privacy -->
                 <section class="profile-card">
 
                     <div class="card-heading">
-                        <span>04</span>
+                        <span>05</span>
                         <h2>Privacy</h2>
                     </div>
 

@@ -1,4 +1,3 @@
-```css
 /* =========================================================
    THE CIRCLEBOOK
    Main Stylesheet
@@ -18,6 +17,7 @@
 
     --cream: #f8f4eb;
     --paper: #eee9df;
+    --page-background: var(--cream);
     --white: #fffdf8;
 
     --text: #292929;
@@ -52,12 +52,19 @@ body {
         "Times New Roman",
         serif;
 
-    background: var(--paper);
+    background: var(--page-background);
     color: var(--text);
 
     line-height: 1.6;
 
     min-height: 100vh;
+
+    display: flex;
+    flex-direction: column;
+}
+
+main {
+    flex: 1;
 }
 
 
@@ -102,7 +109,7 @@ select {
 .site-header {
     background: var(--navy);
 
-    color: white;
+    color: var(--cream);
 
     border-bottom:
         4px solid var(--gold);
@@ -153,9 +160,26 @@ select {
     gap: 22px;
 }
 
+.menu-toggle {
+    display: none;
+    width: 42px;
+    height: 38px;
+    padding: 8px;
+    border: 1px solid var(--gold-light);
+    background: transparent;
+    cursor: pointer;
+}
+
+.menu-toggle span {
+    display: block;
+    height: 2px;
+    margin: 4px 0;
+    background: var(--gold-light);
+}
+
 
 .main-nav a {
-    color: white;
+    color: var(--cream);
 
     font-size: 15px;
 
@@ -165,6 +189,27 @@ select {
 
 
 .main-nav a:hover {
+    color: var(--gold-light);
+}
+
+.main-nav a.active {
+    color: var(--gold-light);
+    border-bottom: 2px solid var(--gold-light);
+    padding-bottom: 4px;
+}
+
+.main-nav .nav-link {
+    border: 0;
+    padding: 0;
+    background: transparent;
+    color: var(--cream);
+    cursor: pointer;
+    font: inherit;
+    font-size: 15px;
+}
+
+.main-nav .nav-link:hover,
+.main-nav .nav-link:focus-visible {
     color: var(--gold-light);
 }
 
@@ -300,6 +345,9 @@ select {
     border:
         1px solid var(--navy);
 
+    box-shadow:
+        3px 3px 0 var(--gold);
+
     cursor: pointer;
 
     font-family:
@@ -320,6 +368,7 @@ select {
     min-height: 42px;
     padding: 9px 18px;
     border: 1px solid var(--navy);
+    box-shadow: 3px 3px 0 var(--gold);
     cursor: pointer;
     font-family: Georgia, "Times New Roman", serif;
     font-size: 15px;
@@ -336,6 +385,7 @@ select {
     background: var(--navy-light);
     color: white;
     transform: translateY(-1px);
+    box-shadow: 2px 2px 0 var(--gold);
 }
 
 .btn-secondary {
@@ -346,6 +396,7 @@ select {
 .btn-secondary:hover {
     background: var(--navy);
     color: white;
+    box-shadow: 2px 2px 0 var(--gold);
 }
 
 
@@ -363,6 +414,9 @@ select {
 
     transform:
         translateY(-1px);
+
+    box-shadow:
+        2px 2px 0 var(--gold);
 }
 
 
@@ -380,6 +434,9 @@ select {
         var(--navy);
 
     color: white;
+
+    box-shadow:
+        2px 2px 0 var(--gold);
 }
 
 
@@ -648,14 +705,14 @@ select {
    ========================================================= */
 
 .site-footer {
-    background:
-        #1d2a37;
+    background: var(--navy);
 
-    color:
-        #d8d8d8;
+    color: var(--cream);
 
     border-top:
         4px solid var(--gold);
+
+    margin-top: auto;
 }
 
 
@@ -682,6 +739,17 @@ select {
     font-weight: bold;
 
     margin-bottom: 5px;
+}
+
+.site-footer > .container:not(.footer-content) {
+    padding: 28px 0;
+    text-align: center;
+}
+
+.site-footer > .container:not(.footer-content) p {
+    margin: 0;
+    color: var(--cream);
+    font-size: 14px;
 }
 
 
@@ -713,6 +781,11 @@ select {
 .footer-links a:hover {
     color:
         var(--gold-light);
+}
+
+.footer-links a:focus-visible {
+    color: var(--gold-light);
+    outline-color: var(--gold-light);
 }
 
 
@@ -847,7 +920,7 @@ textarea {
 .invite-page {
     min-height: calc(100vh - 160px);
     padding: 60px 20px;
-    background: var(--cream);
+    background: var(--page-background);
 }
 
 .people-search,
@@ -1012,4 +1085,3 @@ textarea {
 /* =========================================================
    END OF STYLE.CSS
    ========================================================= */
-```

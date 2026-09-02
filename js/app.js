@@ -18,6 +18,29 @@ function initializeNavigation() {
         return;
     }
 
+    nav.id = "main-navigation";
+
+    let menuButton = document.querySelector(".menu-toggle");
+    if (!menuButton) {
+        menuButton = document.createElement("button");
+        menuButton.type = "button";
+        menuButton.className = "menu-toggle";
+        menuButton.setAttribute("aria-controls", "main-navigation");
+        menuButton.setAttribute("aria-expanded", "false");
+        menuButton.setAttribute("aria-label", "Open navigation menu");
+        menuButton.innerHTML = "<span></span><span></span><span></span>";
+        nav.parentElement.insertBefore(menuButton, nav);
+
+        menuButton.addEventListener("click", () => {
+            const isOpen = nav.classList.toggle("is-open");
+            menuButton.setAttribute("aria-expanded", String(isOpen));
+            menuButton.setAttribute(
+                "aria-label",
+                isOpen ? "Close navigation menu" : "Open navigation menu"
+            );
+        });
+    }
+
     const inPagesDirectory = window.location.pathname.includes("/pages/");
     const path = inPagesDirectory ? "" : "pages/";
     const homePath = inPagesDirectory ? "../index.html" : "index.html";

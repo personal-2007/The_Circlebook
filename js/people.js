@@ -338,7 +338,7 @@ function createPersonCard(user, currentUser, users) {
         "View Profile";
 
 
-    /* Add to Circle */
+    /* Add to Friend */
 
     const addButton =
         document.createElement("button");
@@ -349,7 +349,7 @@ function createPersonCard(user, currentUser, users) {
         "btn btn-primary";
 
     addButton.textContent =
-        "Add to Circle";
+        "Add to Friend";
 
 
     addButton.addEventListener(

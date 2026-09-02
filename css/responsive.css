@@ -5,15 +5,35 @@
 
 	.header-container,
 	.header-inner {
-		align-items: flex-start;
+		align-items: center;
 		flex-direction: column;
 		gap: 12px;
 		padding: 16px 0;
 	}
 
+	.header-container,
+	.header-inner {
+		position: relative;
+	}
+
+	.menu-toggle {
+		display: block;
+		position: absolute;
+		top: 16px;
+		right: 0;
+	}
+
 	.main-nav {
+		display: none;
+		width: 100%;
+		padding-top: 8px;
 		flex-wrap: wrap;
 		gap: 10px 16px;
+		justify-content: flex-start;
+	}
+
+	.main-nav.is-open {
+		display: flex;
 	}
 
 	.feature-grid,
@@ -71,5 +91,9 @@
 	.footer-content {
 		flex-direction: column;
 		gap: 20px;
+	}
+
+	.site-footer > .container:not(.footer-content) {
+		padding: 22px 0;
 	}
 }
