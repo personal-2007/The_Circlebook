@@ -1,0 +1,384 @@
+/*
+ * The Circlebook
+ * Profile Page Styles
+ */
+
+/* =========================================
+   PROFILE PAGE
+========================================= */
+
+.profile-page {
+    min-height: calc(100vh - 160px);
+    padding: 60px 20px;
+    background: var(--cream);
+}
+
+
+/* =========================================
+   PROFILE HEADER
+========================================= */
+
+.profile-header {
+    display: flex;
+    align-items: center;
+    gap: 35px;
+    max-width: 1000px;
+    margin: 0 auto 45px;
+    padding: 35px;
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-top: 4px solid var(--gold);
+}
+
+.profile-photo {
+    width: 145px;
+    height: 145px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+
+    background: var(--navy);
+    border: 5px solid var(--paper);
+
+    color: var(--gold-light);
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 3.5rem;
+    font-weight: 700;
+}
+
+.profile-heading {
+    flex: 1;
+}
+
+.profile-heading .eyebrow {
+    display: block;
+    margin-bottom: 8px;
+
+    color: var(--gold);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+}
+
+.profile-heading h1 {
+    margin-bottom: 7px;
+
+    color: var(--navy);
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 2.5rem;
+    line-height: 1.15;
+}
+
+.profile-heading p {
+    margin-bottom: 22px;
+    color: var(--text-light);
+}
+
+
+/* =========================================
+   PROFILE ACTIONS
+========================================= */
+
+.profile-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+
+/* =========================================
+   PROFILE GRID
+========================================= */
+
+.profile-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 22px;
+
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+
+/* =========================================
+   PROFILE CARD
+========================================= */
+
+.profile-card {
+    padding: 30px;
+
+    background: var(--white);
+    border: 1px solid var(--border);
+}
+
+.card-heading {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    margin-bottom: 25px;
+    padding-bottom: 14px;
+
+    border-bottom: 1px solid var(--border);
+}
+
+.card-heading > span {
+    color: var(--gold);
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 0.8rem;
+    font-weight: 700;
+}
+
+.card-heading h2 {
+    margin: 0;
+
+    color: var(--navy);
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 1.35rem;
+}
+
+
+/* =========================================
+   PROFILE DETAILS
+========================================= */
+
+.profile-details {
+    display: flex;
+    flex-direction: column;
+}
+
+.detail-item {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+
+    padding: 13px 0;
+    border-bottom: 1px solid #e5dfd4;
+}
+
+.detail-item:last-child {
+    border-bottom: none;
+}
+
+.detail-label {
+    color: var(--text-light);
+    font-size: 0.82rem;
+}
+
+.detail-item strong {
+    color: var(--text);
+    font-size: 0.88rem;
+    text-align: right;
+}
+
+
+/* =========================================
+   INTERESTS
+========================================= */
+
+.interest-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 9px;
+}
+
+.interest-tag {
+    display: inline-block;
+    padding: 7px 12px;
+
+    background: var(--paper);
+    border: 1px solid var(--border);
+
+    color: var(--navy);
+    font-size: 0.78rem;
+    font-weight: 600;
+}
+
+.empty-state {
+    color: var(--text-light);
+    font-size: 0.85rem;
+    font-style: italic;
+}
+
+
+/* =========================================
+   CIRCLE SUMMARY
+========================================= */
+
+.circle-summary {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    margin-bottom: 22px;
+}
+
+.circle-number {
+    width: 72px;
+    height: 72px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+
+    background: var(--navy);
+    color: var(--gold-light);
+
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 1.8rem;
+    font-weight: 700;
+}
+
+.circle-summary h3 {
+    margin-bottom: 5px;
+
+    color: var(--navy);
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 1rem;
+}
+
+.circle-summary p {
+    color: var(--text-light);
+    font-size: 0.82rem;
+    line-height: 1.5;
+}
+
+
+/* =========================================
+   PRIVACY
+========================================= */
+
+.privacy-description {
+    margin-bottom: 20px;
+
+    color: var(--text-light);
+    font-size: 0.88rem;
+    line-height: 1.7;
+}
+
+
+/* =========================================
+   TEXT LINK
+========================================= */
+
+.text-link {
+    color: var(--navy);
+    font-size: 0.82rem;
+    font-weight: 700;
+    text-decoration: none;
+
+    border-bottom: 1px solid var(--gold);
+    transition: color 0.2s ease;
+}
+
+.text-link:hover {
+    color: var(--gold);
+}
+
+
+/* =========================================
+   TABLET
+========================================= */
+
+@media (max-width: 800px) {
+
+    .profile-page {
+        padding: 45px 18px;
+    }
+
+    .profile-header {
+        gap: 25px;
+        padding: 28px;
+    }
+
+    .profile-photo {
+        width: 120px;
+        height: 120px;
+        font-size: 2.8rem;
+    }
+
+    .profile-heading h1 {
+        font-size: 2.1rem;
+    }
+
+    .profile-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+
+/* =========================================
+   MOBILE
+========================================= */
+
+@media (max-width: 600px) {
+
+    .profile-page {
+        padding: 35px 14px;
+    }
+
+    .profile-header {
+        flex-direction: column;
+        text-align: center;
+        padding: 25px 18px;
+    }
+
+    .profile-photo {
+        width: 110px;
+        height: 110px;
+        font-size: 2.5rem;
+    }
+
+    .profile-heading h1 {
+        font-size: 1.9rem;
+    }
+
+    .profile-actions {
+        justify-content: center;
+    }
+
+    .profile-card {
+        padding: 23px 18px;
+    }
+
+    .detail-item {
+        flex-direction: column;
+        gap: 4px;
+    }
+
+    .detail-item strong {
+        text-align: left;
+    }
+
+    .circle-summary {
+        align-items: flex-start;
+    }
+}
+
+
+/* =========================================
+   SMALL MOBILE
+========================================= */
+
+@media (max-width: 400px) {
+
+    .profile-heading h1 {
+        font-size: 1.65rem;
+    }
+
+    .profile-actions {
+        flex-direction: column;
+    }
+
+    .profile-actions .btn {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .circle-number {
+        width: 60px;
+        height: 60px;
+        font-size: 1.5rem;
+    }
+}

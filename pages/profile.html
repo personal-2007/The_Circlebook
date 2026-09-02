@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>My Profile — The Circlebook</title>
+
+    <meta
+        name="description"
+        content="View and manage your Circlebook profile."
+    >
+
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/responsive.css">
+    <link rel="stylesheet" href="../css/profile.css">
+</head>
+
+<body>
+
+    <!-- Header -->
+    <header class="site-header">
+        <div class="container header-inner">
+
+            <a href="../index.html" class="logo">
+                The Circlebook
+            </a>
+
+            <nav class="main-nav">
+                <a href="../index.html">Home</a>
+                <a href="people.html">People</a>
+                <a href="profile.html" class="active">My Profile</a>
+                <a href="requests.html">Requests</a>
+                <a href="settings.html">Settings</a>
+            </nav>
+
+        </div>
+    </header>
+
+
+    <!-- Profile -->
+    <main class="profile-page">
+
+        <div class="container">
+
+            <!-- Profile Header -->
+            <section class="profile-header">
+
+                <div class="profile-photo">
+                    <span id="profileInitial">?</span>
+                </div>
+
+                <div class="profile-heading">
+
+                    <span class="eyebrow">
+                        MEMBER PROFILE
+                    </span>
+
+                    <h1 id="profileName">
+                        Your Name
+                    </h1>
+
+                    <p id="profileLocation">
+                        Your Location
+                    </p>
+
+                    <div class="profile-actions">
+
+                        <a
+                            href="settings.html"
+                            class="btn btn-primary"
+                        >
+                            Edit Profile
+                        </a>
+
+                        <button
+                            type="button"
+                            class="btn btn-secondary"
+                            data-action="logout"
+                        >
+                            Sign Out
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- Profile Content -->
+            <div class="profile-grid">
+
+                <!-- About -->
+                <section class="profile-card">
+
+                    <div class="card-heading">
+                        <span>01</span>
+                        <h2>About</h2>
+                    </div>
+
+                    <div class="profile-details">
+
+                        <div class="detail-item">
+                            <span class="detail-label">
+                                Full Name
+                            </span>
+
+                            <strong id="detailName">
+                                —
+                            </strong>
+                        </div>
+
+
+                        <div class="detail-item">
+                            <span class="detail-label">
+                                Location
+                            </span>
+
+                            <strong id="detailLocation">
+                                —
+                            </strong>
+                        </div>
+
+
+                        <div class="detail-item">
+                            <span class="detail-label">
+                                College / School
+                            </span>
+
+                            <strong id="detailEducation">
+                                —
+                            </strong>
+                        </div>
+
+
+                        <div class="detail-item">
+                            <span class="detail-label">
+                                Birthday
+                            </span>
+
+                            <strong id="detailBirthday">
+                                —
+                            </strong>
+                        </div>
+
+
+                        <div class="detail-item">
+                            <span class="detail-label">
+                                Gender
+                            </span>
+
+                            <strong id="detailGender">
+                                —
+                            </strong>
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+                <!-- Interests -->
+                <section class="profile-card">
+
+                    <div class="card-heading">
+                        <span>02</span>
+                        <h2>Interests</h2>
+                    </div>
+
+                    <div
+                        id="profileInterests"
+                        class="interest-list"
+                    >
+                        <span class="empty-state">
+                            No interests added yet.
+                        </span>
+                    </div>
+
+                </section>
+
+
+                <!-- Circle -->
+                <section class="profile-card">
+
+                    <div class="card-heading">
+                        <span>03</span>
+                        <h2>My Circle</h2>
+                    </div>
+
+                    <div class="circle-summary">
+
+                        <div class="circle-number" id="friendCount">
+                            0
+                        </div>
+
+                        <div>
+                            <h3>People in your circle</h3>
+
+                            <p>
+                                Your connections will appear here
+                                as you build your circle.
+                            </p>
+                        </div>
+
+                    </div>
+
+                    <a
+                        href="people.html"
+                        class="text-link"
+                    >
+                        Find People →
+                    </a>
+
+                </section>
+
+
+                <!-- Privacy -->
+                <section class="profile-card">
+
+                    <div class="card-heading">
+                        <span>04</span>
+                        <h2>Privacy</h2>
+                    </div>
+
+                    <p class="privacy-description">
+                        Your profile visibility is controlled by
+                        your privacy preferences.
+                    </p>
+
+                    <a
+                        href="settings.html"
+                        class="text-link"
+                    >
+                        Manage Privacy →
+                    </a>
+
+                </section>
+
+            </div>
+
+        </div>
+
+    </main>
+
+
+    <!-- Footer -->
+    <footer class="site-footer">
+
+        <div class="container">
+
+            <p>
+                © <span data-year></span> The Circlebook.
+                A community directory inspired by the early social web.
+            </p>
+
+        </div>
+
+    </footer>
+
+
+    <script src="../js/app.js"></script>
+    <script src="../js/profile.js"></script>
+
+</body>
+</html>

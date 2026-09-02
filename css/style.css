@@ -1,0 +1,804 @@
+```css
+/* =========================================================
+   THE CIRCLEBOOK
+   Main Stylesheet
+   ========================================================= */
+
+
+/* =========================================================
+   1. ROOT VARIABLES
+   ========================================================= */
+
+:root {
+    --navy: #243447;
+    --navy-light: #344d67;
+
+    --gold: #c5a46d;
+    --gold-light: #d9b878;
+
+    --cream: #f8f4eb;
+    --paper: #eee9df;
+    --white: #fffdf8;
+
+    --text: #292929;
+    --text-light: #666666;
+    --border: #cfc5b3;
+
+    --shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+
+    --max-width: 1100px;
+}
+
+
+/* =========================================================
+   2. RESET
+   ========================================================= */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+
+html {
+    scroll-behavior: smooth;
+}
+
+
+body {
+    font-family:
+        Georgia,
+        "Times New Roman",
+        serif;
+
+    background: var(--paper);
+    color: var(--text);
+
+    line-height: 1.6;
+
+    min-height: 100vh;
+}
+
+
+img {
+    max-width: 100%;
+    display: block;
+}
+
+
+a {
+    color: inherit;
+    text-decoration: none;
+}
+
+
+button,
+input,
+textarea,
+select {
+    font: inherit;
+}
+
+
+/* =========================================================
+   3. CONTAINER
+   ========================================================= */
+
+.container {
+    width: min(
+        100% - 40px,
+        var(--max-width)
+    );
+
+    margin-inline: auto;
+}
+
+
+/* =========================================================
+   4. HEADER
+   ========================================================= */
+
+.site-header {
+    background: var(--navy);
+
+    color: white;
+
+    border-bottom:
+        4px solid var(--gold);
+
+    position: sticky;
+    top: 0;
+
+    z-index: 1000;
+}
+
+
+.header-container {
+    min-height: 72px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 30px;
+}
+
+
+/* Logo */
+
+.logo {
+    font-size: 27px;
+
+    font-weight: bold;
+
+    letter-spacing: 0.5px;
+
+    white-space: nowrap;
+}
+
+
+.logo span {
+    color: var(--gold-light);
+}
+
+
+/* Navigation */
+
+.main-nav {
+    display: flex;
+
+    align-items: center;
+
+    gap: 22px;
+}
+
+
+.main-nav a {
+    color: white;
+
+    font-size: 15px;
+
+    transition:
+        color 0.2s ease;
+}
+
+
+.main-nav a:hover {
+    color: var(--gold-light);
+}
+
+
+/* Navigation Join Button */
+
+.nav-button {
+    border:
+        1px solid var(--gold-light);
+
+    padding:
+        7px 16px;
+
+    color:
+        var(--gold-light) !important;
+
+    transition:
+        all 0.2s ease;
+}
+
+
+.nav-button:hover {
+    background:
+        var(--gold-light);
+
+    color:
+        var(--navy) !important;
+}
+
+
+/* =========================================================
+   5. HERO
+   ========================================================= */
+
+.hero {
+    padding:
+        95px 0 100px;
+
+    background:
+        linear-gradient(
+            rgba(248, 244, 235, 0.96),
+            rgba(248, 244, 235, 0.96)
+        );
+
+    border-bottom:
+        1px solid var(--border);
+
+    text-align: center;
+}
+
+
+.hero-content {
+    max-width: 800px;
+}
+
+
+.eyebrow {
+    color: #78684e;
+
+    font-size: 12px;
+
+    font-weight: bold;
+
+    letter-spacing: 2px;
+
+    margin-bottom: 15px;
+}
+
+
+.hero h1 {
+    color: var(--navy);
+
+    font-size:
+        clamp(42px, 7vw, 72px);
+
+    line-height: 1.1;
+
+    margin-bottom: 12px;
+}
+
+
+.hero h2 {
+    color: #6d604c;
+
+    font-size:
+        clamp(20px, 3vw, 28px);
+
+    font-weight: normal;
+
+    margin-bottom: 24px;
+}
+
+
+.hero-description {
+    max-width: 650px;
+
+    margin:
+        0 auto;
+
+    color: var(--text-light);
+
+    font-size: 17px;
+
+    line-height: 1.8;
+}
+
+
+/* =========================================================
+   6. BUTTONS
+   ========================================================= */
+
+.hero-actions {
+    margin-top: 30px;
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+    gap: 12px;
+
+    flex-wrap: wrap;
+}
+
+
+.button {
+    display: inline-block;
+
+    padding:
+        11px 23px;
+
+    border:
+        1px solid var(--navy);
+
+    cursor: pointer;
+
+    font-family:
+        Georgia,
+        "Times New Roman",
+        serif;
+
+    font-size: 15px;
+
+    transition:
+        all 0.2s ease;
+}
+
+
+.primary-button {
+    background:
+        var(--navy);
+
+    color: white;
+}
+
+
+.primary-button:hover {
+    background:
+        var(--navy-light);
+
+    transform:
+        translateY(-1px);
+}
+
+
+.secondary-button {
+    background:
+        transparent;
+
+    color:
+        var(--navy);
+}
+
+
+.secondary-button:hover {
+    background:
+        var(--navy);
+
+    color: white;
+}
+
+
+/* =========================================================
+   7. SECTION HEADING
+   ========================================================= */
+
+.section-heading {
+    text-align: center;
+
+    max-width: 650px;
+
+    margin:
+        0 auto 45px;
+}
+
+
+.section-heading h2 {
+    color: var(--navy);
+
+    font-size:
+        clamp(28px, 4vw, 38px);
+
+    line-height: 1.2;
+
+    margin-bottom: 10px;
+}
+
+
+.section-heading > p:last-child {
+    color: var(--text-light);
+
+    font-size: 16px;
+}
+
+
+/* =========================================================
+   8. FEATURES
+   ========================================================= */
+
+.features {
+    padding:
+        85px 0;
+
+    background:
+        var(--paper);
+}
+
+
+.feature-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(3, 1fr);
+
+    gap: 22px;
+}
+
+
+.feature-card {
+    background:
+        var(--cream);
+
+    border:
+        1px solid var(--border);
+
+    padding:
+        30px;
+
+    box-shadow:
+        var(--shadow);
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+
+.feature-card:hover {
+    transform:
+        translateY(-4px);
+
+    box-shadow:
+        0 8px 20px
+        rgba(0, 0, 0, 0.1);
+}
+
+
+.feature-number {
+    color:
+        var(--gold);
+
+    font-size: 14px;
+
+    font-weight: bold;
+
+    letter-spacing: 1px;
+
+    margin-bottom: 15px;
+}
+
+
+.feature-card h3 {
+    color:
+        var(--navy);
+
+    font-size: 22px;
+
+    margin-bottom: 10px;
+}
+
+
+.feature-card p {
+    color:
+        var(--text-light);
+
+    font-size: 15px;
+
+    line-height: 1.7;
+
+    margin-bottom: 18px;
+}
+
+
+.feature-card a {
+    color:
+        var(--navy);
+
+    font-weight: bold;
+
+    font-size: 14px;
+}
+
+
+.feature-card a:hover {
+    color:
+        #806b48;
+}
+
+
+/* =========================================================
+   9. HOW IT WORKS
+   ========================================================= */
+
+.how-it-works {
+    padding:
+        85px 0;
+
+    background:
+        var(--cream);
+
+    border-top:
+        1px solid var(--border);
+
+    border-bottom:
+        1px solid var(--border);
+}
+
+
+.steps {
+    display: grid;
+
+    grid-template-columns:
+        repeat(4, 1fr);
+
+    gap: 20px;
+}
+
+
+.step {
+    text-align: center;
+
+    padding:
+        20px;
+}
+
+
+.step > span {
+    display:
+        flex;
+
+    width: 50px;
+    height: 50px;
+
+    align-items: center;
+    justify-content: center;
+
+    margin:
+        0 auto 18px;
+
+    border:
+        1px solid var(--gold);
+
+    border-radius: 50%;
+
+    color:
+        var(--navy);
+
+    font-size: 14px;
+
+    font-weight: bold;
+}
+
+
+.step h3 {
+    color:
+        var(--navy);
+
+    font-size: 19px;
+
+    margin-bottom: 7px;
+}
+
+
+.step p {
+    color:
+        var(--text-light);
+
+    font-size: 14px;
+}
+
+
+/* =========================================================
+   10. CTA
+   ========================================================= */
+
+.cta {
+    padding:
+        80px 20px;
+
+    background:
+        var(--navy);
+
+    color: white;
+
+    text-align: center;
+}
+
+
+.cta h2 {
+    color:
+        white;
+
+    font-size:
+        clamp(30px, 5vw, 42px);
+
+    margin-bottom: 8px;
+}
+
+
+.cta p {
+    color:
+        #d9d9d9;
+
+    margin-bottom: 5px;
+}
+
+
+.cta .button {
+    margin-top: 20px;
+}
+
+
+/* =========================================================
+   11. FOOTER
+   ========================================================= */
+
+.site-footer {
+    background:
+        #1d2a37;
+
+    color:
+        #d8d8d8;
+
+    border-top:
+        4px solid var(--gold);
+}
+
+
+.footer-content {
+    padding:
+        40px 0;
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: flex-start;
+
+    gap: 40px;
+}
+
+
+.footer-logo {
+    color:
+        var(--gold-light);
+
+    font-size: 21px;
+
+    font-weight: bold;
+
+    margin-bottom: 5px;
+}
+
+
+.footer-content p {
+    color:
+        #bcbcbc;
+
+    font-size: 14px;
+}
+
+
+.footer-links {
+    display: flex;
+
+    flex-wrap: wrap;
+
+    gap: 18px;
+}
+
+
+.footer-links a {
+    color:
+        #d8d8d8;
+
+    font-size: 14px;
+}
+
+
+.footer-links a:hover {
+    color:
+        var(--gold-light);
+}
+
+
+.footer-bottom {
+    border-top:
+        1px solid rgba(255,255,255,0.12);
+
+    padding:
+        18px 20px;
+
+    text-align: center;
+}
+
+
+.footer-bottom p {
+    color:
+        #999;
+
+    font-size: 13px;
+}
+
+
+/* =========================================================
+   12. FORM ELEMENTS
+   ========================================================= */
+
+input,
+textarea,
+select {
+    width: 100%;
+
+    padding:
+        11px 12px;
+
+    background:
+        var(--white);
+
+    border:
+        1px solid #bbb19f;
+
+    color:
+        var(--text);
+
+    outline: none;
+
+    border-radius: 0;
+}
+
+
+input:focus,
+textarea:focus,
+select:focus {
+    border-color:
+        var(--navy);
+
+    box-shadow:
+        0 0 0 2px
+        rgba(36, 52, 71, 0.08);
+}
+
+
+textarea {
+    min-height: 120px;
+
+    resize: vertical;
+}
+
+
+/* =========================================================
+   13. SELECTION
+   ========================================================= */
+
+::selection {
+    background:
+        var(--gold-light);
+
+    color:
+        var(--navy);
+}
+
+
+/* =========================================================
+   14. SCROLLBAR
+   ========================================================= */
+
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+
+::-webkit-scrollbar-track {
+    background:
+        var(--paper);
+}
+
+
+::-webkit-scrollbar-thumb {
+    background:
+        var(--navy);
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background:
+        var(--navy-light);
+}
+
+
+/* =========================================================
+   15. ACCESSIBILITY
+   ========================================================= */
+
+:focus-visible {
+    outline:
+        2px solid var(--gold);
+
+    outline-offset:
+        3px;
+}
+
+
+/* =========================================================
+   END OF STYLE.CSS
+   ========================================================= */
+```
