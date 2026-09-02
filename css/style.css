@@ -313,6 +313,41 @@ select {
         all 0.2s ease;
 }
 
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 42px;
+    padding: 9px 18px;
+    border: 1px solid var(--navy);
+    cursor: pointer;
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 15px;
+    text-align: center;
+    transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
+}
+
+.btn-primary {
+    background: var(--navy);
+    color: white;
+}
+
+.btn-primary:hover {
+    background: var(--navy-light);
+    color: white;
+    transform: translateY(-1px);
+}
+
+.btn-secondary {
+    background: transparent;
+    color: var(--navy);
+}
+
+.btn-secondary:hover {
+    background: var(--navy);
+    color: white;
+}
+
 
 .primary-button {
     background:
@@ -788,6 +823,182 @@ textarea {
 /* =========================================================
    15. ACCESSIBILITY
    ========================================================= */
+
+.page-heading {
+    max-width: 720px;
+    margin: 0 auto 35px;
+    text-align: center;
+}
+
+.page-heading h1 {
+    margin: 8px 0 10px;
+    color: var(--navy);
+    font-size: clamp(32px, 5vw, 48px);
+    line-height: 1.15;
+}
+
+.page-heading p {
+    color: var(--text-light);
+}
+
+.people-page,
+.requests-page,
+.settings-page,
+.invite-page {
+    min-height: calc(100vh - 160px);
+    padding: 60px 20px;
+    background: var(--cream);
+}
+
+.people-search,
+.settings-card,
+.invite-card,
+.request-card,
+.person-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow);
+}
+
+.people-search {
+    max-width: 760px;
+    margin: 0 auto 25px;
+    padding: 24px;
+}
+
+.search-box label {
+    display: block;
+    margin-bottom: 8px;
+    color: var(--navy);
+    font-weight: bold;
+}
+
+.search-input-row {
+    display: flex;
+    gap: 10px;
+}
+
+.search-input-row input {
+    flex: 1;
+}
+
+.search-status,
+.request-status {
+    margin: 20px 0;
+    color: var(--text-light);
+    text-align: center;
+}
+
+.people-grid,
+.requests-list,
+.settings-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 20px;
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.person-card,
+.request-card {
+    display: flex;
+    gap: 18px;
+    padding: 22px;
+}
+
+.person-photo,
+.request-photo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 64px;
+    height: 64px;
+    flex-shrink: 0;
+    background: var(--navy);
+    color: var(--gold-light);
+    font-size: 1.7rem;
+    font-weight: bold;
+}
+
+.person-information,
+.request-information {
+    min-width: 0;
+    flex: 1;
+}
+
+.person-information h2,
+.request-information h2 {
+    margin-bottom: 4px;
+    color: var(--navy);
+    font-size: 1.2rem;
+}
+
+.person-location,
+.person-education,
+.request-location,
+.request-education {
+    color: var(--text-light);
+    font-size: 0.88rem;
+}
+
+.person-interests {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin: 12px 0;
+}
+
+.person-interests span {
+    padding: 4px 8px;
+    background: var(--paper);
+    border: 1px solid var(--border);
+    color: var(--navy);
+    font-size: 0.75rem;
+}
+
+.person-actions,
+.request-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 14px;
+}
+
+.settings-card {
+    padding: 28px;
+}
+
+.settings-card .card-heading {
+    margin-bottom: 20px;
+}
+
+.settings-card form {
+    display: grid;
+    gap: 16px;
+}
+
+.account-card p {
+    margin-bottom: 18px;
+    color: var(--text-light);
+}
+
+.empty-people,
+.empty-requests {
+    max-width: 600px;
+    margin: 30px auto;
+    text-align: center;
+}
+
+.empty-people h2,
+.empty-requests h2 {
+    color: var(--navy);
+}
+
+.empty-people p,
+.empty-requests p {
+    margin: 8px 0 18px;
+    color: var(--text-light);
+}
 
 :focus-visible {
     outline:

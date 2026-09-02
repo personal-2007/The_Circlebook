@@ -187,15 +187,26 @@ function initializePrivacyForm(user) {
             return;
         }
 
+        const allowedVisibility = ["public", "friends", "private"];
+        const profileVisibility = document.getElementById("profileVisibility").value;
+        const birthdayVisibility = document.getElementById("birthdayVisibility").value;
+        const emailVisibility = document.getElementById("emailVisibility").value;
+
+        if (![profileVisibility, birthdayVisibility, emailVisibility]
+            .every(value => allowedVisibility.includes(value))) {
+            showSettingsMessage("Please choose valid privacy settings.", "error");
+            return;
+        }
+
         users[index].privacy = {
             profile:
-                document.getElementById("profileVisibility").value,
+                profileVisibility,
 
             birthday:
-                document.getElementById("birthdayVisibility").value,
+                birthdayVisibility,
 
             email:
-                document.getElementById("emailVisibility").value
+                emailVisibility
         };
 
         saveUsers(users);
@@ -215,9 +226,12 @@ function initializePrivacyForm(user) {
 ========================= */
 
 function updateCurrentUser(user) {
+    // This prototype stores credentials locally; keep passwords out of the session snapshot.
+    const sessionUser = { ...user };
+    delete sessionUser.password;
     localStorage.setItem(
         "circlebook_current_user",
-        JSON.stringify(user)
+        JSON.stringify(sessionUser)
     );
 }
 

@@ -13,39 +13,31 @@ document.addEventListener("DOMContentLoaded", () => {
 ========================================= */
 
 function loadProfile() {
+    const currentUser = getCurrentUser();
 
-    const currentUserData =
-        localStorage.getItem("circlebook_current_user");
-
-    if (!currentUserData) {
+    if (!currentUser) {
         window.location.href = "login.html";
         return;
     }
-
-    let currentUser;
-
-    try {
-        currentUser = JSON.parse(currentUserData);
-    } catch (error) {
-        console.error("Invalid current user:", error);
-        window.location.href = "login.html";
-        return;
-    }
-
 
     const users = getProfileUsers();
+    const requestedId = new URLSearchParams(window.location.search).get("id");
 
     const user = users.find(
-        (item) => item.id === currentUser.id
+        (item) => item.id === (requestedId || currentUser.id)
     );
 
     if (!user) {
-        window.location.href = "login.html";
+        showUnavailableProfile();
         return;
     }
 
+    if (!canViewField(user, currentUser, users, "profile")) {
+        showUnavailableProfile();
+        return;
+    }
 
-    displayProfile(user);
+    displayProfile(user, currentUser, users);
 }
 
 
@@ -74,20 +66,21 @@ function getProfileUsers() {
    DISPLAY PROFILE
 ========================================= */
 
-function displayProfile(user) {
+function displayProfile(user, viewer, users) {
 
     const name = user.fullName || "Unknown User";
 
-    const location =
-        user.location || "Location not provided";
+    const location = canViewField(user, viewer, users, "profile")
+        ? user.location || "Location not provided"
+        : "Private";
 
-    const education =
-        user.education || "Not provided";
+    const education = canViewField(user, viewer, users, "profile")
+        ? user.education || "Not provided"
+        : "Private";
 
-    const birthday =
-        user.birthday
+    const birthday = canViewField(user, viewer, users, "birthday") && user.birthday
             ? formatProfileDate(user.birthday)
-            : "Not provided";
+            : canViewField(user, viewer, users, "birthday") ? "Not provided" : "Private";
 
     const gender =
         user.gender
@@ -120,7 +113,7 @@ function displayProfile(user) {
 
     /* Interests */
 
-    displayInterests(user.interests);
+    displayInterests(canViewField(user, viewer, users, "profile") ? user.interests : []);
 
 
     /* Friends */
@@ -228,4 +221,33 @@ function capitalize(value) {
 
     return value.charAt(0).toUpperCase() +
         value.slice(1);
+}
+
+function canViewField(user, viewer, users, field) {
+    if (user.id === viewer.id) {
+        return true;
+    }
+
+    const visibility = user.privacy && user.privacy[field] || "friends";
+    if (visibility === "public") {
+        return true;
+    }
+    if (visibility !== "friends") {
+        return false;
+    }
+
+    const viewerRecord = users.find(item => item.id === viewer.id);
+    return Array.isArray(user.friends) && user.friends.includes(viewer.id) &&
+        Array.isArray(viewerRecord && viewerRecord.friends) && viewerRecord.friends.includes(user.id);
+}
+
+function showUnavailableProfile() {
+    setText("profileName", "Profile unavailable");
+    setText("profileLocation", "This profile is private or no longer available.");
+    setText("profileInitial", "?");
+    const content = document.querySelector(".profile-grid");
+    if (content) {
+        content.hidden = true;
+    }
+    document.querySelectorAll(".profile-actions").forEach(element => element.hidden = true);
 }

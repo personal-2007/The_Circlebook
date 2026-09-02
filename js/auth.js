@@ -158,6 +158,7 @@ function initializeRegistration() {
 
         /* Create user */
 
+        // Production authentication requires a backend, secure password hashing, and sessions.
         const newUser = {
             id: generateUserId(),
             fullName,

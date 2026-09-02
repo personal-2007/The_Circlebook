@@ -239,6 +239,20 @@
                 return;
             }
 
+            const currentUserData = localStorage.getItem("circlebook_current_user");
+            let currentUser;
+
+            try {
+                currentUser = currentUserData ? JSON.parse(currentUserData) : null;
+            } catch (error) {
+                currentUser = null;
+            }
+
+            if (!currentUser || !currentUser.id) {
+                window.location.href = "login.html";
+                return;
+            }
+
 
             form.addEventListener("submit", (event) => {
 
@@ -261,6 +275,20 @@
                         .value
                         .trim();
 
+                if (name.length < 2) {
+                    messageBox.hidden = false;
+                    messageBox.className = "invite-message error";
+                    messageBox.textContent = "Please enter their full name.";
+                    return;
+                }
+
+                if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                    messageBox.hidden = false;
+                    messageBox.className = "invite-message error";
+                    messageBox.textContent = "Please enter a valid email address.";
+                    return;
+                }
+
 
                 const invitation = {
                     id:
@@ -270,6 +298,7 @@
                     name,
                     email,
                     message,
+                    inviterId: currentUser.id,
 
                     createdAt:
                         new Date().toISOString(),

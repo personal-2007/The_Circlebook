@@ -145,6 +145,10 @@ function renderPeople(query) {
 
         people = people.filter((user) => {
 
+            if (!canSeePeopleProfile(user, currentUser, users)) {
+                return (user.fullName || "").toLowerCase().includes(search);
+            }
+
             const name =
                 user.fullName || "";
 
@@ -213,7 +217,7 @@ function renderPeople(query) {
     people.forEach((user) => {
 
         const card =
-            createPersonCard(user);
+            createPersonCard(user, currentUser, users);
 
         results.appendChild(card);
     });
@@ -224,7 +228,7 @@ function renderPeople(query) {
    CREATE PERSON CARD
 ========================================= */
 
-function createPersonCard(user) {
+function createPersonCard(user, currentUser, users) {
 
     const card =
         document.createElement("article");
@@ -267,8 +271,10 @@ function createPersonCard(user) {
     location.className =
         "person-location";
 
-    location.textContent =
-        user.location || "Location not provided";
+    const canSeeProfile = canSeePeopleProfile(user, currentUser, users);
+    location.textContent = canSeeProfile
+        ? user.location || "Location not provided"
+        : "Private profile";
 
 
     const education =
@@ -277,8 +283,9 @@ function createPersonCard(user) {
     education.className =
         "person-education";
 
-    education.textContent =
-        user.education || "Education not provided";
+    education.textContent = canSeeProfile
+        ? user.education || "Education not provided"
+        : "Private";
 
 
     /* Interests */
@@ -291,7 +298,7 @@ function createPersonCard(user) {
 
 
     if (
-        Array.isArray(user.interests) &&
+        canSeeProfile && Array.isArray(user.interests) &&
         user.interests.length > 0
     ) {
 
@@ -349,12 +356,10 @@ function createPersonCard(user) {
         "click",
         () => {
 
-            sendFriendRequest(user.id);
-
-            addButton.textContent =
-                "Request Sent";
-
-            addButton.disabled = true;
+            if (sendFriendRequest(user.id)) {
+                addButton.textContent = "Request Sent";
+                addButton.disabled = true;
+            }
         }
     );
 
@@ -391,7 +396,7 @@ function sendFriendRequest(targetUserId) {
 
     if (!currentUser) {
         window.location.href = "login.html";
-        return;
+        return false;
     }
 
 
@@ -413,7 +418,8 @@ function sendFriendRequest(targetUserId) {
 
 
     if (!sender || !receiver) {
-        return;
+        showPeopleMessage("That member is no longer available.", "error");
+        return false;
     }
 
 
@@ -440,7 +446,7 @@ function sendFriendRequest(targetUserId) {
             "info"
         );
 
-        return;
+        return false;
     }
 
 
@@ -456,7 +462,12 @@ function sendFriendRequest(targetUserId) {
             "info"
         );
 
-        return;
+        return false;
+    }
+
+    if (Array.isArray(sender.friendRequests) && sender.friendRequests.includes(targetUserId)) {
+        showPeopleMessage("This person has already sent you a request.", "info");
+        return false;
     }
 
 
@@ -477,6 +488,8 @@ function sendFriendRequest(targetUserId) {
         `Circle request sent to ${receiver.fullName}.`,
         "success"
     );
+
+    return true;
 }
 
 
@@ -519,4 +532,22 @@ function showPeopleMessage(
         messageElement.remove();
 
     }, 3000);
+}
+
+function canSeePeopleProfile(user, viewer, users) {
+    if (!viewer || user.id === viewer.id) {
+        return true;
+    }
+
+    const visibility = user.privacy && user.privacy.profile || "friends";
+    if (visibility === "public") {
+        return true;
+    }
+    if (visibility !== "friends") {
+        return false;
+    }
+
+    const viewerRecord = users.find(item => item.id === viewer.id);
+    return Array.isArray(user.friends) && user.friends.includes(viewer.id) &&
+        Array.isArray(viewerRecord && viewerRecord.friends) && viewerRecord.friends.includes(user.id);
 }

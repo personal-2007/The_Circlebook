@@ -201,6 +201,10 @@ function renderRequests() {
 ========================================= */
 
 function createRequestCard(requestUser) {
+    const currentUser = getRequestCurrentUser();
+    const users = getRequestUsers();
+    const viewer = users.find(user => user.id === currentUser.id);
+    const canSeeProfile = canViewRequestProfile(requestUser, viewer, users);
 
     const card =
         document.createElement("article");
@@ -244,9 +248,9 @@ function createRequestCard(requestUser) {
     location.className =
         "request-location";
 
-    location.textContent =
-        requestUser.location ||
-        "Location not provided";
+    location.textContent = canSeeProfile
+        ? requestUser.location || "Location not provided"
+        : "Private profile";
 
 
     const education =
@@ -255,9 +259,9 @@ function createRequestCard(requestUser) {
     education.className =
         "request-education";
 
-    education.textContent =
-        requestUser.education ||
-        "Education not provided";
+    education.textContent = canSeeProfile
+        ? requestUser.education || "Education not provided"
+        : "Private";
 
 
     /* Actions */
@@ -350,6 +354,19 @@ function createRequestCard(requestUser) {
     return card;
 }
 
+function canViewRequestProfile(user, viewer, users) {
+    const visibility = user.privacy && user.privacy.profile || "friends";
+    if (visibility === "public") {
+        return true;
+    }
+    if (visibility !== "friends") {
+        return false;
+    }
+
+    return Array.isArray(user.friends) && user.friends.includes(viewer.id) &&
+        Array.isArray(viewer.friends) && viewer.friends.includes(user.id);
+}
+
 
 /* =========================================
    ACCEPT REQUEST
@@ -380,6 +397,19 @@ function acceptRequest(requesterId) {
         !requester
     ) {
         return;
+    }
+
+    if (!Array.isArray(currentUserData.friendRequests) ||
+        !currentUserData.friendRequests.includes(requesterId)) {
+        showRequestMessage("That request is no longer pending.", "info");
+        renderRequests();
+        return;
+    }
+
+    if (Array.isArray(requester.friendRequests)) {
+        requester.friendRequests = requester.friendRequests.filter(
+            id => id !== currentUserData.id
+        );
     }
 
 

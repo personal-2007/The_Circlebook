@@ -1,0 +1,75 @@
+@media (max-width: 900px) {
+	.site-header {
+		position: relative;
+	}
+
+	.header-container,
+	.header-inner {
+		align-items: flex-start;
+		flex-direction: column;
+		gap: 12px;
+		padding: 16px 0;
+	}
+
+	.main-nav {
+		flex-wrap: wrap;
+		gap: 10px 16px;
+	}
+
+	.feature-grid,
+	.steps {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+}
+
+@media (max-width: 600px) {
+	.container {
+		width: min(100% - 28px, var(--max-width));
+	}
+
+	.hero {
+		padding: 62px 0 68px;
+	}
+
+	.hero h1 {
+		font-size: clamp(36px, 12vw, 52px);
+	}
+
+	.feature-grid,
+	.steps,
+	.people-grid,
+	.requests-list,
+	.settings-grid {
+		grid-template-columns: 1fr;
+	}
+
+	.people-page,
+	.requests-page,
+	.settings-page,
+	.invite-page {
+		padding: 40px 14px;
+	}
+
+	.search-input-row,
+	.person-card,
+	.request-card {
+		flex-direction: column;
+	}
+
+	.person-photo,
+	.request-photo {
+		width: 58px;
+		height: 58px;
+	}
+
+	.person-actions .btn,
+	.request-actions .btn,
+	.search-input-row .btn {
+		width: 100%;
+	}
+
+	.footer-content {
+		flex-direction: column;
+		gap: 20px;
+	}
+}

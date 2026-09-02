@@ -13,15 +13,45 @@ document.addEventListener("DOMContentLoaded", () => {
  * Navigation
  */
 function initializeNavigation() {
+    const nav = document.querySelector(".main-nav");
+    if (!nav) {
+        return;
+    }
+
+    const inPagesDirectory = window.location.pathname.includes("/pages/");
+    const path = inPagesDirectory ? "" : "pages/";
+    const homePath = inPagesDirectory ? "../index.html" : "index.html";
     const currentPage = window.location.pathname.split("/").pop() || "index.html";
+    const links = [
+        { label: "Home", href: homePath, page: "index.html" },
+        { label: "People", href: `${path}people.html`, page: "people.html" }
+    ];
 
-    document.querySelectorAll("nav a").forEach((link) => {
-        const linkPage = link.getAttribute("href");
+    if (isLoggedIn()) {
+        links.push(
+            { label: "My Profile", href: `${path}profile.html`, page: "profile.html" },
+            { label: "Requests", href: `${path}requests.html`, page: "requests.html" },
+            { label: "Invite", href: `${path}invite.html`, page: "invite.html" },
+            { label: "Settings", href: `${path}settings.html`, page: "settings.html" }
+        );
+    } else {
+        links.push(
+            { label: "Login", href: `${path}login.html`, page: "login.html" },
+            { label: "Join", href: `${path}register.html`, page: "register.html", className: "nav-button" }
+        );
+    }
 
-        if (linkPage === currentPage) {
-            link.classList.add("active");
-        }
-    });
+    nav.innerHTML = links.map((link) => {
+        const classes = [link.className, link.page === currentPage ? "active" : ""]
+            .filter(Boolean)
+            .join(" ");
+        return `<a href="${link.href}"${classes ? ` class="${classes}"` : ""}>${link.label}</a>`;
+    }).join("");
+
+    if (isLoggedIn()) {
+        nav.insertAdjacentHTML("beforeend", '<button type="button" class="nav-link" data-action="logout">Sign Out</button>');
+    }
+
 }
 
 /*
@@ -48,7 +78,9 @@ function initializeButtons() {
     document.querySelectorAll("[data-action='logout']").forEach((button) => {
         button.addEventListener("click", () => {
             localStorage.removeItem("circlebook_current_user");
-            window.location.href = "pages/login.html";
+            window.location.href = window.location.pathname.includes("/pages/")
+                ? "login.html"
+                : "pages/login.html";
         });
     });
 }
