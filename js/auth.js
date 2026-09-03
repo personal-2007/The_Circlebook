@@ -177,6 +177,7 @@ function initializeRegistration() {
             profilePhoto: "",
             friends: [],
             friendRequests: [],
+            posts: [],
             privacy: {
                 profile: "friends",
                 birthday: "friends",

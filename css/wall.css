@@ -1,0 +1,205 @@
+/*
+ * The Circlebook
+ * Profile Wall Styles
+ */
+
+:root {
+    --navy: #243447;
+    --navy-light: #344d67;
+    --gold: #c5a46d;
+    --gold-light: #d9b878;
+    --cream: #f8f4eb;
+    --paper: #eee9df;
+    --white: #fffdf8;
+    --text: #292929;
+    --text-light: #666666;
+    --border: #cfc5b3;
+}
+
+.profile-wall-card {
+    grid-column: 1 / -1;
+    background-color: var(--white);
+}
+
+.profile-post-form {
+    display: grid;
+    gap: 10px;
+    max-width: 760px;
+    margin-bottom: 22px;
+}
+
+.profile-post-form label {
+    color: var(--navy);
+    font-size: 0.85rem;
+    font-weight: 700;
+}
+
+.profile-post-form textarea {
+    width: 100%;
+    min-height: 100px;
+    max-width: 100%;
+    background: var(--cream);
+    border-color: var(--border);
+}
+
+.profile-post-form .btn {
+    justify-self: start;
+}
+
+.wall-message {
+    margin: 0 0 18px;
+    padding: 10px 12px;
+    border-left: 3px solid var(--gold);
+    color: var(--navy);
+    font-size: 0.85rem;
+}
+
+.wall-message.error {
+    border-left-color: var(--navy-light);
+}
+
+.profile-posts {
+    display: grid;
+    gap: 13px;
+    max-width: 760px;
+}
+
+.profile-post {
+    min-width: 0;
+    padding: 17px 18px 13px;
+    background: var(--cream);
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--gold);
+}
+
+.profile-post p {
+    margin: 0;
+    color: var(--text);
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+}
+
+.wall-post-actions,
+.wall-comment-form {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+}
+
+.wall-post-actions {
+    margin-top: 14px;
+}
+
+.wall-action-button {
+    padding: 3px 8px;
+    border: 1px solid var(--border);
+    background: var(--white);
+    color: var(--navy);
+    cursor: pointer;
+    font-size: 0.75rem;
+}
+
+.wall-action-button:hover,
+.wall-action-button:focus-visible,
+.wall-action-button.is-active {
+    background: var(--navy);
+    color: var(--white);
+}
+
+.wall-reaction-count {
+    color: var(--text-light);
+    font-size: 0.75rem;
+}
+
+.wall-comments {
+    margin-top: 15px;
+    padding-top: 12px;
+    border-top: 1px solid var(--border);
+}
+
+.wall-comment-list {
+    display: grid;
+    gap: 10px;
+    margin-bottom: 12px;
+}
+
+.wall-comment {
+    padding: 9px 10px;
+    background: var(--paper);
+    border-left: 2px solid var(--gold-light);
+}
+
+.wall-comment p {
+    font-size: 0.85rem;
+}
+
+.wall-comment time {
+    display: inline-block;
+    margin-top: 5px;
+    color: var(--text-light);
+    font-size: 0.7rem;
+}
+
+.wall-reply-button {
+    margin-left: 8px;
+}
+
+.wall-replies {
+    display: grid;
+    gap: 8px;
+    margin: 9px 0 0 14px;
+}
+
+.wall-reply-form {
+    margin-top: 9px;
+}
+
+.wall-comment-form input {
+    min-width: 0;
+    flex: 1;
+    padding: 7px 9px;
+}
+
+.profile-post-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-top: 12px;
+    padding-top: 9px;
+    border-top: 1px solid var(--border);
+}
+
+.profile-post time {
+    color: var(--text-light);
+    font-size: 0.75rem;
+}
+
+.wall-delete-button {
+    padding: 3px 0;
+    border: 0;
+    border-bottom: 1px solid var(--gold);
+    background: transparent;
+    color: var(--navy);
+    cursor: pointer;
+    font-size: 0.75rem;
+}
+
+.wall-delete-button:hover,
+.wall-delete-button:focus-visible {
+    color: var(--gold);
+}
+
+@media (max-width: 600px) {
+    .profile-post-form .btn {
+        width: 100%;
+    }
+
+    .profile-post {
+        padding: 15px 14px 12px;
+    }
+
+    .wall-comment-form {
+        align-items: stretch;
+    }
+}

@@ -277,53 +277,6 @@
 }
 
 
-.profile-posts-card {
-    grid-column: 1 / -1;
-}
-
-.profile-post-form {
-    display: grid;
-    gap: 10px;
-    margin-bottom: 24px;
-}
-
-.profile-post-form label {
-    color: var(--navy);
-    font-size: 0.85rem;
-    font-weight: 700;
-}
-
-.profile-post-form textarea {
-    min-height: 84px;
-}
-
-.profile-post-form .btn {
-    justify-self: start;
-}
-
-.profile-posts {
-    display: grid;
-    gap: 12px;
-}
-
-.profile-post {
-    padding: 16px;
-    background: var(--cream);
-    border-left: 3px solid var(--gold);
-}
-
-.profile-post p {
-    white-space: pre-wrap;
-    overflow-wrap: anywhere;
-}
-
-.profile-post time {
-    display: block;
-    margin-top: 8px;
-    color: var(--text-light);
-    font-size: 0.75rem;
-}
-
 /* =========================================
    TABLET
 ========================================= */
