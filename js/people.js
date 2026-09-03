@@ -49,6 +49,126 @@ function initializePeoplePage() {
 }
 
 
+
+function renderSmartCircle(users, viewer) {
+    const results = document.getElementById("smartCircleResults");
+    const empty = document.getElementById("smartCircleEmpty");
+
+    if (!results || !viewer) {
+        return;
+    }
+
+    const viewerRecord = users.find(user => user.id === viewer.id);
+    const recommendations = users
+        .filter(user => user.id !== viewer.id && canSeePeopleProfile(user, viewer, users))
+        .map(user => ({ user, match: calculateCircleMatch(viewerRecord, user, users) }))
+        .sort((left, right) => right.match.score - left.match.score)
+        .slice(0, 3);
+
+    results.innerHTML = "";
+    recommendations.forEach(recommendation => {
+        results.appendChild(createSmartMatchCard(recommendation.user, recommendation.match));
+    });
+
+    if (empty) {
+        empty.hidden = recommendations.length > 0;
+    }
+}
+
+
+function calculateCircleMatch(viewer, candidate, users) {
+    const reasons = [];
+    let score = 0;
+    const sharedInterests = sharedValues(viewer && viewer.interests, candidate.interests);
+    const sharedSkills = sharedValues(viewer && viewer.skills, candidate.skills);
+    const sharedCommunities = sharedValues(viewer && viewer.communities, candidate.communities);
+    const sharedIntents = sharedValues(viewer && viewer.intents, candidate.intents);
+    const mutualFriends = mutualConnectionCount(viewer, candidate, users);
+
+    score += Math.min(sharedInterests.length / 3, 1) * 25;
+    score += Math.min(sharedSkills.length / 3, 1) * 20;
+    score += Math.min(sharedCommunities.length / 2, 1) * 15;
+    score += Math.min(mutualFriends / 3, 1) * 15;
+    score += viewer && candidate.education && viewer.education && viewer.education.toLowerCase() === candidate.education.toLowerCase() ? 10 : 0;
+    score += viewer && candidate.location && viewer.location && viewer.location.toLowerCase() === candidate.location.toLowerCase() ? 5 : 0;
+    score += Math.min(sharedIntents.length / 2, 1) * 10;
+    score += interactionSignal(viewer, candidate) ? 5 : 0;
+
+    if (sharedInterests.length) {
+        reasons.push(`You both know ${sharedInterests.slice(0, 2).join(" and ")}`);
+    }
+    if (sharedSkills.length) {
+        reasons.push(`share ${sharedSkills.slice(0, 2).join(" and ")}`);
+    }
+    if (sharedCommunities.length) {
+        reasons.push(`follow ${sharedCommunities[0]}`);
+    }
+    if (sharedIntents.length) {
+        reasons.push(`want to ${sharedIntents[0].toLowerCase()}`);
+    }
+    if (mutualFriends) {
+        reasons.push(`${mutualFriends} mutual connection${mutualFriends === 1 ? "" : "s"}`);
+    }
+    if (!reasons.length && viewer && candidate.location && viewer.location === candidate.location) {
+        reasons.push(`are both based in ${candidate.location}`);
+    }
+
+    return {
+        score: Math.max(1, Math.min(99, Math.round(score))),
+        reasons: reasons.slice(0, 3)
+    };
+}
+
+
+function createSmartMatchCard(user, match) {
+    const card = document.createElement("article");
+    card.className = "smart-match-card";
+
+    const score = document.createElement("strong");
+    score.className = "smart-match-score";
+    score.textContent = `${match.score}% Circle Match`;
+
+    const name = document.createElement("h3");
+    name.textContent = user.fullName || "Circlebook member";
+
+    const reason = document.createElement("p");
+    reason.textContent = match.reasons.length
+        ? `${match.reasons.join(", ")}.`
+        : "A promising new connection based on your Circlebook profile.";
+
+    const link = document.createElement("a");
+    link.className = "text-link";
+    link.href = `profile.html?id=${encodeURIComponent(user.id)}`;
+    link.textContent = "View profile";
+
+    card.append(score, name, reason, link);
+    return card;
+}
+
+
+function sharedValues(first, second) {
+    const left = Array.isArray(first) ? first : [];
+    const right = new Set((Array.isArray(second) ? second : []).map(value => String(value).toLowerCase()));
+    return left.filter(value => right.has(String(value).toLowerCase()));
+}
+
+
+function mutualConnectionCount(viewer, candidate, users) {
+    const viewerFriends = new Set(Array.isArray(viewer && viewer.friends) ? viewer.friends : []);
+    const candidateFriends = new Set(Array.isArray(candidate.friends) ? candidate.friends : []);
+    return [...viewerFriends].filter(id => candidateFriends.has(id) && users.some(user => user.id === id)).length;
+}
+
+
+function interactionSignal(viewer, candidate) {
+    const candidatePosts = Array.isArray(candidate.posts) ? candidate.posts : [];
+    return candidatePosts.some(post => {
+        const reacted = post.reactions && post.reactions[viewer && viewer.id];
+        const commented = Array.isArray(post.comments) && post.comments.some(comment => comment.authorId === (viewer && viewer.id));
+        return reacted || commented;
+    });
+}
+
 /* =========================================
    GET USERS
 ========================================= */
@@ -122,6 +242,8 @@ function renderPeople(query) {
 
     const currentUser =
         getPeopleCurrentUser();
+
+    renderSmartCircle(users, currentUser);
 
 
     /* Don't show current user */
