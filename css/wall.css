@@ -3,19 +3,6 @@
  * Profile Wall Styles
  */
 
-:root {
-    --navy: #243447;
-    --navy-light: #344d67;
-    --gold: #c5a46d;
-    --gold-light: #d9b878;
-    --cream: #f8f4eb;
-    --paper: #eee9df;
-    --white: #fffdf8;
-    --text: #292929;
-    --text-light: #666666;
-    --border: #cfc5b3;
-}
-
 .profile-wall-card {
     grid-column: 1 / -1;
     background-color: var(--white);

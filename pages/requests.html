@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Requests — The Circlebook</title>
+    <meta name="description" content="Manage your Circlebook connection requests.">
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/responsive.css">
+</head>
+<body>
+    <header class="site-header">
+        <div class="container header-inner">
+            <a href="../index.html" class="logo">The Circlebook</a>
+            <nav class="main-nav"><a href="../index.html">Home</a><a href="people.html">People</a><a href="profile.html">My Profile</a><a href="requests.html" class="active">Requests</a><a href="invite.html">Invite</a><a href="settings.html">Settings</a></nav>
+        </div>
+    </header>
+    <main class="requests-page">
+        <div class="container">
+            <section class="page-heading"><span class="eyebrow">YOUR CONNECTIONS</span><h1>Circle Requests</h1><p>Welcome people into your circle.</p></section>
+            <p id="requestStatus" class="request-status" aria-live="polite"></p>
+            <section id="requestsList" class="requests-list" aria-label="Circle requests"></section>
+            <section id="requestsEmpty" class="empty-requests" hidden><h2>No requests yet</h2><p>New connection requests will appear here.</p><a href="people.html" class="btn btn-primary">Discover People</a></section>
+        </div>
+    </main>
+    <footer class="site-footer"><div class="container"><p>© <span data-year></span> The Circlebook. A community directory inspired by the early social web.</p></div></footer>
+    <script src="../js/app.js"></script>
+    <script src="../js/requests.js"></script>
+</body>
+</html>

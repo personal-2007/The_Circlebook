@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings — The Circlebook</title>
+    <meta name="description" content="Manage your Circlebook profile and privacy settings.">
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/responsive.css">
+    <link rel="stylesheet" href="../css/auth.css">
+</head>
+<body>
+    <header class="site-header">
+        <div class="container header-inner">
+            <a href="../index.html" class="logo">The Circlebook</a>
+            <nav class="main-nav"><a href="../index.html">Home</a><a href="people.html">People</a><a href="profile.html">My Profile</a><a href="requests.html">Requests</a><a href="invite.html">Invite</a><a href="settings.html" class="active">Settings</a></nav>
+        </div>
+    </header>
+    <main class="settings-page">
+        <div class="container">
+            <section class="page-heading"><span class="eyebrow">YOUR CONTROL CENTER</span><h1>Settings</h1><p>Keep your profile current and choose what your circle can see.</p></section>
+            <div class="settings-grid">
+                <section class="settings-card">
+                    <div class="card-heading"><span>01</span><h2>Profile</h2></div>
+                    <form id="profileSettingsForm">
+                        <div class="form-group"><label for="settingsName">Full Name</label><input type="text" id="settingsName" required></div>
+                        <div class="form-group"><label for="settingsLocation">Location</label><input type="text" id="settingsLocation"></div>
+                        <div class="form-group"><label for="settingsEducation">College / School</label><input type="text" id="settingsEducation"></div>
+                        <div class="form-group"><label for="settingsInterests">Interests</label><input type="text" id="settingsInterests" placeholder="AI, music, design"></div>
+                        <button type="submit" class="btn btn-primary">Save Profile</button>
+                    </form>
+                </section>
+                <section class="settings-card">
+                    <div class="card-heading"><span>02</span><h2>Privacy</h2></div>
+                    <form id="privacyForm">
+                        <div class="form-group"><label for="profileVisibility">Profile Visibility</label><select id="profileVisibility"><option value="public">Public</option><option value="friends">Friends</option><option value="private">Private</option></select></div>
+                        <div class="form-group"><label for="birthdayVisibility">Birthday Visibility</label><select id="birthdayVisibility"><option value="public">Public</option><option value="friends">Friends</option><option value="private">Private</option></select></div>
+                        <div class="form-group"><label for="emailVisibility">Email Visibility</label><select id="emailVisibility"><option value="public">Public</option><option value="friends">Friends</option><option value="private">Private</option></select></div>
+                        <button type="submit" class="btn btn-primary">Save Privacy</button>
+                    </form>
+                    <p id="settingsMessage" class="auth-message" hidden aria-live="polite"></p>
+                </section>
+                <section class="settings-card">
+                    <div class="card-heading"><span>03</span><h2>Security</h2></div>
+                    <p class="privacy-description">This development prototype stores authentication data in your browser. Production security will be added with the backend.</p>
+                    <button type="button" class="btn btn-secondary" data-action="logout">Sign Out</button>
+                </section>
+            </div>
+        </div>
+    </main>
+    <footer class="site-footer"><div class="container"><p>© <span data-year></span> The Circlebook. A community directory inspired by the early social web.</p></div></footer>
+    <script src="../js/app.js"></script>
+    <script src="../js/privacy.js"></script>
+</body>
+</html>

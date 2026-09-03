@@ -9,24 +9,44 @@
    ========================================================= */
 
 :root {
-    --navy: #243447;
-    --navy-light: #344d67;
-
-    --gold: #c5a46d;
-    --gold-light: #d9b878;
-
-    --cream: #f8f4eb;
-    --paper: #eee9df;
-    --page-background: var(--cream);
-    --white: #fffdf8;
-
-    --text: #292929;
-    --text-light: #666666;
-    --border: #cfc5b3;
-
-    --shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
-
-    --max-width: 1100px;
+    --saffron: #FF9933;
+    --saffron-dark: #E8871F;
+    --saffron-soft: #FFF3E6;
+    --india-green: #138808;
+    --green-dark: #0F6F06;
+    --green-soft: #EAF7E8;
+    --ashoka-blue: #000080;
+    --blue-dark: #00005C;
+    --blue-soft: #EEF0FF;
+    --white: #FFFFFF;
+    --background: #F7F9FC;
+    --surface: #FFFFFF;
+    --surface-soft: #F1F4F8;
+    --text: #172033;
+    --text-secondary: #64748B;
+    --text-muted: #94A3B8;
+    --border: #E2E8F0;
+    --border-strong: #CBD5E1;
+    --success: #138808;
+    --danger: #DC2626;
+    --warning: #FF9933;
+    --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.06);
+    --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.08);
+    --shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.10);
+    --radius-sm: 8px;
+    --radius-md: 14px;
+    --radius-lg: 20px;
+    --radius-xl: 28px;
+    --navy: var(--ashoka-blue);
+    --navy-light: #1D3A9A;
+    --gold: var(--saffron);
+    --gold-light: #FFB866;
+    --cream: var(--background);
+    --paper: var(--surface-soft);
+    --page-background: var(--background);
+    --text-light: var(--text-secondary);
+    --shadow: var(--shadow-sm);
+    --max-width: 1160px;
 }
 
 
@@ -47,15 +67,12 @@ html {
 
 
 body {
-    font-family:
-        Georgia,
-        "Times New Roman",
-        serif;
+    font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 
     background: var(--page-background);
     color: var(--text);
 
-    line-height: 1.6;
+    line-height: 1.55;
 
     min-height: 100vh;
 
@@ -1085,3 +1102,343 @@ textarea {
 /* =========================================================
    END OF STYLE.CSS
    ========================================================= */
+
+/* Modern Circlebook theme */
+html {
+    background: var(--background);
+}
+
+body {
+    background: var(--background);
+    color: var(--text);
+}
+
+.site-header {
+    background: var(--ashoka-blue);
+    border-bottom: 0;
+    box-shadow: var(--shadow-md);
+}
+
+.site-header::after,
+.site-footer::before {
+    content: "";
+    display: block;
+    height: 3px;
+    background: linear-gradient(90deg, var(--saffron) 0 33%, var(--white) 33% 66%, var(--india-green) 66%);
+}
+
+.header-inner,
+.header-container {
+    min-height: 74px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.logo,
+.footer-logo {
+    color: var(--white);
+    font-family: Inter, system-ui, sans-serif;
+    font-size: 1rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.logo span,
+.footer-logo {
+    color: var(--saffron);
+}
+
+.main-nav {
+    gap: 8px;
+}
+
+.main-nav a,
+.main-nav .nav-link {
+    padding: 8px 10px;
+    border-radius: var(--radius-sm);
+    color: rgba(255, 255, 255, 0.86);
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.main-nav a:hover,
+.main-nav .nav-link:hover,
+.main-nav .nav-link:focus-visible,
+.main-nav a.active {
+    background: rgba(255, 255, 255, 0.12);
+    color: var(--white);
+}
+
+.main-nav a.active {
+    border-bottom: 0;
+}
+
+.nav-button {
+    border: 1px solid var(--saffron) !important;
+    color: var(--saffron) !important;
+}
+
+.nav-button:hover {
+    background: var(--saffron) !important;
+    color: var(--ashoka-blue) !important;
+}
+
+.hero {
+    position: relative;
+    overflow: hidden;
+    padding: 110px 0 120px;
+    background: var(--white);
+    border-bottom: 1px solid var(--border);
+    text-align: left;
+}
+
+.hero::after {
+    content: "";
+    position: absolute;
+    right: 7%;
+    bottom: -130px;
+    width: 360px;
+    height: 360px;
+    border: 1px solid rgba(0, 0, 128, 0.12);
+    border-radius: 50%;
+    box-shadow: 0 0 0 18px rgba(255, 153, 51, 0.05), 0 0 0 52px rgba(19, 136, 8, 0.04);
+}
+
+.hero-content {
+    position: relative;
+    z-index: 1;
+    margin-inline: 0;
+}
+
+.eyebrow {
+    color: var(--saffron-dark);
+    font-family: Inter, system-ui, sans-serif;
+    font-size: 0.72rem;
+    letter-spacing: 0.14em;
+}
+
+.hero h1,
+.section-heading h2,
+.page-heading h1,
+.profile-heading h1,
+.card-heading h2,
+.feature-card h3,
+.step h3,
+.circle-summary h3,
+.person-information h2,
+.request-information h2 {
+    color: var(--ashoka-blue);
+    font-family: Inter, system-ui, sans-serif;
+}
+
+.hero h1 {
+    max-width: 700px;
+    font-size: clamp(2.8rem, 7vw, 5.4rem);
+    font-weight: 800;
+    letter-spacing: -0.04em;
+}
+
+.hero h2 {
+    max-width: 620px;
+    color: var(--text);
+    font-size: clamp(1.35rem, 3vw, 2rem);
+    font-weight: 700;
+}
+
+.hero-description {
+    max-width: 620px;
+    color: var(--text-secondary);
+}
+
+.features,
+.how-it-works,
+.people-page,
+.requests-page,
+.settings-page,
+.invite-page,
+.profile-page,
+.auth-page {
+    background: var(--background);
+}
+
+.features,
+.how-it-works {
+    padding: 92px 0;
+}
+
+.feature-card,
+.people-search,
+.settings-card,
+.invite-card,
+.request-card,
+.person-card,
+.profile-card,
+.profile-header,
+.auth-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+}
+
+.feature-card,
+.person-card,
+.request-card,
+.profile-card,
+.auth-card,
+.invite-card {
+    transition: transform 180ms ease, box-shadow 180ms ease;
+}
+
+.feature-card:hover,
+.person-card:hover,
+.request-card:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-md);
+}
+
+.btn,
+.button {
+    min-height: 42px;
+    border-radius: var(--radius-sm);
+    box-shadow: none;
+    font-family: Inter, system-ui, sans-serif;
+    font-weight: 700;
+}
+
+.btn-primary,
+.primary-button {
+    background: var(--ashoka-blue);
+    border-color: var(--ashoka-blue);
+    color: var(--white);
+}
+
+.btn-primary:hover,
+.primary-button:hover {
+    background: var(--blue-dark);
+    border-color: var(--blue-dark);
+    color: var(--white);
+    box-shadow: var(--shadow-sm);
+}
+
+.btn-secondary,
+.secondary-button {
+    background: var(--white);
+    border-color: var(--border-strong);
+    color: var(--ashoka-blue);
+}
+
+.btn-secondary:hover,
+.secondary-button:hover {
+    background: var(--blue-soft);
+    color: var(--ashoka-blue);
+    box-shadow: none;
+}
+
+input,
+textarea,
+select {
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius-sm);
+    background: var(--white);
+    color: var(--text);
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+    border-color: var(--ashoka-blue);
+    box-shadow: 0 0 0 3px rgba(0, 0, 128, 0.1);
+}
+
+.profile-page,
+.people-page,
+.requests-page,
+.settings-page,
+.invite-page {
+    padding-top: 72px;
+    padding-bottom: 72px;
+}
+
+.profile-header {
+    border-top: 4px solid var(--saffron);
+}
+
+.profile-photo,
+.person-photo,
+.request-photo,
+.circle-number,
+.auth-mark {
+    background: var(--ashoka-blue);
+    border-radius: 50%;
+    color: var(--saffron);
+}
+
+.profile-card,
+.profile-header {
+    padding: 28px;
+}
+
+.card-heading {
+    border-bottom-color: var(--border);
+}
+
+.card-heading > span,
+.feature-number,
+.step > span {
+    color: var(--saffron-dark);
+}
+
+.interest-tag,
+.person-interests span {
+    background: var(--green-soft);
+    border-color: rgba(19, 136, 8, 0.2);
+    border-radius: 999px;
+    color: var(--green-dark);
+}
+
+.profile-post {
+    background: var(--surface-soft);
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--saffron);
+    border-radius: var(--radius-md);
+}
+
+.profile-post-footer,
+.wall-comments {
+    border-top-color: var(--border);
+}
+
+.site-footer {
+    background: var(--ashoka-blue);
+    border-top: 0;
+}
+
+.site-footer::before {
+    margin-bottom: 0;
+}
+
+.site-footer > .container:not(.footer-content) p,
+.footer-content p {
+    color: rgba(255, 255, 255, 0.76);
+}
+
+.cta {
+    background: var(--ashoka-blue);
+}
+
+.menu-toggle {
+    border-color: rgba(255, 255, 255, 0.5);
+    border-radius: var(--radius-sm);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        scroll-behavior: auto !important;
+        transition-duration: 0.01ms !important;
+    }
+}
