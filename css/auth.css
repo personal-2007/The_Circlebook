@@ -1,0 +1,82 @@
+/*
+ * The Circlebook
+ * Authentication Page Styles
+ */
+
+.auth-page {
+    min-height: calc(100vh - 160px);
+    padding: 60px 20px;
+    background: var(--page-background);
+}
+
+.auth-card {
+    max-width: 520px;
+    margin: 0 auto;
+    padding: 38px;
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-top: 4px solid var(--gold);
+    box-shadow: var(--shadow);
+}
+
+.auth-mark {
+    width: 58px;
+    height: 58px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 22px;
+    background: var(--navy);
+    color: var(--gold-light);
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 1.7rem;
+    font-weight: 700;
+}
+
+.auth-card .page-heading {
+    margin-bottom: 28px;
+}
+
+.auth-form {
+    display: grid;
+    gap: 18px;
+}
+
+.form-group {
+    display: grid;
+    gap: 7px;
+}
+
+.form-group label {
+    color: var(--navy);
+    font-size: 0.85rem;
+    font-weight: 700;
+}
+
+.auth-form .btn {
+    width: 100%;
+    margin-top: 4px;
+}
+
+.auth-message {
+    margin-bottom: 18px;
+    padding: 11px 13px;
+    border-left: 3px solid var(--gold);
+    background: var(--cream);
+    color: var(--navy);
+    font-size: 0.86rem;
+}
+
+.auth-message.error {
+    border-left-color: var(--navy-light);
+}
+
+@media (max-width: 600px) {
+    .auth-page {
+        padding: 40px 14px;
+    }
+
+    .auth-card {
+        padding: 28px 18px;
+    }
+}
