@@ -6,6 +6,7 @@
 .profile-wall-card {
     grid-column: 1 / -1;
     background-color: var(--white);
+    border-radius: var(--radius-lg);
 }
 
 .profile-post-form {
@@ -57,6 +58,7 @@
     background: var(--cream);
     border: 1px solid var(--border);
     border-left: 4px solid var(--gold);
+    border-radius: var(--radius-md);
 }
 
 .profile-post p {

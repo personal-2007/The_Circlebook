@@ -15,8 +15,9 @@
     padding: 38px;
     background: var(--white);
     border: 1px solid var(--border);
-    border-top: 4px solid var(--gold);
-    box-shadow: var(--shadow);
+    border-top: 4px solid var(--saffron);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
 }
 
 .auth-mark {
@@ -26,9 +27,10 @@
     align-items: center;
     justify-content: center;
     margin: 0 auto 22px;
-    background: var(--navy);
-    color: var(--gold-light);
-    font-family: Georgia, "Times New Roman", serif;
+    background: var(--ashoka-blue);
+    color: var(--saffron);
+    border-radius: 50%;
+    font-family: Inter, system-ui, sans-serif;
     font-size: 1.7rem;
     font-weight: 700;
 }
