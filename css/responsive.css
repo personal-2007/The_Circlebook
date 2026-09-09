@@ -1,2 +1,248 @@
-/* css/responsive.css - The Circlebook Module Stylesheet */
+/* =========================================================
+   THE CIRCLEBOOK - MASTER RESPONSIVE LAYOUT ENGINE
+   Supports Mobile (320px–767px), Tablet (768px–1023px),
+   Laptop (1024px–1439px), Desktop & Large Desktop (1440px+)
+   ========================================================= */
+
 @import url('modules.css');
+
+/* =========================================================
+   1. MOBILE BOTTOM STICKY NAVIGATION (< 768px)
+   ========================================================= */
+.mobile-bottom-nav {
+    display: none;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: calc(64px + env(safe-area-inset-bottom));
+    padding-bottom: env(safe-area-inset-bottom);
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    z-index: var(--z-bottom-nav, 300);
+    align-items: center;
+    justify-content: space-around;
+    padding-inline: 0.5rem;
+    box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.06);
+}
+
+.mobile-nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.2rem;
+    color: var(--text-secondary);
+    text-decoration: none;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    font-size: 0.75rem;
+    font-weight: 600;
+    flex: 1;
+    height: 100%;
+    min-height: 44px;
+}
+
+.mobile-nav-item.active {
+    color: var(--saffron-dark, #E8871F);
+}
+
+.mobile-nav-item .nav-icon {
+    font-size: 1.3rem;
+    line-height: 1;
+}
+
+.mobile-nav-create {
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    background: var(--saffron, #FF9933);
+    color: #fff;
+    font-size: 1.6rem;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: var(--shadow-card);
+    transform: translateY(-8px);
+}
+
+/* =========================================================
+   2. DEVICE BREAKPOINT MODES
+   ========================================================= */
+
+/* A. Mobile Phones & Mobile Browsers (320px – 767px) */
+@media (max-width: 767px) {
+    .app-sidebar {
+        transform: translateX(-100%);
+        width: 280px;
+        position: fixed;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        z-index: var(--z-sidebar, 200);
+        box-shadow: var(--shadow-lg);
+    }
+
+    .app-sidebar.open {
+        transform: translateX(0);
+    }
+
+    .app-main {
+        margin-left: 0;
+        padding-bottom: calc(80px + env(safe-area-inset-bottom)); /* Prevents content overlap behind bottom nav */
+    }
+
+    .mobile-toggle {
+        display: block !important;
+        min-height: 44px;
+        min-width: 44px;
+    }
+
+    .mobile-bottom-nav {
+        display: flex;
+    }
+
+    .floating-ai-btn {
+        bottom: calc(5.2rem + env(safe-area-inset-bottom));
+        right: 1.25rem;
+        width: 50px;
+        height: 50px;
+        font-size: 1.3rem;
+    }
+
+    .module-viewport {
+        padding: 1rem 0.75rem;
+    }
+
+    .grid-2, .grid-3, .grid-4 {
+        grid-template-columns: 1fr;
+    }
+
+    .chat-container {
+        flex-direction: column;
+        height: auto;
+        min-height: 520px;
+    }
+
+    .chat-sidebar {
+        width: 100%;
+        max-height: 180px;
+    }
+
+    .topbar-username {
+        display: none;
+    }
+
+    .global-search-bar {
+        width: 160px;
+    }
+
+    .global-search-bar input {
+        font-size: 0.82rem;
+        padding: 0.45rem 0.75rem 0.45rem 2rem;
+    }
+
+    /* Modal fitting for mobile screens */
+    .circle-modal-box {
+        max-width: calc(100% - 24px);
+        max-height: calc(100vh - 32px);
+        max-height: calc(100dvh - 32px);
+    }
+
+    /* Profile Header Stacking */
+    .profile-info-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.75rem;
+        margin-left: 0 !important;
+        margin-top: 50px;
+    }
+}
+
+/* B. Compact Mobile (320px – 430px) */
+@media (max-width: 430px) {
+    .global-search-bar {
+        display: none;
+    }
+
+    .topbar-actions {
+        gap: 0.35rem;
+    }
+
+    .circle-card {
+        padding: 1rem;
+        border-radius: var(--radius-sm);
+    }
+
+    .post-actions {
+        gap: 0.5rem;
+        font-size: 0.8rem;
+    }
+
+    .post-action-btn {
+        font-size: 0.78rem;
+        padding: 0.3rem 0.4rem;
+    }
+}
+
+/* C. Tablet Mode (768px – 1023px) */
+@media (min-width: 768px) and (max-width: 1023px) {
+    :root {
+        --sidebar-width: 230px;
+    }
+
+    .grid-3, .grid-4 {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .global-search-bar {
+        width: 220px;
+    }
+
+    /* Hide optional right-hand panel on tablet portrait if space is tight */
+    .right-sidebar-panel {
+        display: none;
+    }
+}
+
+/* D. Laptop Mode (1024px – 1439px) */
+@media (min-width: 1024px) and (max-width: 1439px) {
+    :root {
+        --sidebar-width: 250px;
+    }
+
+    .grid-3 {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    .grid-4 {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+/* E. Desktop & Ultra-Wide Screens (1440px+) */
+@media (min-width: 1440px) {
+    .app-shell {
+        max-width: 1440px;
+        margin-inline: auto;
+    }
+
+    .module-viewport {
+        max-width: 1360px;
+    }
+}
+
+/* Ultra-Wide Monitors (1600px, 1920px, 2560px+) Protection */
+@media (min-width: 1600px) {
+    body {
+        background: #ECEFF4;
+    }
+
+    .app-shell {
+        box-shadow: 0 0 40px rgba(0, 0, 0, 0.08);
+    }
+}
+
+

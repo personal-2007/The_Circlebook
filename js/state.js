@@ -624,6 +624,76 @@ const CirclebookStore = {
         }
     },
 
+    deletePost(postId) {
+        const index = this.posts.findIndex(p => p.id === postId);
+        if (index !== -1) {
+            this.posts.splice(index, 1);
+            this.saveState();
+            return true;
+        }
+        return false;
+    },
+
+    sendCircleRequest(userId) {
+        const user = this.users.find(u => u.id === userId);
+        if (user) {
+            user.connectionStatus = "pending_sent";
+            this.saveState();
+            return true;
+        }
+        return false;
+    },
+
+    cancelCircleRequest(userId) {
+        const user = this.users.find(u => u.id === userId);
+        if (user) {
+            user.connectionStatus = "none";
+            this.saveState();
+            return true;
+        }
+        return false;
+    },
+
+    updateUserProfile(updatedData) {
+        this.currentUser = { ...this.currentUser, ...updatedData };
+        // Sync inside users array as well
+        const idx = this.users.findIndex(u => u.id === this.currentUser.id);
+        if (idx !== -1) {
+            this.users[idx] = { ...this.users[idx], ...updatedData };
+        }
+        this.saveState();
+        return this.currentUser;
+    },
+
+    registerUser(name, email, password) {
+        const newUser = {
+            id: `usr_${Date.now()}`,
+            name: name,
+            handle: `@${name.toLowerCase().replace(/\s+/g, '_')}`,
+            email: email,
+            role: "user",
+            avatar: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=250&q=80",
+            banner: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1200&q=80",
+            headline: "Member @ The Circlebook",
+            location: "Bengaluru, India",
+            college: "Global University ('24)",
+            gender: "Not Specified",
+            birthday: "2000-01-01",
+            about: "Excited to connect, share knowledge, and build my circle on The Circlebook.",
+            circleCount: 0,
+            skills: ["Networking", "Collaboration"],
+            interests: ["Community", "Technology"],
+            intents: ["Networking"],
+            connectionStatus: "connected",
+            appearance: { theme: "vintage-gold" },
+            isOnboarded: false
+        };
+        this.currentUser = newUser;
+        this.users.unshift(newUser);
+        this.saveState();
+        return newUser;
+    },
+
     applyForJob(jobId) {
         const job = this.jobs.find(j => j.id === jobId);
         if (job) {

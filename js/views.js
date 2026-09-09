@@ -9,12 +9,14 @@ const CirclebookViews = {
     entry(subTab = "welcome") {
         if (subTab === "splash") {
             return `
-                <div class="circle-card" style="text-align: center; padding: 4rem 2rem;">
-                    <div style="font-size: 3rem; margin-bottom: 1rem;">📜</div>
-                    <h1 style="font-family: Georgia, serif; font-size: 2.2rem; color: var(--saffron);">The Circlebook</h1>
-                    <p style="color: var(--text-secondary); margin-bottom: 2rem;">EST. 2004 • A Vintage Community Directory & Social Network</p>
-                    <div class="step-indicator active" style="width: 200px; margin: 0 auto; height: 8px;"></div>
-                    <p style="margin-top: 1rem; font-size: 0.88rem; color: var(--text-muted);">Loading Directory & Connections...</p>
+                <div class="circle-card" style="text-align: center; padding: 4rem 2rem; max-width: 540px; margin: 2rem auto;">
+                    <div class="loading-logo" style="width: 100px; height: 100px; margin: 0 auto 1.25rem;">
+                        <img src="assets/images/circlebook-logo.png" alt="The Circlebook Logo" style="width: 100%; height: 100%; object-fit: contain; border-radius: 50%; border: 3px solid var(--saffron);" />
+                    </div>
+                    <h1 style="font-family: Georgia, serif; font-size: 2.2rem; color: var(--ashoka-blue, #000080); margin-bottom: 0.25rem;">The Circlebook</h1>
+                    <p style="color: var(--saffron-dark); font-weight: 600; font-size: 1.05rem; margin-bottom: 1.5rem;">Know your people. Build your circle.</p>
+                    <div class="loading-spinner" style="margin: 0 auto 1.25rem;"></div>
+                    <p style="font-size: 0.88rem; color: var(--text-muted);">Initializing directory & network connections...</p>
                 </div>
             `;
         }
@@ -23,14 +25,17 @@ const CirclebookViews = {
                 <div class="circle-card" style="padding: 3rem; background: linear-gradient(to right, var(--surface), var(--surface-soft));">
                     <div class="grid-2" style="align-items: center;">
                         <div>
-                            <span class="tag-badge" style="background: var(--saffron-soft); color: var(--saffron-dark); font-weight: 700;">COMMUNITY DIRECTORY</span>
+                            <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem;">
+                                <img src="assets/images/circlebook-logo.png" style="width: 48px; height: 48px; object-fit: contain; border-radius: 50%; border: 2px solid var(--saffron);" alt="Logo" />
+                                <span class="tag-badge" style="background: var(--saffron-soft); color: var(--saffron-dark); font-weight: 700;">RELATIONSHIP & KNOWLEDGE NETWORK</span>
+                            </div>
                             <h1 style="font-family: Georgia, serif; font-size: 2.5rem; margin: 0.75rem 0; color: var(--text);">Know Your People. Build Your Circle.</h1>
                             <p style="font-size: 1.05rem; color: var(--text-secondary); line-height: 1.6; margin-bottom: 1.5rem;">
-                                Welcome to The Circlebook — an editorial, human-first social platform. Discover classmates, colleagues, mentors, and friends in a distraction-free directory.
+                                Welcome to The Circlebook — an editorial, human-first social platform inspired by simple community roots, built for meaningful relationships, knowledge sharing, and career opportunities.
                             </p>
-                            <div style="display: flex; gap: 1rem;">
-                                <button class="btn-primary" onclick="CirclebookRouter.navigate('entry', 'onboarding1')">Start Onboarding →</button>
-                                <button class="btn-secondary" onclick="CirclebookRouter.navigate('home', 'feed')">Explore Feed</button>
+                            <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                                <button class="btn-primary" onclick="CirclebookRouter.navigate('auth', 'register')">Create Account & Join Circle →</button>
+                                <button class="btn-secondary" onclick="CirclebookRouter.navigate('home', 'feed')">Explore Directory Feed</button>
                             </div>
                         </div>
                         <div style="text-align: center;">
@@ -49,26 +54,37 @@ const CirclebookViews = {
                         <div class="step-indicator ${step >= 2 ? 'active' : ''}"></div>
                         <div class="step-indicator ${step >= 3 ? 'active' : ''}"></div>
                     </div>
-                    <h2 style="font-family: Georgia, serif; margin-bottom: 0.5rem;">Onboarding Step ${step} of 3</h2>
+                    <h2 style="font-family: Georgia, serif; margin-bottom: 0.5rem;">Profile Setup — Step ${step} of 3</h2>
                     <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">
-                        ${step === 1 ? 'Personal Profile Basics & Identity Setup' : step === 2 ? 'Select Interests & Professional Skills' : 'Circle & Community Connection Preferences'}
+                        ${step === 1 ? 'Personal Identity & Basic Information' : step === 2 ? 'Select Skills, Interests & Career Intentions' : 'Circle Connections & Recommended Communities'}
                     </p>
                     
                     ${step === 1 ? `
-                        <div class="form-group"><label>Display Name</label><input type="text" class="form-control" value="${CirclebookStore.currentUser.name}"></div>
-                        <div class="form-group"><label>Headline / Short Bio</label><input type="text" class="form-control" value="${CirclebookStore.currentUser.headline}"></div>
-                        <div class="form-group"><label>Location</label><input type="text" class="form-control" value="${CirclebookStore.currentUser.location}"></div>
-                        <button class="btn-primary" onclick="CirclebookRouter.navigate('entry', 'onboarding2')">Next: Skills & Interests →</button>
+                        <div class="form-group"><label>Display Name</label><input type="text" id="obName" class="form-control" value="${CirclebookStore.currentUser.name}"></div>
+                        <div class="form-group"><label>Headline / Short Bio</label><input type="text" id="obHeadline" class="form-control" value="${CirclebookStore.currentUser.headline}"></div>
+                        <div class="form-group"><label>Location</label><input type="text" id="obLocation" class="form-control" value="${CirclebookStore.currentUser.location}"></div>
+                        <div class="form-group"><label>College / Alma Mater</label><input type="text" id="obCollege" class="form-control" value="${CirclebookStore.currentUser.college}"></div>
+                        <button class="btn-primary" onclick="CirclebookApp.saveOnboardingStep1()">Next: Skills & Interests →</button>
                     ` : step === 2 ? `
                         <div class="form-group">
-                            <label>Popular Skills Tag Selection</label>
+                            <label>Popular Skills Tags (Click to select)</label>
                             <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; margin-top: 0.5rem;">
                                 <span class="tag-badge" style="background: var(--saffron-soft); color: var(--saffron-dark); font-weight: 700;">✓ JavaScript</span>
                                 <span class="tag-badge" style="background: var(--saffron-soft); color: var(--saffron-dark); font-weight: 700;">✓ React</span>
                                 <span class="tag-badge">Python</span>
                                 <span class="tag-badge">UI/UX Design</span>
                                 <span class="tag-badge">System Design</span>
+                                <span class="tag-badge">DevOps</span>
                             </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Networking Intents</label>
+                            <select class="form-control">
+                                <option>Make Friends & Networking</option>
+                                <option>Find Career Opportunities</option>
+                                <option>Build Projects & Collaborations</option>
+                                <option>Find Tech Mentors</option>
+                            </select>
                         </div>
                         <button class="btn-primary" onclick="CirclebookRouter.navigate('entry', 'onboarding3')">Next: Communities →</button>
                     ` : `
@@ -77,15 +93,15 @@ const CirclebookViews = {
                             <div style="margin-top: 0.5rem;">
                                 <div style="display: flex; align-items: center; justify-content: space-between; padding: 0.75rem; border: 1px solid var(--border); border-radius: var(--radius-soft); margin-bottom: 0.5rem;">
                                     <div><strong>Frontend Guild</strong> • 1.4k members</div>
-                                    <button class="btn-secondary" style="padding: 0.3rem 0.75rem;">Joined</button>
+                                    <button class="btn-secondary" style="padding: 0.3rem 0.75rem;">Joined ✓</button>
                                 </div>
                                 <div style="display: flex; align-items: center; justify-content: space-between; padding: 0.75rem; border: 1px solid var(--border); border-radius: var(--radius-soft);">
-                                    <div><strong>Vintage Typography</strong> • 890 members</div>
+                                    <div><strong>Vintage Typography & UI</strong> • 890 members</div>
                                     <button class="btn-primary" style="padding: 0.3rem 0.75rem;">Join</button>
                                 </div>
                             </div>
                         </div>
-                        <button class="btn-primary" onclick="CirclebookRouter.navigate('home', 'feed')">Complete Onboarding & Go to Feed 🚀</button>
+                        <button class="btn-primary" onclick="CirclebookApp.completeOnboarding()">Complete Setup & Launch Feed 🚀</button>
                     `}
                 </div>
             `;
@@ -98,34 +114,62 @@ const CirclebookViews = {
     // ---------------------------------------------------------
     auth(subTab = "login") {
         return `
-            <div class="circle-card" style="max-width: 480px; margin: 2rem auto; padding: 2rem;">
-                <h2 style="font-family: Georgia, serif; text-align: center; margin-bottom: 0.25rem;">The Circlebook Auth</h2>
-                <p style="text-align: center; color: var(--text-secondary); margin-bottom: 1.5rem;">Access your community profile and circle directory</p>
+            <div class="circle-card" style="max-width: 480px; margin: 2rem auto; padding: 2.25rem;">
+                <div style="text-align: center; margin-bottom: 1.5rem;">
+                    <img src="assets/images/circlebook-logo.png" style="width: 64px; height: 64px; object-fit: contain; border-radius: 50%; border: 3px solid var(--saffron); margin-bottom: 0.5rem;" alt="Circlebook Logo" />
+                    <h2 style="font-family: Georgia, serif; margin-bottom: 0.25rem; color: var(--ashoka-blue, #000080);">The Circlebook</h2>
+                    <p style="color: var(--text-secondary); font-size: 0.9rem;">Know your people. Build your circle.</p>
+                </div>
 
                 ${subTab === "login" ? `
-                    <div class="form-group"><label>Email Address</label><input type="email" class="form-control" value="${CirclebookStore.currentUser.email}"></div>
-                    <div class="form-group"><label>Password</label><input type="password" class="form-control" value="••••••••••••"></div>
+                    <div class="form-group"><label>Email Address</label><input type="email" id="loginEmail" class="form-control" value="${CirclebookStore.currentUser.email}"></div>
+                    <div class="form-group"><label>Password</label><input type="password" id="loginPass" class="form-control" value="••••••••••••"></div>
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
-                        <label><input type="checkbox" checked> Remember me</label>
-                        <a href="javascript:void(0)" onclick="CirclebookRouter.navigate('auth', 'forgot')" style="color: var(--saffron-dark); text-decoration: none; font-size: 0.88rem;">Forgot Password?</a>
+                        <label style="font-size: 0.85rem;"><input type="checkbox" checked> Remember me</label>
+                        <a href="javascript:void(0)" onclick="CirclebookRouter.navigate('auth', 'forgot')" style="color: var(--saffron-dark); text-decoration: none; font-size: 0.88rem; font-weight: 600;">Forgot Password?</a>
                     </div>
-                    <button class="btn-primary" style="width: 100%;" onclick="CirclebookApp.toast('Successfully logged in!'); CirclebookRouter.navigate('home', 'feed');">Sign In to Circlebook</button>
+                    <button class="btn-primary" style="width: 100%;" onclick="CirclebookApp.handleLoginSubmit()">Sign In to The Circlebook</button>
                     
+                    <div style="margin-top: 1.25rem; text-align: center; font-size: 0.88rem; color: var(--text-secondary);">
+                        Don't have an account? <a href="javascript:void(0)" onclick="CirclebookRouter.navigate('auth', 'register')" style="color: var(--saffron-dark); font-weight: 700;">Sign Up</a>
+                    </div>
+
                     <div style="margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid var(--border); text-align: center;">
-                        <p style="font-size: 0.88rem; color: var(--text-secondary);">Quick Demo Switcher:</p>
+                        <p style="font-size: 0.82rem; color: var(--text-secondary);">Quick Demo Context Switcher:</p>
                         <div style="display: flex; gap: 0.5rem; justify-content: center; margin-top: 0.5rem;">
                             <button class="btn-secondary" style="font-size: 0.78rem; padding: 0.3rem 0.6rem;" onclick="CirclebookApp.switchDemoUser('usr_001')">User (Aarav)</button>
                             <button class="btn-secondary" style="font-size: 0.78rem; padding: 0.3rem 0.6rem;" onclick="CirclebookApp.switchDemoUser('usr_004')">Admin (Ananya)</button>
                         </div>
                     </div>
                 ` : subTab === "register" ? `
-                    <div class="form-group"><label>Full Name</label><input type="text" class="form-control" placeholder="Jane Doe"></div>
-                    <div class="form-group"><label>Email Address</label><input type="email" class="form-control" placeholder="jane@example.com"></div>
-                    <div class="form-group"><label>Password</label><input type="password" class="form-control" placeholder="Create strong password"></div>
-                    <button class="btn-primary" style="width: 100%;" onclick="CirclebookApp.toast('Account created!'); CirclebookRouter.navigate('entry', 'onboarding1');">Create Account</button>
+                    <div class="form-group"><label>Full Name</label><input type="text" id="regName" class="form-control" placeholder="Jane Doe"></div>
+                    <div class="form-group"><label>Email Address</label><input type="email" id="regEmail" class="form-control" placeholder="jane@example.com"></div>
+                    <div class="form-group"><label>Password</label><input type="password" id="regPass" class="form-control" placeholder="Create strong password"></div>
+                    <button class="btn-primary" style="width: 100%; margin-top: 0.5rem;" onclick="CirclebookApp.handleRegisterSubmit()">Create Account & Get OTP →</button>
+                    
+                    <div style="margin-top: 1.25rem; text-align: center; font-size: 0.88rem; color: var(--text-secondary);">
+                        Already registered? <a href="javascript:void(0)" onclick="CirclebookRouter.navigate('auth', 'login')" style="color: var(--saffron-dark); font-weight: 700;">Sign In</a>
+                    </div>
+                ` : subTab === "otp" ? `
+                    <div style="text-align: center;">
+                        <h3 style="font-family: Georgia, serif; margin-bottom: 0.5rem;">Security Verification (OTP)</h3>
+                        <p style="font-size: 0.88rem; color: var(--text-secondary);">Enter the 6-digit code sent to your registered email/phone.</p>
+                        
+                        <div class="otp-input-group">
+                            <input type="text" maxlength="1" class="otp-digit" value="4" />
+                            <input type="text" maxlength="1" class="otp-digit" value="8" />
+                            <input type="text" maxlength="1" class="otp-digit" value="2" />
+                            <input type="text" maxlength="1" class="otp-digit" value="9" />
+                            <input type="text" maxlength="1" class="otp-digit" value="1" />
+                            <input type="text" maxlength="1" class="otp-digit" value="5" />
+                        </div>
+                        
+                        <button class="btn-primary" style="width: 100%;" onclick="CirclebookApp.handleOTPSubmit()">Verify OTP & Setup Profile ✓</button>
+                        <p style="margin-top: 1rem; font-size: 0.82rem; color: var(--text-muted);">Resend code in 24 seconds...</p>
+                    </div>
                 ` : `
                     <div class="form-group"><label>Enter your registered Email</label><input type="email" class="form-control" value="${CirclebookStore.currentUser.email}"></div>
-                    <button class="btn-primary" style="width: 100%;" onclick="CirclebookApp.toast('Password reset link sent to email!'); CirclebookRouter.navigate('auth', 'login');">Send Reset Link</button>
+                    <button class="btn-primary" style="width: 100%;" onclick="CirclebookApp.toast('Password reset code sent to email!'); CirclebookRouter.navigate('auth', 'otp');">Send Reset Code</button>
                 `}
             </div>
         `;
@@ -156,14 +200,19 @@ const CirclebookViews = {
                     </div>
 
                     <!-- Feed Items -->
-                    ${posts.map(p => `
+                    ${posts.length ? posts.map(p => `
                         <div class="circle-card">
-                            <div class="post-header">
-                                <img src="${p.authorAvatar}" class="post-avatar" alt="${p.authorName}" />
-                                <div>
-                                    <div class="post-author-name">${p.authorName} <span class="tag-badge">${p.category}</span></div>
-                                    <div class="post-author-handle">${p.authorHandle} • ${p.timestamp}</div>
+                            <div class="post-header" style="justify-content: space-between;">
+                                <div style="display: flex; align-items: center; gap: 0.75rem;">
+                                    <img src="${p.authorAvatar}" class="post-avatar" alt="${p.authorName}" />
+                                    <div>
+                                        <div class="post-author-name">${p.authorName} <span class="tag-badge">${p.category}</span></div>
+                                        <div class="post-author-handle">${p.authorHandle} • ${p.timestamp}</div>
+                                    </div>
                                 </div>
+                                ${p.authorId === CirclebookStore.currentUser.id ? `
+                                    <button class="btn-secondary" style="font-size: 0.78rem; padding: 0.25rem 0.5rem; color: var(--danger);" title="Delete Post" onclick="CirclebookApp.confirmDeletePost('${p.id}')">🗑️ Delete</button>
+                                ` : ''}
                             </div>
                             <div class="post-content">${p.content}</div>
                             ${p.image ? `<img src="${p.image}" class="post-media" alt="Post Media" />` : ''}
@@ -192,11 +241,18 @@ const CirclebookViews = {
                                 </div>
                             ` : ''}
                         </div>
-                    `).join('')}
+                    `).join('') : `
+                        <div class="empty-state-box">
+                            <span class="empty-state-icon">📜</span>
+                            <div class="empty-state-title">Your Feed is Empty</div>
+                            <div class="empty-state-desc">Share your first update or connect with people in your circle to see updates here.</div>
+                            <button class="btn-primary" onclick="CirclebookApp.openCreatePostModal()">+ Create First Post</button>
+                        </div>
+                    `}
                 </div>
 
                 <!-- Right Sidebar Widgets -->
-                <div>
+                <div class="right-sidebar-panel sticky-right-panel">
                     <div class="circle-card">
                         <div class="circle-card-title">🔥 Trending Topics</div>
                         <div style="margin-top: 0.75rem;">
@@ -221,30 +277,37 @@ const CirclebookViews = {
     // ---------------------------------------------------------
     // 4. 🔎 DISCOVER MODULE
     // ---------------------------------------------------------
-    discover(subTab = "home") {
+    discover(subTab = "people") {
         const users = CirclebookStore.users;
         return `
             <div class="circle-card">
                 <div class="circle-card-header">
-                    <div class="circle-card-title">🔎 Discover Community Hub</div>
+                    <div class="circle-card-title">🔎 Discover People & Connections</div>
+                    <button class="btn-secondary" style="font-size: 0.8rem;" onclick="CirclebookRouter.navigate('ai', 'people_finder')">🤖 AI Smart Match</button>
                 </div>
                 <div class="global-search-bar" style="width: 100%; margin-bottom: 1.5rem;">
                     <span class="search-icon">🔍</span>
-                    <input type="text" placeholder="Search people by name, skill (e.g. React), location, or college..." oninput="CirclebookApp.filterDiscoverPeople(this.value)">
+                    <input type="text" placeholder="Search people by name, skill (e.g. React, Python), location, or college..." oninput="CirclebookApp.filterDiscoverPeople(this.value)">
                 </div>
 
                 <div class="grid-3" id="discoverGrid">
                     ${users.map(u => `
                         <div class="circle-card" style="text-align: center; margin-bottom: 0;">
-                            <img src="${u.avatar}" style="width: 72px; height: 72px; border-radius: 50%; object-fit: cover; margin-bottom: 0.5rem;" alt="${u.name}" />
+                            <img src="${u.avatar}" style="width: 76px; height: 76px; border-radius: 50%; object-fit: cover; margin-bottom: 0.5rem; border: 2px solid var(--border);" alt="${u.name}" />
                             <h3 style="font-size: 1.05rem; font-weight: 700; margin-bottom: 0.2rem;">${u.name}</h3>
-                            <p style="font-size: 0.82rem; color: var(--text-secondary); margin-bottom: 0.5rem;">${u.headline}</p>
+                            <p style="font-size: 0.82rem; color: var(--text-secondary); margin-bottom: 0.4rem; min-height: 2.4em;">${u.headline}</p>
                             <p style="font-size: 0.78rem; color: var(--text-muted); margin-bottom: 0.75rem;">📍 ${u.location} • 🎓 ${u.college}</p>
-                            <div style="margin-bottom: 0.75rem;">
+                            <div style="margin-bottom: 0.85rem; min-height: 28px;">
                                 ${u.skills.slice(0, 3).map(s => `<span class="tag-badge">${s}</span>`).join('')}
                             </div>
                             <div style="display: flex; gap: 0.5rem; justify-content: center;">
-                                <button class="btn-primary" style="font-size: 0.8rem; padding: 0.35rem 0.75rem;" onclick="CirclebookApp.toast('Circle request sent to ${u.name}')">+ Circle</button>
+                                ${u.connectionStatus === 'connected' ? `
+                                    <button class="btn-secondary" style="font-size: 0.8rem; padding: 0.35rem 0.75rem; color: var(--india-green);" disabled>✓ Connected</button>
+                                ` : u.connectionStatus === 'pending_sent' ? `
+                                    <button class="btn-secondary" style="font-size: 0.8rem; padding: 0.35rem 0.75rem;" onclick="CirclebookStore.cancelCircleRequest('${u.id}'); CirclebookApp.toast('Request cancelled'); CirclebookRouter.render();">⏳ Sent</button>
+                                ` : `
+                                    <button class="btn-primary" style="font-size: 0.8rem; padding: 0.35rem 0.75rem;" onclick="CirclebookStore.sendCircleRequest('${u.id}'); CirclebookApp.toast('Circle request sent to ${u.name}'); CirclebookRouter.render();">+ Circle</button>
+                                `}
                                 <button class="btn-secondary" style="font-size: 0.8rem; padding: 0.35rem 0.75rem;" onclick="CirclebookRouter.navigate('profile', 'overview')">Profile</button>
                             </div>
                         </div>
@@ -258,31 +321,56 @@ const CirclebookViews = {
     // 5. 👥 MY CIRCLE MODULE
     // ---------------------------------------------------------
     mycircle(subTab = "all") {
-        const users = CirclebookStore.users.filter(u => u.connectionStatus === "connected" || subTab === "requests");
+        let users = CirclebookStore.users;
+        if (subTab === "requests") {
+            users = users.filter(u => u.connectionStatus === "pending_received" || u.connectionStatus === "pending_sent");
+        } else if (subTab === "inner") {
+            users = users.filter(u => CirclebookStore.currentUser.innerCircleIds.includes(u.id));
+        } else if (subTab === "friends") {
+            users = users.filter(u => u.circleType === "Friends");
+        } else if (subTab === "work") {
+            users = users.filter(u => u.circleType === "Work");
+        } else {
+            users = users.filter(u => u.connectionStatus === "connected");
+        }
+
         return `
             <div class="circle-card">
                 <div class="circle-card-header">
                     <div class="circle-card-title">👥 My Circle Network (${CirclebookStore.currentUser.circleCount} Members)</div>
-                    <button class="btn-primary" style="font-size: 0.85rem;" onclick="const cName = prompt('Create Custom Circle Name:'); if(cName) CirclebookApp.toast('Circle Created!');">+ Create Custom Circle</button>
+                    <button class="btn-primary" style="font-size: 0.85rem;" onclick="const cName = prompt('Create Custom Circle Name:'); if(cName) CirclebookApp.toast('Circle created: ' + cName);">+ Create Custom Circle</button>
                 </div>
-                <div class="grid-2">
-                    ${users.map(u => `
-                        <div style="display: flex; gap: 1rem; align-items: center; padding: 0.85rem; border: 1px solid var(--border); border-radius: var(--radius-soft); background: var(--surface);">
-                            <img src="${u.avatar}" style="width: 54px; height: 54px; border-radius: 50%; object-fit: cover;" alt="${u.name}" />
-                            <div style="flex: 1;">
-                                <div style="font-weight: 700;">${u.name} <span class="tag-badge" style="background: var(--saffron-soft); color: var(--saffron-dark);">${u.circleType || 'Circle'}</span></div>
-                                <div style="font-size: 0.82rem; color: var(--text-secondary);">${u.headline}</div>
+                
+                ${users.length ? `
+                    <div class="grid-2">
+                        ${users.map(u => `
+                            <div style="display: flex; gap: 1rem; align-items: center; padding: 0.85rem; border: 1px solid var(--border); border-radius: var(--radius-soft); background: var(--surface);">
+                                <img src="${u.avatar}" style="width: 54px; height: 54px; border-radius: 50%; object-fit: cover;" alt="${u.name}" />
+                                <div style="flex: 1;">
+                                    <div style="font-weight: 700;">${u.name} <span class="tag-badge" style="background: var(--saffron-soft); color: var(--saffron-dark); font-size: 0.72rem;">${u.circleType || 'Circle'}</span></div>
+                                    <div style="font-size: 0.82rem; color: var(--text-secondary);">${u.headline}</div>
+                                </div>
+                                <div style="display: flex; gap: 0.4rem;">
+                                    ${u.connectionStatus === 'pending_received' ? `
+                                        <button class="btn-primary" style="font-size: 0.78rem; padding: 0.3rem 0.6rem;" onclick="CirclebookStore.acceptConnectionRequest('${u.id}'); CirclebookApp.toast('Accepted request from ${u.name}'); CirclebookRouter.render();">Accept</button>
+                                        <button class="btn-secondary" style="font-size: 0.78rem; padding: 0.3rem 0.6rem;" onclick="CirclebookStore.declineConnectionRequest('${u.id}'); CirclebookApp.toast('Declined request'); CirclebookRouter.render();">Decline</button>
+                                    ` : u.connectionStatus === 'pending_sent' ? `
+                                        <button class="btn-secondary" style="font-size: 0.78rem; padding: 0.3rem 0.6rem;" onclick="CirclebookStore.cancelCircleRequest('${u.id}'); CirclebookApp.toast('Cancelled request'); CirclebookRouter.render();">Cancel</button>
+                                    ` : `
+                                        <button class="btn-secondary" style="font-size: 0.78rem; padding: 0.3rem 0.6rem;" onclick="CirclebookRouter.navigate('communication', 'chat')">Message</button>
+                                    `}
+                                </div>
                             </div>
-                            <div>
-                                ${u.connectionStatus === 'pending_received' ? `
-                                    <button class="btn-primary" style="font-size: 0.78rem; padding: 0.3rem 0.6rem;" onclick="CirclebookStore.acceptConnectionRequest('${u.id}'); CirclebookRouter.render();">Accept</button>
-                                ` : `
-                                    <button class="btn-secondary" style="font-size: 0.78rem; padding: 0.3rem 0.6rem;" onclick="CirclebookRouter.navigate('communication', 'chat')">Message</button>
-                                `}
-                            </div>
-                        </div>
-                    `).join('')}
-                </div>
+                        `).join('')}
+                    </div>
+                ` : `
+                    <div class="empty-state-box">
+                        <span class="empty-state-icon">👥</span>
+                        <div class="empty-state-title">No Connections Found</div>
+                        <div class="empty-state-desc">There are currently no members in this sub-circle. Search the directory to add people to your circle.</div>
+                        <button class="btn-primary" onclick="CirclebookRouter.navigate('discover', 'people')">Find People →</button>
+                    </div>
+                `}
             </div>
         `;
     },
@@ -297,13 +385,13 @@ const CirclebookViews = {
                 <img src="${u.banner}" style="width: 100%; height: 180px; object-fit: cover;" alt="Banner" />
                 <div style="padding: 1.5rem; position: relative;">
                     <img src="${u.avatar}" style="width: 90px; height: 90px; border-radius: 50%; border: 4px solid var(--surface); position: absolute; top: -45px; left: 1.5rem; object-fit: cover;" alt="${u.name}" />
-                    <div style="margin-left: 110px; display: flex; justify-content: space-between; align-items: flex-start;">
+                    <div class="profile-info-row" style="margin-left: 110px; display: flex; justify-content: space-between; align-items: flex-start;">
                         <div>
                             <h2 style="font-family: Georgia, serif; font-size: 1.5rem;">${u.name}</h2>
                             <p style="color: var(--text-secondary); font-size: 0.95rem;">${u.headline}</p>
                             <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 0.25rem;">📍 ${u.location} • 🎓 ${u.college}</p>
                         </div>
-                        <button class="btn-secondary" onclick="CirclebookRouter.navigate('settings', 'profile')">✏️ Edit Profile</button>
+                        <button class="btn-secondary" onclick="CirclebookApp.openEditProfileModal()">✏️ Edit Profile</button>
                     </div>
                 </div>
             </div>
@@ -549,28 +637,51 @@ const CirclebookViews = {
     // 13. ⚙️ SETTINGS MODULE
     // ---------------------------------------------------------
     settings(subTab = "appearance") {
-        const theme = CirclebookStore.currentUser.appearance.theme;
+        const u = CirclebookStore.currentUser;
+        const theme = u.appearance.theme;
         return `
             <div class="circle-card">
                 <div class="circle-card-header">
-                    <div class="circle-card-title">⚙️ Settings & Platform Controls</div>
+                    <div class="circle-card-title">⚙️ Settings & Account Preferences</div>
+                    <button class="btn-primary" style="font-size: 0.85rem;" onclick="CirclebookApp.openEditProfileModal()">✏️ Edit Profile</button>
                 </div>
+                
                 <div class="form-group">
-                    <label>Select Aesthetic Theme</label>
+                    <label>Select Application Theme & Palette</label>
                     <div class="grid-4" style="margin-top: 0.5rem;">
-                        <button class="btn-secondary" style="${theme === 'vintage-gold' ? 'border-color: var(--saffron); font-weight: 700;' : ''}" onclick="CirclebookStore.applyTheme('vintage-gold'); CirclebookRouter.render();">📜 Vintage Cream & Gold</button>
-                        <button class="btn-secondary" style="${theme === 'vintage-dark' ? 'border-color: var(--saffron); font-weight: 700;' : ''}" onclick="CirclebookStore.applyTheme('vintage-dark'); CirclebookRouter.render();">🌙 Vintage Dark</button>
-                        <button class="btn-secondary" style="${theme === 'modern-navy' ? 'border-color: var(--saffron); font-weight: 700;' : ''}" onclick="CirclebookStore.applyTheme('modern-navy'); CirclebookRouter.render();">🌊 Modern Navy</button>
-                        <button class="btn-secondary" style="${theme === 'emerald-clean' ? 'border-color: var(--saffron); font-weight: 700;' : ''}" onclick="CirclebookStore.applyTheme('emerald-clean'); CirclebookRouter.render();">🌿 Emerald Clean</button>
+                        <button class="btn-secondary" style="${theme === 'vintage-gold' ? 'border-color: var(--saffron); font-weight: 700; background: var(--saffron-soft);' : ''}" onclick="CirclebookStore.applyTheme('vintage-gold'); CirclebookRouter.render();">📜 Vintage Gold</button>
+                        <button class="btn-secondary" style="${theme === 'vintage-dark' ? 'border-color: var(--saffron); font-weight: 700; background: var(--saffron-soft);' : ''}" onclick="CirclebookStore.applyTheme('vintage-dark'); CirclebookRouter.render();">🌙 Vintage Dark</button>
+                        <button class="btn-secondary" style="${theme === 'modern-navy' ? 'border-color: var(--saffron); font-weight: 700; background: var(--saffron-soft);' : ''}" onclick="CirclebookStore.applyTheme('modern-navy'); CirclebookRouter.render();">🌊 Modern Navy</button>
+                        <button class="btn-secondary" style="${theme === 'emerald-clean' ? 'border-color: var(--saffron); font-weight: 700; background: var(--saffron-soft);' : ''}" onclick="CirclebookStore.applyTheme('emerald-clean'); CirclebookRouter.render();">🌿 Emerald Clean</button>
                     </div>
                 </div>
 
                 <div style="margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border);">
-                    <h3>Privacy Visibility Matrix</h3>
-                    <div style="margin-top: 1rem;">
-                        <div class="form-group"><label>Profile Visibility</label><select class="form-control"><option>Everyone</option><option>My Circle Only</option></select></div>
-                        <div class="form-group"><label>Email Visibility</label><select class="form-control"><option>My Circle</option><option>Only Me</option></select></div>
+                    <h3 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 1rem;">🔒 Account & Privacy Controls</h3>
+                    <div class="grid-2">
+                        <div class="form-group">
+                            <label>Profile Visibility</label>
+                            <select class="form-control" onchange="CirclebookApp.toast('Privacy setting updated')">
+                                <option ${u.privacy.profile === 'Everyone' ? 'selected' : ''}>Everyone</option>
+                                <option ${u.privacy.profile === 'My Circle' ? 'selected' : ''}>My Circle Only</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Email Visibility</label>
+                            <select class="form-control" onchange="CirclebookApp.toast('Privacy setting updated')">
+                                <option ${u.privacy.email === 'My Circle' ? 'selected' : ''}>My Circle</option>
+                                <option ${u.privacy.email === 'Only Me' ? 'selected' : ''}>Only Me</option>
+                            </select>
+                        </div>
                     </div>
+                </div>
+
+                <div style="margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <strong style="color: var(--text);">Signed in as ${u.name}</strong> (${u.email})
+                        <div style="font-size: 0.82rem; color: var(--text-secondary);">Session active on current device</div>
+                    </div>
+                    <button class="btn-danger" style="font-size: 0.88rem;" onclick="CirclebookApp.confirmLogout()">🚪 Sign Out</button>
                 </div>
             </div>
         `;

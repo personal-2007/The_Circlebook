@@ -2,7 +2,7 @@
 <html lang="en" data-theme="vintage-gold">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <meta name="description" content="The Circlebook - Know Your People. Build Your Circle. Vintage Community Directory & Social Network.">
     <title>The Circlebook - Master Platform</title>
 
@@ -29,7 +29,8 @@
         <aside class="app-sidebar">
             <div class="sidebar-header">
                 <a href="#home/feed" class="sidebar-brand">
-                    📜 The <span>Circlebook</span>
+                    <img src="assets/images/circlebook-logo.png" alt="The Circlebook Logo" class="brand-logo-img" />
+                    <span>The <strong>Circlebook</strong></span>
                 </a>
             </div>
 
@@ -51,7 +52,7 @@
                 </button>
                 <button class="sidebar-link" data-module="mycircle" onclick="CirclebookRouter.navigate('mycircle')">
                     <span class="sidebar-icon">👥</span> MY CIRCLE
-                    <span class="sidebar-badge">42</span>
+                    <span class="sidebar-badge" id="sidebarCircleBadge">42</span>
                 </button>
                 <button class="sidebar-link" data-module="profile" onclick="CirclebookRouter.navigate('profile')">
                     <span class="sidebar-icon">👤</span> PROFILE
@@ -64,7 +65,7 @@
                 </button>
                 <button class="sidebar-link" data-module="notifications" onclick="CirclebookRouter.navigate('notifications')">
                     <span class="sidebar-icon">🔔</span> NOTIFICATIONS
-                    <span class="sidebar-badge">4</span>
+                    <span class="sidebar-badge" id="sidebarNotifBadge">4</span>
                 </button>
                 <button class="sidebar-link" data-module="communities" onclick="CirclebookRouter.navigate('communities')">
                     <span class="sidebar-icon">🌐</span> COMMUNITIES
@@ -102,20 +103,18 @@
                     <button class="mobile-toggle" onclick="CirclebookApp.toggleMobileSidebar()">☰</button>
                     <div class="global-search-bar">
                         <span class="search-icon">🔍</span>
-                        <input type="text" placeholder="Search people, communities, events, jobs..." onfocus="CirclebookRouter.navigate('discover')" oninput="CirclebookApp.filterDiscoverPeople(this.value)">
+                        <input type="text" id="globalSearchInput" placeholder="Search people, skills, interests..." onfocus="CirclebookRouter.navigate('discover', 'people')" oninput="CirclebookApp.filterDiscoverPeople(this.value)">
                     </div>
                 </div>
 
                 <div class="topbar-actions">
-                    <button class="topbar-btn" title="Toggle Theme" onclick="const themes=['vintage-gold','vintage-dark','modern-navy','emerald-clean']; const next=themes[(themes.indexOf(CirclebookStore.currentUser.appearance.theme)+1)%themes.length]; CirclebookStore.applyTheme(next); CirclebookRouter.render();">🎨</button>
-                    <button class="topbar-btn" title="Notifications" onclick="CirclebookRouter.navigate('notifications')">
-                        🔔
-                    </button>
+                    <button class="topbar-btn" title="Toggle Theme" onclick="CirclebookApp.toggleNextTheme()">🎨</button>
+                    <button class="topbar-btn" title="Notifications" onclick="CirclebookRouter.navigate('notifications')">🔔</button>
                     <button class="topbar-btn" title="Messages" onclick="CirclebookRouter.navigate('communication')">💬</button>
                     
-                    <div class="topbar-user" onclick="CirclebookRouter.navigate('profile')">
-                        <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=250&q=80" class="topbar-avatar" alt="User Avatar" />
-                        <span class="topbar-username">Aarav Sharma</span>
+                    <div class="topbar-user" onclick="CirclebookRouter.navigate('profile')" id="topbarUserBtn">
+                        <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=250&q=80" id="topbarAvatar" class="topbar-avatar" alt="User Avatar" />
+                        <span class="topbar-username" id="topbarUsername">Aarav Sharma</span>
                     </div>
                 </div>
             </header>
@@ -133,10 +132,40 @@
 
     </div>
 
+    <!-- MOBILE STICKY BOTTOM NAVIGATION -->
+    <nav class="mobile-bottom-nav">
+        <button class="mobile-nav-item" onclick="CirclebookRouter.navigate('home')">
+            <span class="nav-icon">🏠</span>
+            <span>Home</span>
+        </button>
+        <button class="mobile-nav-item" onclick="CirclebookRouter.navigate('discover', 'people')">
+            <span class="nav-icon">🔎</span>
+            <span>People</span>
+        </button>
+        <button class="mobile-nav-item" onclick="CirclebookApp.openCreatePostModal()">
+            <div class="mobile-nav-create">+</div>
+        </button>
+        <button class="mobile-nav-item" onclick="CirclebookRouter.navigate('communication')">
+            <span class="nav-icon">💬</span>
+            <span>Messages</span>
+        </button>
+        <button class="mobile-nav-item" onclick="CirclebookRouter.navigate('profile')">
+            <span class="nav-icon">👤</span>
+            <span>Profile</span>
+        </button>
+    </nav>
+
     <!-- FLOATING AI ASSISTANT ACTION BUTTON -->
     <button class="floating-ai-btn" title="Circle AI Assistant" onclick="CirclebookRouter.navigate('ai')">
         🤖
     </button>
+
+    <!-- REUSABLE GLOBAL MODAL BACKDROP -->
+    <div class="circle-modal-backdrop" id="globalModalBackdrop">
+        <div class="circle-modal-box" id="globalModalBox">
+            <!-- Modal Content Injected via CirclebookApp.openModal() -->
+        </div>
+    </div>
 
     <!-- JavaScript Scripts -->
     <script src="js/state.js"></script>
