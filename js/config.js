@@ -8,7 +8,7 @@ window.CirclebookConfig = {
     apiBaseUrl: "http://localhost:8080/api/v1",
     aiModel: "CircleAI-v2.5-General",
     themeDefaults: {
-        theme: "vintage-gold",
+        theme: "glass-light",
         fontSize: "medium",
         compactMode: false
     },

@@ -41,7 +41,7 @@ const CirclebookStore = {
             birthday: "Only Me"
         },
         appearance: {
-            theme: "vintage-gold", // "vintage-gold", "vintage-dark", "modern-navy", "emerald-clean"
+            theme: "glass-light", // "glass-light", "glass-dark", "modern-blue", "purple-luxe"
             compact: false,
             fontSize: "medium"
         },
@@ -685,7 +685,7 @@ const CirclebookStore = {
             interests: ["Community", "Technology"],
             intents: ["Networking"],
             connectionStatus: "connected",
-            appearance: { theme: "vintage-gold" },
+            appearance: { theme: "glass-light" },
             isOnboarded: false
         };
         this.currentUser = newUser;

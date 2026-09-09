@@ -649,10 +649,10 @@ const CirclebookViews = {
                 <div class="form-group">
                     <label>Select Application Theme & Palette</label>
                     <div class="grid-4" style="margin-top: 0.5rem;">
-                        <button class="btn-secondary" style="${theme === 'vintage-gold' ? 'border-color: var(--saffron); font-weight: 700; background: var(--saffron-soft);' : ''}" onclick="CirclebookStore.applyTheme('vintage-gold'); CirclebookRouter.render();">📜 Vintage Gold</button>
-                        <button class="btn-secondary" style="${theme === 'vintage-dark' ? 'border-color: var(--saffron); font-weight: 700; background: var(--saffron-soft);' : ''}" onclick="CirclebookStore.applyTheme('vintage-dark'); CirclebookRouter.render();">🌙 Vintage Dark</button>
-                        <button class="btn-secondary" style="${theme === 'modern-navy' ? 'border-color: var(--saffron); font-weight: 700; background: var(--saffron-soft);' : ''}" onclick="CirclebookStore.applyTheme('modern-navy'); CirclebookRouter.render();">🌊 Modern Navy</button>
-                        <button class="btn-secondary" style="${theme === 'emerald-clean' ? 'border-color: var(--saffron); font-weight: 700; background: var(--saffron-soft);' : ''}" onclick="CirclebookStore.applyTheme('emerald-clean'); CirclebookRouter.render();">🌿 Emerald Clean</button>
+                        <button class="btn-secondary" style="${theme === 'glass-light' ? 'border-color: var(--primary-blue, #2563EB); font-weight: 700; background: rgba(37, 99, 235, 0.12);' : ''}" onclick="CirclebookStore.applyTheme('glass-light'); CirclebookRouter.render();">💎 Glass Light</button>
+                        <button class="btn-secondary" style="${theme === 'glass-dark' ? 'border-color: var(--primary-blue, #2563EB); font-weight: 700; background: rgba(37, 99, 235, 0.12);' : ''}" onclick="CirclebookStore.applyTheme('glass-dark'); CirclebookRouter.render();">🌙 Glass Dark</button>
+                        <button class="btn-secondary" style="${theme === 'modern-blue' ? 'border-color: var(--primary-blue, #2563EB); font-weight: 700; background: rgba(37, 99, 235, 0.12);' : ''}" onclick="CirclebookStore.applyTheme('modern-blue'); CirclebookRouter.render();">🌊 Modern Blue</button>
+                        <button class="btn-secondary" style="${theme === 'purple-luxe' ? 'border-color: var(--premium-purple, #7C3AED); font-weight: 700; background: rgba(124, 58, 237, 0.15);' : ''}" onclick="CirclebookStore.applyTheme('purple-luxe'); CirclebookRouter.render();">🔮 Purple Luxe</button>
                     </div>
                 </div>
 

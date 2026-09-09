@@ -9,43 +9,65 @@
    ========================================================= */
 
 :root {
-    --saffron: #FF9933;
-    --saffron-dark: #E8871F;
-    --saffron-soft: #FFF3E6;
-    --india-green: #138808;
-    --green-dark: #0F6F06;
-    --green-soft: #EAF7E8;
-    --ashoka-blue: #000080;
-    --blue-dark: #00005C;
-    --blue-soft: #EEF0FF;
-    --white: #FFFFFF;
-    --background: #F7F9FC;
+    --primary-blue: #2563EB;
+    --bright-blue: #3B82F6;
+
+    --premium-purple: #7C3AED;
+    --soft-purple: #A855F7;
+
+    --deep-navy: #0F172A;
+
+    --background: #F8FAFC;
     --surface: #FFFFFF;
-    --surface-soft: #F1F4F8;
-    --text: #172033;
+
+    --glass-white: rgba(255, 255, 255, 0.72);
+    --glass-blue: rgba(37, 99, 235, 0.12);
+    --glass-purple: rgba(124, 58, 237, 0.12);
+
+    --glass-border: rgba(255, 255, 255, 0.40);
+    --dark-glass: rgba(15, 23, 42, 0.75);
+
+    --text-primary: #0F172A;
     --text-secondary: #64748B;
     --text-muted: #94A3B8;
+
     --border: #E2E8F0;
-    --border-strong: #CBD5E1;
-    --success: #138808;
+
+    --success: #16A34A;
+    --warning: #F59E0B;
     --danger: #DC2626;
-    --warning: #FF9933;
-    --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.06);
-    --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.08);
-    --shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.10);
+
+    /* Legacy Fallback Mappings for Existing Components */
+    --saffron: #2563EB;
+    --saffron-dark: #7C3AED;
+    --saffron-soft: rgba(37, 99, 235, 0.10);
+    --ashoka-blue: #0F172A;
+    --india-green: #16A34A;
+    --green-soft: rgba(22, 163, 74, 0.10);
+
+    --text: var(--text-primary);
+    --page-background: var(--background);
+    --paper-card: var(--glass-white);
+
+    /* Gradients */
+    --gradient-primary: linear-gradient(135deg, #2563EB, #7C3AED);
+    --gradient-highlight: linear-gradient(135deg, #3B82F6, #A855F7);
+    --gradient-glow: linear-gradient(135deg, rgba(37, 99, 235, 0.15), rgba(124, 58, 237, 0.15));
+
+    /* Radius System */
     --radius-sm: 8px;
     --radius-md: 14px;
-    --radius-lg: 20px;
-    --radius-xl: 28px;
-    --navy: var(--ashoka-blue);
-    --navy-light: #1D3A9A;
-    --gold: var(--saffron);
-    --gold-light: #FFB866;
-    --cream: var(--background);
-    --paper: var(--surface-soft);
-    --page-background: var(--background);
-    --text-light: var(--text-secondary);
-    --shadow: var(--shadow-sm);
+    --radius-lg: 18px;
+    --radius-xl: 24px;
+    --radius-2xl: 32px;
+    --radius-pill: 9999px;
+
+    /* Shadow System */
+    --shadow-sm: 0 2px 8px rgba(15, 23, 42, 0.04);
+    --shadow-md: 0 8px 24px rgba(15, 23, 42, 0.08);
+    --shadow-lg: 0 16px 40px rgba(15, 23, 42, 0.10);
+    --shadow-card: 0 8px 30px rgba(15, 23, 42, 0.06);
+
     --max-width: 1440px;
     --app-max-width: 1440px;
 
@@ -123,6 +145,40 @@ img {
     max-width: 100%;
     height: auto;
     display: block;
+}
+
+/* =========================================================
+   GLASSMORPHISM & GRADIENT SYSTEM
+   ========================================================= */
+
+.glass {
+    background: rgba(255, 255, 255, 0.72);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.45);
+    box-shadow: 0 8px 32px rgba(15, 23, 42, 0.08);
+}
+
+.glass-blue {
+    background: rgba(37, 99, 235, 0.10);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(37, 99, 235, 0.20);
+}
+
+.glass-purple {
+    background: rgba(124, 58, 237, 0.10);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(124, 58, 237, 0.20);
+}
+
+.glass-dark {
+    background: rgba(15, 23, 42, 0.75);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    color: #F8FAFC;
 }
 
 

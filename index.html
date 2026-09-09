@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="vintage-gold">
+<html lang="en" data-theme="glass-light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
@@ -19,6 +19,10 @@
     </script>
 </head>
 <body>
+
+    <!-- Ambient Background Blur Glows -->
+    <div class="ambient-blue-glow"></div>
+    <div class="ambient-purple-glow"></div>
 
     <!-- =========================================================
          MASTER APP SHELL LAYOUT
@@ -61,7 +65,7 @@
                 <div class="sidebar-section-title">INTERACTION & HUBS</div>
                 <button class="sidebar-link" data-module="communication" onclick="CirclebookRouter.navigate('communication')">
                     <span class="sidebar-icon">💬</span> COMMUNICATION
-                    <span class="sidebar-badge" style="background: var(--india-green, green);">3</span>
+                    <span class="sidebar-badge" style="background: var(--secondary-badge, #7C3AED);">3</span>
                 </button>
                 <button class="sidebar-link" data-module="notifications" onclick="CirclebookRouter.navigate('notifications')">
                     <span class="sidebar-icon">🔔</span> NOTIFICATIONS
@@ -157,7 +161,7 @@
 
     <!-- FLOATING AI ASSISTANT ACTION BUTTON -->
     <button class="floating-ai-btn" title="Circle AI Assistant" onclick="CirclebookRouter.navigate('ai')">
-        🤖
+        ✨
     </button>
 
     <!-- REUSABLE GLOBAL MODAL BACKDROP -->

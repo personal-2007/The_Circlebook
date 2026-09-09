@@ -170,7 +170,7 @@ const CirclebookRouter = {
 
         // Apply theme from store
         if (CirclebookStore.currentUser && CirclebookStore.currentUser.appearance) {
-            document.documentElement.setAttribute("data-theme", CirclebookStore.currentUser.appearance.theme || "vintage-gold");
+            document.documentElement.setAttribute("data-theme", CirclebookStore.currentUser.appearance.theme || "glass-light");
         }
 
         // Sync Topbar User Display
@@ -246,9 +246,10 @@ const CirclebookApp = {
     },
 
     toggleNextTheme() {
-        const themes = ['vintage-gold', 'vintage-dark', 'modern-navy', 'emerald-clean'];
-        const current = CirclebookStore.currentUser.appearance.theme || 'vintage-gold';
-        const next = themes[(themes.indexOf(current) + 1) % themes.length];
+        const themes = ['glass-light', 'glass-dark', 'modern-blue', 'purple-luxe'];
+        const current = CirclebookStore.currentUser.appearance.theme || 'glass-light';
+        const nextIndex = (themes.indexOf(current) + 1) % themes.length;
+        const next = themes[nextIndex < 0 ? 0 : nextIndex];
         CirclebookStore.applyTheme(next);
         this.toast(`Applied theme: ${next.replace('-', ' ').toUpperCase()}`);
         CirclebookRouter.render();
