@@ -1,0 +1,16 @@
+[
+  {
+    "id": "post_101",
+    "author": "Ananya Roy",
+    "category": "General",
+    "content": "Welcome to The Circlebook Master Platform!",
+    "likes": 42
+  },
+  {
+    "id": "post_102",
+    "author": "Priya Nair",
+    "category": "Design",
+    "content": "Exploring vintage newspaper layouts and modern UI design systems.",
+    "likes": 29
+  }
+]

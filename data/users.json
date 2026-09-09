@@ -1,0 +1,42 @@
+[
+  {
+    "id": "usr_001",
+    "name": "Aarav Sharma",
+    "handle": "@aarav_sharma",
+    "email": "aarav.sharma@circlebook.org",
+    "role": "user",
+    "location": "Bengaluru, India",
+    "college": "IIT Bombay",
+    "circleCount": 42
+  },
+  {
+    "id": "usr_002",
+    "name": "Priya Nair",
+    "handle": "@priya_nair",
+    "email": "priya.nair@circlebook.org",
+    "role": "user",
+    "location": "Mumbai, India",
+    "college": "NID Ahmedabad",
+    "circleCount": 88
+  },
+  {
+    "id": "usr_003",
+    "name": "Rohan Varma",
+    "handle": "@rohan_v",
+    "email": "rohan.v@circlebook.org",
+    "role": "user",
+    "location": "Hyderabad, India",
+    "college": "IIIT Hyderabad",
+    "circleCount": 120
+  },
+  {
+    "id": "usr_004",
+    "name": "Ananya Roy",
+    "handle": "@ananya_roy",
+    "email": "ananya.roy@circlebook.org",
+    "role": "admin",
+    "location": "Bengaluru, India",
+    "college": "St. Xavier's",
+    "circleCount": 310
+  }
+]

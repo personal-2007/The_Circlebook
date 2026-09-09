@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>The Circlebook</title>
+
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/system.css">
+</head>
+
+<body>
+
+    <main class="loading-screen">
+
+        <div class="loading-content">
+
+            <div class="loading-logo">
+                <img
+                    src="../assets/images/circlebook-logo.png"
+                    alt="The Circlebook Logo"
+                >
+            </div>
+
+            <h1>The Circlebook</h1>
+
+            <p>Know your people. Build your circle.</p>
+
+            <div class="loading-spinner"></div>
+
+        </div>
+
+    </main>
+
+    <script>
+        setTimeout(() => {
+            sessionStorage.setItem("circlebook_splash_seen", "true");
+            window.location.href = "../index.html";
+        }, 3000);
+    </script>
+
+</body>
+</html>

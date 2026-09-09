@@ -1,411 +1,146 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="vintage-gold">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="The Circlebook - Know Your People. Build Your Circle. Vintage Community Directory & Social Network.">
+    <title>The Circlebook - Master Platform</title>
 
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
-
-    <meta
-        name="description"
-        content="The Circlebook - A simple social directory for connecting people."
-    >
-
-    <title>The Circlebook</title>
-
-    <!-- Main Styles -->
+    <!-- Main & Module Styles -->
     <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/modules.css">
     <link rel="stylesheet" href="css/responsive.css">
-</head>
 
+    <!-- Splash Screen Redirect Check -->
+    <script>
+        if (!sessionStorage.getItem("circlebook_splash_seen") && !window.location.search.includes("loaded=true")) {
+            window.location.href = "system/loading.html";
+        }
+    </script>
+</head>
 <body>
 
-    <!-- =========================
-         HEADER
-    ========================== -->
-    <header class="site-header">
+    <!-- =========================================================
+         MASTER APP SHELL LAYOUT
+    ========================================================= -->
+    <div class="app-shell">
 
-        <div class="container header-container">
-
-            <!-- Logo -->
-            <a href="index.html" class="logo">
-                The <span>Circlebook</span>
-            </a>
-
-            <!-- Navigation -->
-            <nav class="main-nav">
-
-                <a href="index.html">
-                    Home
+        <!-- PRIMARY SIDEBAR NAVIGATION (15 MASTER DOMAINS) -->
+        <aside class="app-sidebar">
+            <div class="sidebar-header">
+                <a href="#home/feed" class="sidebar-brand">
+                    📜 The <span>Circlebook</span>
                 </a>
+            </div>
 
-                <a href="pages/people.html">
-                    People
-                </a>
+            <nav class="sidebar-nav">
+                <div class="sidebar-section-title">CORE PLATFORM</div>
+                <button class="sidebar-link" data-module="entry" onclick="CirclebookRouter.navigate('entry')">
+                    <span class="sidebar-icon">🚀</span> ENTRY
+                </button>
+                <button class="sidebar-link" data-module="auth" onclick="CirclebookRouter.navigate('auth')">
+                    <span class="sidebar-icon">🔐</span> AUTH
+                </button>
+                <button class="sidebar-link active" data-module="home" onclick="CirclebookRouter.navigate('home')">
+                    <span class="sidebar-icon">🏠</span> HOME
+                </button>
 
-                <a href="pages/login.html">
-                    Login
-                </a>
+                <div class="sidebar-section-title">EXPLORE & CIRCLE</div>
+                <button class="sidebar-link" data-module="discover" onclick="CirclebookRouter.navigate('discover')">
+                    <span class="sidebar-icon">🔎</span> DISCOVER
+                </button>
+                <button class="sidebar-link" data-module="mycircle" onclick="CirclebookRouter.navigate('mycircle')">
+                    <span class="sidebar-icon">👥</span> MY CIRCLE
+                    <span class="sidebar-badge">42</span>
+                </button>
+                <button class="sidebar-link" data-module="profile" onclick="CirclebookRouter.navigate('profile')">
+                    <span class="sidebar-icon">👤</span> PROFILE
+                </button>
 
-                <a
-                    href="pages/register.html"
-                    class="nav-button"
-                >
-                    Join
-                </a>
+                <div class="sidebar-section-title">INTERACTION & HUBS</div>
+                <button class="sidebar-link" data-module="communication" onclick="CirclebookRouter.navigate('communication')">
+                    <span class="sidebar-icon">💬</span> COMMUNICATION
+                    <span class="sidebar-badge" style="background: var(--india-green, green);">3</span>
+                </button>
+                <button class="sidebar-link" data-module="notifications" onclick="CirclebookRouter.navigate('notifications')">
+                    <span class="sidebar-icon">🔔</span> NOTIFICATIONS
+                    <span class="sidebar-badge">4</span>
+                </button>
+                <button class="sidebar-link" data-module="communities" onclick="CirclebookRouter.navigate('communities')">
+                    <span class="sidebar-icon">🌐</span> COMMUNITIES
+                </button>
+                <button class="sidebar-link" data-module="events" onclick="CirclebookRouter.navigate('events')">
+                    <span class="sidebar-icon">📅</span> EVENTS
+                </button>
 
+                <div class="sidebar-section-title">CAREER & AI</div>
+                <button class="sidebar-link" data-module="career" onclick="CirclebookRouter.navigate('career')">
+                    <span class="sidebar-icon">💼</span> CAREER HUB
+                </button>
+                <button class="sidebar-link" data-module="ai" onclick="CirclebookRouter.navigate('ai')">
+                    <span class="sidebar-icon">🤖</span> CIRCLE AI
+                </button>
+
+                <div class="sidebar-section-title">CONTROL & GOVERNANCE</div>
+                <button class="sidebar-link" data-module="settings" onclick="CirclebookRouter.navigate('settings')">
+                    <span class="sidebar-icon">⚙️</span> SETTINGS
+                </button>
+                <button class="sidebar-link" data-module="safety" onclick="CirclebookRouter.navigate('safety')">
+                    <span class="sidebar-icon">🛡️</span> SAFETY
+                </button>
+                <button class="sidebar-link" data-module="admin" onclick="CirclebookRouter.navigate('admin')">
+                    <span class="sidebar-icon">🧑💼</span> ADMIN
+                </button>
+            </nav>
+        </aside>
+
+        <!-- MAIN CONTENT AREA -->
+        <main class="app-main">
+            <!-- TOP APP HEADER -->
+            <header class="app-topbar">
+                <div class="topbar-left">
+                    <button class="mobile-toggle" onclick="CirclebookApp.toggleMobileSidebar()">☰</button>
+                    <div class="global-search-bar">
+                        <span class="search-icon">🔍</span>
+                        <input type="text" placeholder="Search people, communities, events, jobs..." onfocus="CirclebookRouter.navigate('discover')" oninput="CirclebookApp.filterDiscoverPeople(this.value)">
+                    </div>
+                </div>
+
+                <div class="topbar-actions">
+                    <button class="topbar-btn" title="Toggle Theme" onclick="const themes=['vintage-gold','vintage-dark','modern-navy','emerald-clean']; const next=themes[(themes.indexOf(CirclebookStore.currentUser.appearance.theme)+1)%themes.length]; CirclebookStore.applyTheme(next); CirclebookRouter.render();">🎨</button>
+                    <button class="topbar-btn" title="Notifications" onclick="CirclebookRouter.navigate('notifications')">
+                        🔔
+                    </button>
+                    <button class="topbar-btn" title="Messages" onclick="CirclebookRouter.navigate('communication')">💬</button>
+                    
+                    <div class="topbar-user" onclick="CirclebookRouter.navigate('profile')">
+                        <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=250&q=80" class="topbar-avatar" alt="User Avatar" />
+                        <span class="topbar-username">Aarav Sharma</span>
+                    </div>
+                </div>
+            </header>
+
+            <!-- SUB-HEADER NAVIGATION TABS -->
+            <nav class="sub-header-nav" id="subHeaderNav">
+                <!-- Dynamically filled by CirclebookRouter -->
             </nav>
 
-        </div>
-
-    </header>
-
-
-    <!-- =========================
-         MAIN CONTENT
-    ========================== -->
-    <main>
-
-        <!-- HERO SECTION -->
-        <section class="hero">
-
-            <div class="container hero-content">
-
-                <p class="eyebrow">
-                    EST. 2004 • A COMMUNITY DIRECTORY
-                </p>
-
-                <h1>
-                    The Circlebook
-                </h1>
-
-                <h2>
-                    Know Your People. Build Your Circle.
-                </h2>
-
-                <p class="hero-description">
-                    A modern community platform for connecting
-                    with friends, classmates, professionals,
-                    and people who share your interests.
-                </p>
-
-                <div class="hero-actions">
-
-                    <a
-                        href="pages/register.html"
-                        class="button primary-button"
-                    >
-                        Create Your Profile
-                    </a>
-
-                    <a
-                        href="pages/people.html"
-                        class="button secondary-button"
-                    >
-                        Explore People
-                    </a>
-
-                </div>
-
+            <!-- DYNAMIC MODULE VIEWPORT -->
+            <div class="module-viewport" id="moduleViewport">
+                <!-- Dynamically rendered by CirclebookViews -->
             </div>
+        </main>
 
-        </section>
+    </div>
 
+    <!-- FLOATING AI ASSISTANT ACTION BUTTON -->
+    <button class="floating-ai-btn" title="Circle AI Assistant" onclick="CirclebookRouter.navigate('ai')">
+        🤖
+    </button>
 
-        <!-- =========================
-             FEATURES
-        ========================== -->
-        <section class="features">
-
-            <div class="container">
-
-                <div class="section-heading">
-
-                    <p class="eyebrow">
-                        THE ORIGINAL IDEA
-                    </p>
-
-                    <h2>
-                        Your Circle Starts Here
-                    </h2>
-
-                    <p>
-                        Simple tools for finding people
-                        and building your community.
-                    </p>
-
-                </div>
-
-
-                <div class="feature-grid">
-
-                    <!-- Profile -->
-                    <article class="feature-card">
-
-                        <div class="feature-number">
-                            01
-                        </div>
-
-                        <h3>
-                            Create Your Profile
-                        </h3>
-
-                        <p>
-                            Introduce yourself with your name,
-                            education, interests,
-                            and personal information.
-                        </p>
-
-                        <a href="pages/register.html">
-                            Create Profile →
-                        </a>
-
-                    </article>
-
-
-                    <!-- People -->
-                    <article class="feature-card">
-
-                        <div class="feature-number">
-                            02
-                        </div>
-
-                        <h3>
-                            Find People
-                        </h3>
-
-                        <p>
-                            Search for people by name,
-                            class, course, location,
-                            or interests.
-                        </p>
-
-                        <a href="pages/people.html">
-                            Find People →
-                        </a>
-
-                    </article>
-
-
-                    <!-- Circle -->
-                    <article class="feature-card">
-
-                        <div class="feature-number">
-                            03
-                        </div>
-
-                        <h3>
-                            Build Your Circle
-                        </h3>
-
-                        <p>
-                            Send requests, accept connections,
-                            and create your own circle of people.
-                        </p>
-
-                        <a href="pages/requests.html">
-                            View Requests →
-                        </a>
-
-                    </article>
-
-                </div>
-
-            </div>
-
-        </section>
-
-
-        <!-- =========================
-             HOW IT WORKS
-        ========================== -->
-        <section class="how-it-works">
-
-            <div class="container">
-
-                <div class="section-heading">
-
-                    <p class="eyebrow">
-                        HOW IT WORKS
-                    </p>
-
-                    <h2>
-                        From Profile to Circle
-                    </h2>
-
-                </div>
-
-
-                <div class="steps">
-
-                    <div class="step">
-
-                        <span>
-                            01
-                        </span>
-
-                        <h3>
-                            Register
-                        </h3>
-
-                        <p>
-                            Create your Circlebook account.
-                        </p>
-
-                    </div>
-
-
-                    <div class="step">
-
-                        <span>
-                            02
-                        </span>
-
-                        <h3>
-                            Introduce Yourself
-                        </h3>
-
-                        <p>
-                            Complete your personal profile.
-                        </p>
-
-                    </div>
-
-
-                    <div class="step">
-
-                        <span>
-                            03
-                        </span>
-
-                        <h3>
-                            Find People
-                        </h3>
-
-                        <p>
-                            Discover people in your community.
-                        </p>
-
-                    </div>
-
-
-                    <div class="step">
-
-                        <span>
-                            04
-                        </span>
-
-                        <h3>
-                            Build Your Circle
-                        </h3>
-
-                        <p>
-                            Connect with people you know.
-                        </p>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        </section>
-
-
-        <!-- =========================
-             CTA
-        ========================== -->
-        <section class="cta">
-
-            <div class="container">
-
-                <h2>
-                    Start Your Circle
-                </h2>
-
-                <p>
-                    Create your profile and discover
-                    your community.
-                </p>
-
-                <a
-                    href="pages/register.html"
-                    class="button primary-button"
-                >
-                    Join The Circlebook
-                </a>
-
-            </div>
-
-        </section>
-
-    </main>
-
-
-    <!-- =========================
-         FOOTER
-    ========================== -->
-    <footer class="site-footer">
-
-        <div class="container footer-content">
-
-            <div>
-
-                <div class="footer-logo">
-                    The Circlebook
-                </div>
-
-                <p>
-                    A simple social directory
-                    for connecting people.
-                </p>
-
-            </div>
-
-
-            <div class="footer-links">
-
-                <a href="index.html">
-                    Home
-                </a>
-
-                <a href="pages/people.html">
-                    People
-                </a>
-
-                <a href="pages/login.html">
-                    Login
-                </a>
-
-                <a href="pages/register.html">
-                    Register
-                </a>
-
-                <a href="pages/settings.html">
-                    Privacy
-                </a>
-
-            </div>
-
-        </div>
-
-
-        <div class="footer-bottom">
-
-            <p>
-                © 2026 The Circlebook.
-                All rights reserved.
-            </p>
-
-        </div>
-
-    </footer>
-
-
-    <!-- Main JavaScript -->
+    <!-- JavaScript Scripts -->
+    <script src="js/state.js"></script>
+    <script src="js/views.js"></script>
     <script src="js/app.js"></script>
-
 </body>
 </html>
