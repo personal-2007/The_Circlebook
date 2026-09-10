@@ -9,45 +9,42 @@ const CirclebookRouter = {
     // Taxonomy Tree Mapping with Titles & Sub-Tabs
     taxonomy: {
         entry: {
-            title: "🚀 ENTRY",
+            title: "ENTRY",
             subTabs: [
-                { id: "welcome", label: "Welcome Screen" },
-                { id: "splash", label: "Splash / Loading" },
-                { id: "onboarding1", label: "Onboarding — Step 1" },
-                { id: "onboarding2", label: "Onboarding — Step 2" },
-                { id: "onboarding3", label: "Onboarding — Step 3" }
+                { id: "welcome", label: "Welcome" },
+                { id: "splash", label: "Splash" },
+                { id: "onboarding1", label: "Onboarding — Identity" },
+                { id: "onboarding2", label: "Onboarding — Skills" },
+                { id: "onboarding3", label: "Onboarding — Circle" }
             ]
         },
         auth: {
-            title: "🔐 AUTH",
+            title: "AUTH",
             subTabs: [
-                { id: "login", label: "Login" },
-                { id: "register", label: "Register" },
-                { id: "forgot", label: "Forgot Password" }
+                { id: "login", label: "Sign In" },
+                { id: "register", label: "Create Account" },
+                { id: "forgot", label: "Password Reset" }
             ]
         },
         home: {
-            title: "🏠 HOME",
+            title: "HOME",
             subTabs: [
-                { id: "feed", label: "Home Feed" },
+                { id: "feed", label: "Feed" },
                 { id: "trending", label: "Trending" },
-                { id: "recommended", label: "Recommended For You" },
-                { id: "happening", label: "What's Happening" }
+                { id: "recommended", label: "Recommended" }
             ]
         },
         discover: {
-            title: "🔎 DISCOVER",
+            title: "DISCOVER",
             subTabs: [
-                { id: "home", label: "Discover Home" },
                 { id: "people", label: "People Search" },
-                { id: "smart_search", label: "Smart Connection Search" },
                 { id: "communities", label: "Communities" },
                 { id: "events", label: "Events" },
                 { id: "opportunities", label: "Opportunities" }
             ]
         },
         mycircle: {
-            title: "👥 MY CIRCLE",
+            title: "MY CIRCLE",
             subTabs: [
                 { id: "all", label: "All Connections" },
                 { id: "inner", label: "Inner Circle" },
@@ -57,89 +54,82 @@ const CirclebookRouter = {
             ]
         },
         profile: {
-            title: "👤 PROFILE",
+            title: "PROFILE",
             subTabs: [
                 { id: "overview", label: "Overview" },
                 { id: "posts", label: "Posts" },
                 { id: "about", label: "About" },
-                { id: "skills", label: "Skills" },
-                { id: "career", label: "Career Profile" }
+                { id: "skills", label: "Skills" }
             ]
         },
         communication: {
-            title: "💬 COMMUNICATION",
+            title: "MESSAGES",
             subTabs: [
-                { id: "chat", label: "Chat Threads" },
-                { id: "group", label: "Group Chat" },
+                { id: "chat", label: "Direct Messages" },
+                { id: "group", label: "Groups" },
                 { id: "requests", label: "Message Requests" }
             ]
         },
         notifications: {
-            title: "🔔 NOTIFICATIONS",
+            title: "NOTIFICATIONS",
             subTabs: [
                 { id: "all", label: "All Notifications" },
                 { id: "social", label: "Social" },
-                { id: "messages", label: "Messages" },
-                { id: "opportunities", label: "Opportunities" }
+                { id: "messages", label: "Messages" }
             ]
         },
         communities: {
-            title: "🌐 COMMUNITIES",
+            title: "COMMUNITIES",
             subTabs: [
-                { id: "discover", label: "Community Discover" },
+                { id: "discover", label: "Discover Communities" },
                 { id: "details", label: "Community Feed" }
             ]
         },
         events: {
-            title: "📅 EVENTS",
+            title: "EVENTS",
             subTabs: [
-                { id: "discover", label: "Event Discover" },
+                { id: "discover", label: "Discover Events" },
                 { id: "my_events", label: "My Events" }
             ]
         },
         career: {
-            title: "💼 CAREER HUB",
+            title: "CAREER HUB",
             subTabs: [
                 { id: "dashboard", label: "Career Dashboard" },
-                { id: "jobs", label: "Job Postings" },
-                { id: "recommendations", label: "AI Career Match" }
+                { id: "jobs", label: "Job Postings" }
             ]
         },
         ai: {
-            title: "🤖 CIRCLE AI",
+            title: "CIRCLE AI",
             subTabs: [
-                { id: "home", label: "AI Home" },
-                { id: "people_finder", label: "AI People Finder" },
-                { id: "post_assistant", label: "Post Assistant" }
+                { id: "home", label: "AI Search & Tools" },
+                { id: "people_finder", label: "Semantic Search" }
             ]
         },
         settings: {
-            title: "⚙️ SETTINGS",
+            title: "SETTINGS",
             subTabs: [
-                { id: "appearance", label: "Appearance & Themes" },
-                { id: "privacy", label: "Privacy" },
-                { id: "security", label: "Security" }
+                { id: "appearance", label: "Appearance" },
+                { id: "privacy", label: "Privacy & Security" }
             ]
         },
         safety: {
-            title: "🛡️ SAFETY",
+            title: "SAFETY",
             subTabs: [
                 { id: "center", label: "Safety Center" },
                 { id: "report", label: "Report Center" }
             ]
         },
         admin: {
-            title: "🧑💼 ADMIN",
+            title: "ADMIN",
             subTabs: [
                 { id: "dashboard", label: "Admin Dashboard" },
-                { id: "users", label: "User Management" },
                 { id: "reports", label: "Moderation Queue" }
             ]
         }
     },
 
     init() {
-        // Parse hash if available e.g. #discover/people
         const hash = window.location.hash.replace("#", "");
         if (hash) {
             const parts = hash.split("/");
@@ -166,7 +156,18 @@ const CirclebookRouter = {
     render() {
         const viewport = document.getElementById("moduleViewport");
         const subNav = document.getElementById("subHeaderNav");
+        const appShell = document.getElementById("appShell");
         if (!viewport) return;
+
+        // Close any open dropdown menus
+        CirclebookApp.closeDropdowns();
+
+        // 1. ENTRY & AUTH LAYOUT ISOLATION
+        if (this.currentModule === "entry" || this.currentModule === "auth") {
+            if (appShell) appShell.classList.add("auth-layout");
+        } else {
+            if (appShell) appShell.classList.remove("auth-layout");
+        }
 
         // Apply theme from store
         if (CirclebookStore.currentUser && CirclebookStore.currentUser.appearance) {
@@ -176,11 +177,20 @@ const CirclebookRouter = {
         // Sync Topbar User Display
         const topbarUsername = document.getElementById("topbarUsername");
         const topbarAvatar = document.getElementById("topbarAvatar");
-        if (topbarUsername && CirclebookStore.currentUser) {
-            topbarUsername.textContent = CirclebookStore.currentUser.name;
+        const dropdownUserName = document.getElementById("dropdownUserName");
+        const dropdownUserHandle = document.getElementById("dropdownUserHandle");
+
+        if (CirclebookStore.currentUser) {
+            if (topbarUsername) topbarUsername.textContent = CirclebookStore.currentUser.name;
+            if (topbarAvatar) topbarAvatar.src = CirclebookStore.currentUser.avatar;
+            if (dropdownUserName) dropdownUserName.textContent = CirclebookStore.currentUser.name;
+            if (dropdownUserHandle) dropdownUserHandle.textContent = `@${CirclebookStore.currentUser.name.toLowerCase().replace(/\s+/g, '_')}`;
         }
-        if (topbarAvatar && CirclebookStore.currentUser) {
-            topbarAvatar.src = CirclebookStore.currentUser.avatar;
+
+        // Sync Admin Link visibility
+        const sidebarAdminBtn = document.getElementById("sidebarAdminBtn");
+        if (sidebarAdminBtn) {
+            sidebarAdminBtn.style.display = (CirclebookStore.currentUser && CirclebookStore.currentUser.role === 'admin') ? 'flex' : 'none';
         }
 
         // Sync Sidebar Circle & Notif Badges
@@ -217,7 +227,7 @@ const CirclebookRouter = {
         if (renderFunc) {
             viewport.innerHTML = renderFunc.call(CirclebookViews, this.currentSubTab);
         } else {
-            viewport.innerHTML = `<div class="circle-card">Module view building...</div>`;
+            viewport.innerHTML = `<div class="circle-card">Module view updating...</div>`;
         }
     }
 };
@@ -228,7 +238,7 @@ const CirclebookApp = {
         if (!box) {
             box = document.createElement("div");
             box.className = "app-toast";
-            box.style.cssText = "position: fixed; bottom: 5rem; left: 50%; transform: translateX(-50%); background: var(--vintage-ink, #1F2937); color: #fff; padding: 0.75rem 1.5rem; border-radius: var(--radius-pill, 9999px); font-size: 0.9rem; font-weight: 600; z-index: 400; box-shadow: var(--shadow-card); opacity: 0; transition: opacity 0.3s;";
+            box.style.cssText = "position: fixed; bottom: 5rem; left: 50%; transform: translateX(-50%); background: var(--deep-navy, #0F172A); color: #fff; padding: 0.75rem 1.5rem; border-radius: var(--radius-pill, 9999px); font-size: 0.88rem; font-weight: 600; z-index: 600; box-shadow: var(--shadow-md); opacity: 0; transition: opacity 0.3s;";
             document.body.appendChild(box);
         }
         box.textContent = message;
@@ -242,6 +252,143 @@ const CirclebookApp = {
         const sidebar = document.querySelector(".app-sidebar");
         if (sidebar) {
             sidebar.classList.toggle("open");
+        }
+    },
+
+    // ---------------------------------------------------------
+    // DROPDOWN MENU CONTROLLER
+    // ---------------------------------------------------------
+    toggleProfileMenu(e) {
+        if (e) e.stopPropagation();
+        const menu = document.getElementById("topbarProfileMenu");
+        if (!menu) return;
+        const isVisible = menu.style.display === "block";
+        this.closeDropdowns();
+        if (!isVisible) {
+            menu.style.display = "block";
+        }
+    },
+
+    togglePostMenu(e, postId) {
+        if (e) e.stopPropagation();
+        const menu = document.getElementById(`postMenu_${postId}`);
+        if (!menu) return;
+        const isVisible = menu.style.display === "block";
+        this.closeDropdowns();
+        if (!isVisible) {
+            menu.style.display = "block";
+        }
+    },
+
+    toggleUserMenu(e, userId) {
+        if (e) e.stopPropagation();
+        const menu = document.getElementById(`userMenu_${userId}`);
+        if (!menu) return;
+        const isVisible = menu.style.display === "block";
+        this.closeDropdowns();
+        if (!isVisible) {
+            menu.style.display = "block";
+        }
+    },
+
+    closeDropdowns() {
+        document.querySelectorAll(".cb-dropdown-menu").forEach(menu => {
+            menu.style.display = "none";
+        });
+    },
+
+    // ---------------------------------------------------------
+    // CONTEXTUAL ACTIONS
+    // ---------------------------------------------------------
+    copyLink(urlOrText = window.location.href) {
+        navigator.clipboard.writeText(urlOrText).then(() => {
+            this.toast("Link copied to clipboard");
+        }).catch(() => {
+            this.toast("Link copied");
+        });
+        this.closeDropdowns();
+    },
+
+    editPost(postId) {
+        this.closeDropdowns();
+        const post = CirclebookStore.posts.find(p => p.id === postId);
+        if (!post) return;
+        this.openModal(
+            "Edit Post",
+            `
+                <div class="form-group">
+                    <label>Post Content</label>
+                    <textarea id="editPostText" class="form-control" rows="4">${post.content}</textarea>
+                </div>
+            `,
+            `
+                <button class="btn-secondary" onclick="CirclebookApp.closeModal()">Cancel</button>
+                <button class="btn-primary" onclick="CirclebookApp.savePostEdit('${postId}')">Save Changes</button>
+            `
+        );
+    },
+
+    savePostEdit(postId) {
+        const text = document.getElementById("editPostText") ? document.getElementById("editPostText").value : "";
+        if (text.trim()) {
+            const post = CirclebookStore.posts.find(p => p.id === postId);
+            if (post) {
+                post.content = text.trim();
+                CirclebookStore.saveState();
+                this.closeModal();
+                this.toast("Post updated");
+                CirclebookRouter.render();
+            }
+        }
+    },
+
+    mutePostNotifications(postId) {
+        this.closeDropdowns();
+        this.toast("Notifications muted for this post");
+    },
+
+    hidePost(postId) {
+        this.closeDropdowns();
+        this.toast("Post hidden from your feed");
+    },
+
+    reportPost(postId) {
+        this.closeDropdowns();
+        const reason = prompt("Please specify reason for reporting this post (e.g., spam, harassment):");
+        if (reason) {
+            this.toast("Post reported. Thank you for keeping the circle safe.");
+        }
+    },
+
+    shareProfile(userId) {
+        this.closeDropdowns();
+        this.copyLink(`${window.location.origin}/#profile`);
+    },
+
+    blockUser(userId) {
+        this.closeDropdowns();
+        const user = CirclebookStore.users.find(u => u.id === userId);
+        const name = user ? user.name : "user";
+        this.openModal(
+            "Block User",
+            `<p style="color: var(--text-secondary); line-height: 1.5;">Are you sure you want to block ${name}? They will no longer be able to message you or see your circle updates.</p>`,
+            `
+                <button class="btn-secondary" onclick="CirclebookApp.closeModal()">Cancel</button>
+                <button class="btn-danger" onclick="CirclebookApp.confirmBlockUser('${userId}')">Block ${name}</button>
+            `
+        );
+    },
+
+    confirmBlockUser(userId) {
+        this.closeModal();
+        this.toast("User blocked");
+    },
+
+    reportUser(userId) {
+        this.closeDropdowns();
+        const reason = prompt("Please specify reason for reporting this profile:");
+        if (reason) {
+            this.toast("User reported for moderation review");
         }
     },
 
@@ -288,7 +435,7 @@ const CirclebookApp = {
 
     openCreatePostModal() {
         this.openModal(
-            "📜 Create New Circle Post",
+            "Create Post",
             `
                 <div class="form-group">
                     <label>Post Category</label>
@@ -296,13 +443,12 @@ const CirclebookApp = {
                         <option>General</option>
                         <option>Design</option>
                         <option>Engineering</option>
-                        <option>Artificial Intelligence</option>
                         <option>Career & Jobs</option>
                     </select>
                 </div>
                 <div class="form-group">
                     <label>What's on your mind?</label>
-                    <textarea id="modalPostText" class="form-control" rows="4" placeholder="Share an update, insights, or vintage typography thoughts with your circle..."></textarea>
+                    <textarea id="modalPostText" class="form-control" rows="4" placeholder="Share an update, paper, or insight with your circle..."></textarea>
                 </div>
                 <div class="form-group">
                     <label>Optional Image URL</label>
@@ -311,7 +457,7 @@ const CirclebookApp = {
             `,
             `
                 <button class="btn-secondary" onclick="CirclebookApp.closeModal()">Cancel</button>
-                <button class="btn-primary" onclick="CirclebookApp.submitCreatePostModal()">Publish Post 🚀</button>
+                <button class="btn-primary" onclick="CirclebookApp.submitCreatePostModal()">Publish Post</button>
             `
         );
     },
@@ -324,7 +470,7 @@ const CirclebookApp = {
         if (text.trim()) {
             CirclebookStore.addPost(text.trim(), cat, img ? img.trim() : null);
             this.closeModal();
-            this.toast("Post published successfully!");
+            this.toast("Post published");
             CirclebookRouter.navigate("home", "feed");
         } else {
             this.toast("Please enter content for your post.");
@@ -332,9 +478,10 @@ const CirclebookApp = {
     },
 
     confirmDeletePost(postId) {
+        this.closeDropdowns();
         this.openModal(
-            "⚠️ Confirm Post Deletion",
-            `<p style="color: var(--text-secondary); line-height: 1.5;">Are you sure you want to remove this post from your feed? This action cannot be undone.</p>`,
+            "Confirm Post Deletion",
+            `<p style="color: var(--text-secondary); line-height: 1.5;">Are you sure you want to remove this post? This action cannot be undone.</p>`,
             `
                 <button class="btn-secondary" onclick="CirclebookApp.closeModal()">Cancel</button>
                 <button class="btn-danger" onclick="CirclebookStore.deletePost('${postId}'); CirclebookApp.closeModal(); CirclebookApp.toast('Post deleted'); CirclebookRouter.render();">Delete Post</button>
@@ -345,7 +492,7 @@ const CirclebookApp = {
     openEditProfileModal() {
         const u = CirclebookStore.currentUser;
         this.openModal(
-            "✏️ Edit Profile Information",
+            "Edit Profile Information",
             `
                 <div class="form-group"><label>Full Name</label><input type="text" id="editName" class="form-control" value="${u.name}"></div>
                 <div class="form-group"><label>Headline / Title</label><input type="text" id="editHeadline" class="form-control" value="${u.headline}"></div>
@@ -369,17 +516,17 @@ const CirclebookApp = {
 
         CirclebookStore.updateUserProfile({ name, headline, location, college, about });
         this.closeModal();
-        this.toast("Profile updated successfully!");
+        this.toast("Profile updated");
         CirclebookRouter.render();
     },
 
     confirmLogout() {
         this.openModal(
-            "🚪 Sign Out Confirmation",
+            "Log out?",
             `<p style="color: var(--text-secondary); line-height: 1.5;">Are you sure you want to log out of The Circlebook?</p>`,
             `
                 <button class="btn-secondary" onclick="CirclebookApp.closeModal()">Cancel</button>
-                <button class="btn-danger" onclick="CirclebookApp.executeLogout()">Sign Out</button>
+                <button class="btn-danger" onclick="CirclebookApp.executeLogout()">Log out</button>
             `
         );
     },
@@ -388,7 +535,7 @@ const CirclebookApp = {
         localStorage.removeItem("circlebook_current_user");
         sessionStorage.removeItem("circlebook_splash_seen");
         this.closeModal();
-        this.toast("Logged out successfully");
+        this.toast("Logged out");
         CirclebookRouter.navigate("auth", "login");
     },
 
@@ -397,7 +544,7 @@ const CirclebookApp = {
         if (input && input.value.trim()) {
             CirclebookStore.addPost(input.value.trim());
             input.value = "";
-            this.toast("Post published to circle feed!");
+            this.toast("Post published to circle feed");
             CirclebookRouter.render();
         }
     },
@@ -408,9 +555,8 @@ const CirclebookApp = {
             CirclebookStore.sendChatMessage(chatId, input.value.trim());
             input.value = "";
             CirclebookRouter.render();
-            // Simulate reply from connection
             setTimeout(() => {
-                CirclebookStore.sendChatMessage(chatId, "Received your message! Loving this modern Circlebook interface.");
+                CirclebookStore.sendChatMessage(chatId, "Received your message!");
                 CirclebookRouter.render();
             }, 1200);
         }
@@ -419,7 +565,7 @@ const CirclebookApp = {
     handleLoginSubmit() {
         const email = document.getElementById("loginEmail") ? document.getElementById("loginEmail").value : "";
         if (email) {
-            this.toast("Login successful!");
+            this.toast("Signed in successfully");
             CirclebookRouter.navigate("home", "feed");
         }
     },
@@ -430,12 +576,12 @@ const CirclebookApp = {
         const pass = document.getElementById("regPass") ? document.getElementById("regPass").value : "password";
 
         CirclebookStore.registerUser(name, email, pass);
-        this.toast("Verification code sent to your email!");
+        this.toast("Verification code sent to your email");
         CirclebookRouter.navigate("auth", "otp");
     },
 
     handleOTPSubmit() {
-        this.toast("OTP Verified! Welcome to The Circlebook.");
+        this.toast("Account verified");
         CirclebookRouter.navigate("entry", "onboarding1");
     },
 
@@ -451,7 +597,7 @@ const CirclebookApp = {
 
     completeOnboarding() {
         CirclebookStore.updateUserProfile({ isOnboarded: true });
-        this.toast("Onboarding Complete! Welcome to your home feed.");
+        this.toast("Setup complete");
         CirclebookRouter.navigate("home", "feed");
     },
 
@@ -459,23 +605,23 @@ const CirclebookApp = {
         if (!promptText) return;
         const target = document.getElementById("aiPromptResult");
         if (target) {
-            target.innerHTML = `<em>Circle AI processing: "${promptText}"...</em>`;
+            target.innerHTML = `<em>Processing query: "${promptText}"...</em>`;
             setTimeout(() => {
                 if (promptText.toLowerCase().includes("designer") || promptText.toLowerCase().includes("find")) {
                     target.innerHTML = `
-                        <strong>AI Connection Match Result:</strong><br>
-                        • <strong>Priya Nair</strong> (@priya_nair) — Product Designer in Mumbai (98% Match). Shared interests: Vintage Typography.<br>
+                        <strong>Search Results:</strong><br>
+                        • <strong>Priya Nair</strong> (@priya_nair) — Product Designer in Mumbai (98% Match). Skills: UI/UX, Typography.<br>
                         • <strong>Kavya Iyer</strong> (@kavya_iyer) — Growth Marketer (85% Match).
                     `;
                 } else if (promptText.toLowerCase().includes("post") || promptText.toLowerCase().includes("draft")) {
                     target.innerHTML = `
-                        <strong>AI Draft Post Suggestion:</strong><br>
-                        <em>"Exploring retro community directory design patterns. There's something deeply satisfying about clean serif headlines and structured card grids. What retro aesthetic do you miss most?"</em>
+                        <strong>Suggested Post Draft:</strong><br>
+                        <em>"Exploring modern community directory design patterns. Clean serif headlines and structured card grids provide a great foundation. What interface style do you prefer?"</em>
                     `;
                 } else {
-                    target.innerHTML = `<strong>Circle AI Insight:</strong> Evaluated query "${promptText}". Found 4 relevant circle connections and 2 upcoming community events matching your profile.`;
+                    target.innerHTML = `<strong>Search Result:</strong> Evaluated query "${promptText}". Found 4 circle connections and 2 upcoming community events matching your criteria.`;
                 }
-            }, 700);
+            }, 500);
         }
     },
 
@@ -493,7 +639,7 @@ const CirclebookApp = {
             if (!filtered.length) {
                 grid.innerHTML = `
                     <div style="grid-column: 1 / -1;" class="empty-state-box">
-                        <span class="empty-state-icon">🔍</span>
+                        <div class="empty-state-icon">${CirclebookIcons.get('search', '', 48)}</div>
                         <div class="empty-state-title">No People Found</div>
                         <div class="empty-state-desc">No circle members match "${query}". Try searching by skills such as "React", "Python", or "Design".</div>
                     </div>
@@ -501,21 +647,21 @@ const CirclebookApp = {
                 return;
             }
             grid.innerHTML = filtered.map(u => `
-                <div class="circle-card" style="text-align: center; margin-bottom: 0;">
+                <div class="circle-card" style="text-align: center; margin-bottom: 0; position: relative;">
                     <img src="${u.avatar}" style="width: 76px; height: 76px; border-radius: 50%; object-fit: cover; margin-bottom: 0.5rem; border: 2px solid var(--border);" alt="${u.name}" />
                     <h3 style="font-size: 1.05rem; font-weight: 700; margin-bottom: 0.2rem;">${u.name}</h3>
                     <p style="font-size: 0.82rem; color: var(--text-secondary); margin-bottom: 0.4rem; min-height: 2.4em;">${u.headline}</p>
-                    <p style="font-size: 0.78rem; color: var(--text-muted); margin-bottom: 0.75rem;">📍 ${u.location} • 🎓 ${u.college}</p>
+                    <p style="font-size: 0.78rem; color: var(--text-muted); margin-bottom: 0.75rem;">${u.location} • ${u.college}</p>
                     <div style="margin-bottom: 0.85rem; min-height: 28px;">
                         ${u.skills.slice(0, 3).map(s => `<span class="tag-badge">${s}</span>`).join('')}
                     </div>
-                    <div style="display: flex; gap: 0.5rem; justify-content: center;">
+                    <div style="display: flex; gap: 0.5rem; justify-content: center; align-items: center;">
                         ${u.connectionStatus === 'connected' ? `
-                            <button class="btn-secondary" style="font-size: 0.8rem; padding: 0.35rem 0.75rem; color: var(--india-green);" disabled>✓ Connected</button>
+                            <button class="btn-secondary" style="font-size: 0.8rem; padding: 0.35rem 0.75rem; color: var(--success);" disabled>Connected</button>
                         ` : u.connectionStatus === 'pending_sent' ? `
-                            <button class="btn-secondary" style="font-size: 0.8rem; padding: 0.35rem 0.75rem;" onclick="CirclebookStore.cancelCircleRequest('${u.id}'); CirclebookApp.toast('Request cancelled'); CirclebookRouter.render();">⏳ Sent</button>
+                            <button class="btn-secondary" style="font-size: 0.8rem; padding: 0.35rem 0.75rem;" onclick="CirclebookStore.cancelCircleRequest('${u.id}'); CirclebookApp.toast('Request cancelled'); CirclebookRouter.render();">Sent</button>
                         ` : `
-                            <button class="btn-primary" style="font-size: 0.8rem; padding: 0.35rem 0.75rem;" onclick="CirclebookStore.sendCircleRequest('${u.id}'); CirclebookApp.toast('Circle request sent to ${u.name}'); CirclebookRouter.render();">+ Circle</button>
+                            <button class="btn-primary" style="font-size: 0.8rem; padding: 0.35rem 0.75rem;" onclick="CirclebookStore.sendCircleRequest('${u.id}'); CirclebookApp.toast('Request sent to ${u.name}'); CirclebookRouter.render();">Add Friend</button>
                         `}
                         <button class="btn-secondary" style="font-size: 0.8rem; padding: 0.35rem 0.75rem;" onclick="CirclebookRouter.navigate('profile', 'overview')">Profile</button>
                     </div>
@@ -524,6 +670,13 @@ const CirclebookApp = {
         }, 150);
     }
 };
+
+// Global Click listener to close dropdowns when clicking outside
+document.addEventListener("click", (e) => {
+    if (!e.target.closest(".cb-dropdown-menu") && !e.target.closest(".topbar-user") && !e.target.closest(".post-more-btn")) {
+        CirclebookApp.closeDropdowns();
+    }
+});
 
 // Initialize Application on DOM Ready
 document.addEventListener("DOMContentLoaded", () => {

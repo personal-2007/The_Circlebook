@@ -1533,3 +1533,150 @@ select:focus {
         transition-duration: 0.01ms !important;
     }
 }
+
+/* =========================================================
+   CLASSICAL UI & CONTEXTUAL DROPDOWN SYSTEM
+   ========================================================= */
+
+/* SVG Icon helper styling */
+.cb-icon {
+    flex-shrink: 0;
+    vertical-align: middle;
+}
+
+/* Contextual Dropdown Menus */
+.cb-dropdown-menu {
+    position: absolute;
+    right: 0;
+    top: calc(100% + 6px);
+    width: 230px;
+    background: var(--surface, #ffffff);
+    border: 1px solid var(--border, #E2E8F0);
+    border-radius: var(--radius-md, 12px);
+    box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.12), 0 8px 10px -6px rgba(15, 23, 42, 0.08);
+    padding: 0.4rem;
+    z-index: 1000;
+    animation: cbDropdownSlideDown 0.15s ease-out;
+}
+
+@keyframes cbDropdownSlideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-6px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.cb-dropdown-header {
+    padding: 0.6rem 0.75rem;
+}
+
+.cb-dropdown-divider {
+    height: 1px;
+    background: var(--border, #E2E8F0);
+    margin: 0.35rem 0;
+}
+
+.cb-dropdown-item {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.55rem 0.75rem;
+    background: transparent;
+    border: none;
+    border-radius: var(--radius-sm, 6px);
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--text-primary, #0F172A);
+    cursor: pointer;
+    text-align: left;
+    transition: background 0.12s, color 0.12s;
+}
+
+.cb-dropdown-item:hover {
+    background: var(--background, #F8FAFC);
+    color: var(--primary-blue, #2563EB);
+}
+
+.cb-dropdown-item.danger {
+    color: var(--danger, #DC2626);
+}
+
+.cb-dropdown-item.danger:hover {
+    background: rgba(220, 38, 38, 0.08);
+    color: var(--danger, #DC2626);
+}
+
+/* Post Action Three-Dot Button */
+.post-more-btn {
+    background: transparent;
+    border: none;
+    padding: 0.35rem;
+    border-radius: 50%;
+    color: var(--text-secondary, #64748B);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.15s, color 0.15s;
+}
+
+.post-more-btn:hover {
+    background: var(--border, #E2E8F0);
+    color: var(--text-primary, #0F172A);
+}
+
+/* Auth / Entry Layout Isolation */
+.app-shell.auth-layout {
+    display: block;
+    min-height: 100vh;
+}
+
+.app-shell.auth-layout .app-sidebar,
+.app-shell.auth-layout .app-topbar,
+.app-shell.auth-layout .mobile-bottom-nav,
+.app-shell.auth-layout .sub-header-nav {
+    display: none !important;
+}
+
+.app-shell.auth-layout .app-main {
+    margin-left: 0 !important;
+    padding: 0 !important;
+    max-width: 100% !important;
+    width: 100% !important;
+}
+
+/* Card Visual Refinement */
+.circle-card {
+    background: var(--surface, #FFFFFF);
+    border: 1px solid var(--border, #E2E8F0);
+    border-radius: var(--radius-md, 14px);
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+    padding: 1.25rem;
+    margin-bottom: 1.25rem;
+}
+
+.topbar-user {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.25rem 0.5rem;
+    border-radius: var(--radius-pill, 9999px);
+    transition: background 0.15s;
+}
+
+.topbar-user:hover {
+    background: rgba(0, 0, 0, 0.05);
+}
+
+.topbar-user-chevron {
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+}
+

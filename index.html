@@ -27,10 +27,10 @@
     <!-- =========================================================
          MASTER APP SHELL LAYOUT
     ========================================================= -->
-    <div class="app-shell">
+    <div class="app-shell" id="appShell">
 
-        <!-- PRIMARY SIDEBAR NAVIGATION (15 MASTER DOMAINS) -->
-        <aside class="app-sidebar">
+        <!-- PRIMARY SIDEBAR NAVIGATION -->
+        <aside class="app-sidebar" id="appSidebar">
             <div class="sidebar-header">
                 <a href="#home/feed" class="sidebar-brand">
                     <img src="assets/images/circlebook-logo.png" alt="The Circlebook Logo" class="brand-logo-img" />
@@ -39,62 +39,67 @@
             </div>
 
             <nav class="sidebar-nav">
-                <div class="sidebar-section-title">CORE PLATFORM</div>
-                <button class="sidebar-link" data-module="entry" onclick="CirclebookRouter.navigate('entry')">
-                    <span class="sidebar-icon">🚀</span> ENTRY
-                </button>
-                <button class="sidebar-link" data-module="auth" onclick="CirclebookRouter.navigate('auth')">
-                    <span class="sidebar-icon">🔐</span> AUTH
-                </button>
+                <div class="sidebar-section-title">NAVIGATION</div>
                 <button class="sidebar-link active" data-module="home" onclick="CirclebookRouter.navigate('home')">
-                    <span class="sidebar-icon">🏠</span> HOME
-                </button>
-
-                <div class="sidebar-section-title">EXPLORE & CIRCLE</div>
-                <button class="sidebar-link" data-module="discover" onclick="CirclebookRouter.navigate('discover')">
-                    <span class="sidebar-icon">🔎</span> DISCOVER
+                    <span class="sidebar-icon"><script>document.write(CirclebookIcons.get('home'))</script></span>
+                    <span>Home</span>
                 </button>
                 <button class="sidebar-link" data-module="mycircle" onclick="CirclebookRouter.navigate('mycircle')">
-                    <span class="sidebar-icon">👥</span> MY CIRCLE
+                    <span class="sidebar-icon"><script>document.write(CirclebookIcons.get('users'))</script></span>
+                    <span>My Circle</span>
                     <span class="sidebar-badge" id="sidebarCircleBadge">42</span>
                 </button>
-                <button class="sidebar-link" data-module="profile" onclick="CirclebookRouter.navigate('profile')">
-                    <span class="sidebar-icon">👤</span> PROFILE
-                </button>
-
-                <div class="sidebar-section-title">INTERACTION & HUBS</div>
-                <button class="sidebar-link" data-module="communication" onclick="CirclebookRouter.navigate('communication')">
-                    <span class="sidebar-icon">💬</span> COMMUNICATION
-                    <span class="sidebar-badge" style="background: var(--secondary-badge, #7C3AED);">3</span>
-                </button>
-                <button class="sidebar-link" data-module="notifications" onclick="CirclebookRouter.navigate('notifications')">
-                    <span class="sidebar-icon">🔔</span> NOTIFICATIONS
-                    <span class="sidebar-badge" id="sidebarNotifBadge">4</span>
+                <button class="sidebar-link" data-module="discover" onclick="CirclebookRouter.navigate('discover')">
+                    <span class="sidebar-icon"><script>document.write(CirclebookIcons.get('discover'))</script></span>
+                    <span>Discover</span>
                 </button>
                 <button class="sidebar-link" data-module="communities" onclick="CirclebookRouter.navigate('communities')">
-                    <span class="sidebar-icon">🌐</span> COMMUNITIES
+                    <span class="sidebar-icon"><script>document.write(CirclebookIcons.get('communities'))</script></span>
+                    <span>Communities</span>
                 </button>
                 <button class="sidebar-link" data-module="events" onclick="CirclebookRouter.navigate('events')">
-                    <span class="sidebar-icon">📅</span> EVENTS
+                    <span class="sidebar-icon"><script>document.write(CirclebookIcons.get('calendar'))</script></span>
+                    <span>Events</span>
                 </button>
 
-                <div class="sidebar-section-title">CAREER & AI</div>
+                <div class="sidebar-section-title">MESSAGES & NOTIFICATIONS</div>
+                <button class="sidebar-link" data-module="communication" onclick="CirclebookRouter.navigate('communication')">
+                    <span class="sidebar-icon"><script>document.write(CirclebookIcons.get('message'))</script></span>
+                    <span>Messages</span>
+                    <span class="sidebar-badge" style="background: var(--primary-blue, #2563EB);">3</span>
+                </button>
+                <button class="sidebar-link" data-module="notifications" onclick="CirclebookRouter.navigate('notifications')">
+                    <span class="sidebar-icon"><script>document.write(CirclebookIcons.get('bell'))</script></span>
+                    <span>Notifications</span>
+                    <span class="sidebar-badge" id="sidebarNotifBadge">4</span>
+                </button>
+
+                <div class="sidebar-section-title">CAREER & TOOLS</div>
                 <button class="sidebar-link" data-module="career" onclick="CirclebookRouter.navigate('career')">
-                    <span class="sidebar-icon">💼</span> CAREER HUB
+                    <span class="sidebar-icon"><script>document.write(CirclebookIcons.get('briefcase'))</script></span>
+                    <span>Career Hub</span>
                 </button>
                 <button class="sidebar-link" data-module="ai" onclick="CirclebookRouter.navigate('ai')">
-                    <span class="sidebar-icon">🤖</span> CIRCLE AI
+                    <span class="sidebar-icon"><script>document.write(CirclebookIcons.get('sparkles'))</script></span>
+                    <span>Circle AI</span>
                 </button>
 
-                <div class="sidebar-section-title">CONTROL & GOVERNANCE</div>
+                <div class="sidebar-section-title">ACCOUNT</div>
+                <button class="sidebar-link" data-module="profile" onclick="CirclebookRouter.navigate('profile')">
+                    <span class="sidebar-icon"><script>document.write(CirclebookIcons.get('user'))</script></span>
+                    <span>Profile</span>
+                </button>
                 <button class="sidebar-link" data-module="settings" onclick="CirclebookRouter.navigate('settings')">
-                    <span class="sidebar-icon">⚙️</span> SETTINGS
+                    <span class="sidebar-icon"><script>document.write(CirclebookIcons.get('settings'))</script></span>
+                    <span>Settings</span>
                 </button>
                 <button class="sidebar-link" data-module="safety" onclick="CirclebookRouter.navigate('safety')">
-                    <span class="sidebar-icon">🛡️</span> SAFETY
+                    <span class="sidebar-icon"><script>document.write(CirclebookIcons.get('shield'))</script></span>
+                    <span>Safety</span>
                 </button>
-                <button class="sidebar-link" data-module="admin" onclick="CirclebookRouter.navigate('admin')">
-                    <span class="sidebar-icon">🧑💼</span> ADMIN
+                <button class="sidebar-link admin-only-link" data-module="admin" onclick="CirclebookRouter.navigate('admin')" style="display: none;" id="sidebarAdminBtn">
+                    <span class="sidebar-icon"><script>document.write(CirclebookIcons.get('lock'))</script></span>
+                    <span>Admin Suite</span>
                 </button>
             </nav>
         </aside>
@@ -102,23 +107,53 @@
         <!-- MAIN CONTENT AREA -->
         <main class="app-main">
             <!-- TOP APP HEADER -->
-            <header class="app-topbar">
+            <header class="app-topbar" id="appTopbar">
                 <div class="topbar-left">
-                    <button class="mobile-toggle" onclick="CirclebookApp.toggleMobileSidebar()">☰</button>
+                    <button class="mobile-toggle" aria-label="Toggle Mobile Menu" onclick="CirclebookApp.toggleMobileSidebar()">
+                        <script>document.write(CirclebookIcons.get('menu', '', 20))</script>
+                    </button>
                     <div class="global-search-bar">
-                        <span class="search-icon">🔍</span>
-                        <input type="text" id="globalSearchInput" placeholder="Search people, skills, interests..." onfocus="CirclebookRouter.navigate('discover', 'people')" oninput="CirclebookApp.filterDiscoverPeople(this.value)">
+                        <span class="search-icon"><script>document.write(CirclebookIcons.get('search', '', 16))</script></span>
+                        <input type="text" id="globalSearchInput" placeholder="Search people, topics, skills..." onfocus="CirclebookRouter.navigate('discover', 'people')" oninput="CirclebookApp.filterDiscoverPeople(this.value)">
                     </div>
                 </div>
 
                 <div class="topbar-actions">
-                    <button class="topbar-btn" title="Toggle Theme" onclick="CirclebookApp.toggleNextTheme()">🎨</button>
-                    <button class="topbar-btn" title="Notifications" onclick="CirclebookRouter.navigate('notifications')">🔔</button>
-                    <button class="topbar-btn" title="Messages" onclick="CirclebookRouter.navigate('communication')">💬</button>
+                    <button class="topbar-btn" title="Messages" aria-label="Messages" onclick="CirclebookRouter.navigate('communication')">
+                        <script>document.write(CirclebookIcons.get('message', '', 18))</script>
+                    </button>
+                    <button class="topbar-btn" title="Notifications" aria-label="Notifications" onclick="CirclebookRouter.navigate('notifications')">
+                        <script>document.write(CirclebookIcons.get('bell', '', 18))</script>
+                    </button>
                     
-                    <div class="topbar-user" onclick="CirclebookRouter.navigate('profile')" id="topbarUserBtn">
-                        <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=250&q=80" id="topbarAvatar" class="topbar-avatar" alt="User Avatar" />
-                        <span class="topbar-username" id="topbarUsername">Aarav Sharma</span>
+                    <div class="topbar-user-wrapper" style="position: relative;">
+                        <div class="topbar-user" onclick="CirclebookApp.toggleProfileMenu(event)" id="topbarUserBtn" aria-expanded="false" role="button" aria-label="User Account Menu">
+                            <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=250&q=80" id="topbarAvatar" class="topbar-avatar" alt="User Avatar" />
+                            <span class="topbar-username" id="topbarUsername">Aarav Sharma</span>
+                            <span class="topbar-user-chevron"><script>document.write(CirclebookIcons.get('chevron-down', '', 14))</script></span>
+                        </div>
+                        
+                        <!-- PROFILE DROPDOWN MENU -->
+                        <div class="cb-dropdown-menu" id="topbarProfileMenu" style="display: none;">
+                            <div class="cb-dropdown-header">
+                                <div style="font-weight: 600;" id="dropdownUserName">Aarav Sharma</div>
+                                <div style="font-size: 0.78rem; color: var(--text-secondary);" id="dropdownUserHandle">@aarav_sharma</div>
+                            </div>
+                            <div class="cb-dropdown-divider"></div>
+                            <button class="cb-dropdown-item" onclick="CirclebookApp.closeDropdowns(); CirclebookRouter.navigate('profile');">
+                                <script>document.write(CirclebookIcons.get('user', '', 16))</script> View Profile
+                            </button>
+                            <button class="cb-dropdown-item" onclick="CirclebookApp.closeDropdowns(); CirclebookRouter.navigate('settings');">
+                                <script>document.write(CirclebookIcons.get('settings', '', 16))</script> Settings & Privacy
+                            </button>
+                            <button class="cb-dropdown-item" onclick="CirclebookApp.closeDropdowns(); CirclebookRouter.navigate('safety');">
+                                <script>document.write(CirclebookIcons.get('shield', '', 16))</script> Safety Center
+                            </button>
+                            <div class="cb-dropdown-divider"></div>
+                            <button class="cb-dropdown-item danger" onclick="CirclebookApp.closeDropdowns(); CirclebookApp.confirmLogout();">
+                                <script>document.write(CirclebookIcons.get('logout', '', 16))</script> Log Out
+                            </button>
+                        </div>
                     </div>
                 </div>
             </header>
@@ -137,32 +172,29 @@
     </div>
 
     <!-- MOBILE STICKY BOTTOM NAVIGATION -->
-    <nav class="mobile-bottom-nav">
-        <button class="mobile-nav-item" onclick="CirclebookRouter.navigate('home')">
-            <span class="nav-icon">🏠</span>
+    <nav class="mobile-bottom-nav" id="mobileBottomNav">
+        <button class="mobile-nav-item" aria-label="Home" onclick="CirclebookRouter.navigate('home')">
+            <span class="nav-icon"><script>document.write(CirclebookIcons.get('home', '', 20))</script></span>
             <span>Home</span>
         </button>
-        <button class="mobile-nav-item" onclick="CirclebookRouter.navigate('discover', 'people')">
-            <span class="nav-icon">🔎</span>
+        <button class="mobile-nav-item" aria-label="People" onclick="CirclebookRouter.navigate('discover', 'people')">
+            <span class="nav-icon"><script>document.write(CirclebookIcons.get('users', '', 20))</script></span>
             <span>People</span>
         </button>
-        <button class="mobile-nav-item" onclick="CirclebookApp.openCreatePostModal()">
-            <div class="mobile-nav-create">+</div>
+        <button class="mobile-nav-item" aria-label="Create Post" onclick="CirclebookApp.openCreatePostModal()">
+            <div class="mobile-nav-create">
+                <script>document.write(CirclebookIcons.get('plus', '', 22))</script>
+            </div>
         </button>
-        <button class="mobile-nav-item" onclick="CirclebookRouter.navigate('communication')">
-            <span class="nav-icon">💬</span>
+        <button class="mobile-nav-item" aria-label="Messages" onclick="CirclebookRouter.navigate('communication')">
+            <span class="nav-icon"><script>document.write(CirclebookIcons.get('message', '', 20))</script></span>
             <span>Messages</span>
         </button>
-        <button class="mobile-nav-item" onclick="CirclebookRouter.navigate('profile')">
-            <span class="nav-icon">👤</span>
+        <button class="mobile-nav-item" aria-label="Profile" onclick="CirclebookRouter.navigate('profile')">
+            <span class="nav-icon"><script>document.write(CirclebookIcons.get('user', '', 20))</script></span>
             <span>Profile</span>
         </button>
     </nav>
-
-    <!-- FLOATING AI ASSISTANT ACTION BUTTON -->
-    <button class="floating-ai-btn" title="Circle AI Assistant" onclick="CirclebookRouter.navigate('ai')">
-        ✨
-    </button>
 
     <!-- REUSABLE GLOBAL MODAL BACKDROP -->
     <div class="circle-modal-backdrop" id="globalModalBackdrop">
@@ -172,6 +204,7 @@
     </div>
 
     <!-- JavaScript Scripts -->
+    <script src="js/icons.js"></script>
     <script src="js/state.js"></script>
     <script src="js/views.js"></script>
     <script src="js/app.js"></script>

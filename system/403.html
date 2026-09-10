@@ -1,1 +1,65 @@
-<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Circlebook System</title><link rel="stylesheet" href="../css/modules.css"></head><body style="padding:3rem;text-align:center;"><h1>403 Forbidden</h1></body></html>
+<!DOCTYPE html>
+<html lang="en" data-theme="glass-light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>403 Forbidden - Circlebook System</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/modules.css">
+    
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: var(--bg-color);
+        }
+        .error-card {
+            text-align: center;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(20px);
+            padding: 4rem;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+        .error-icon {
+            font-size: 5rem;
+            margin-bottom: 1rem;
+        }
+        .error-title {
+            font-size: 3rem;
+            margin-bottom: 0.5rem;
+        }
+        .error-subtitle {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+        }
+        .btn-primary {
+            padding: 0.75rem 2rem;
+            border-radius: 8px;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+            transition: transform 0.2s;
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+    <div class="error-card">
+        <div class="error-icon">🛡️</div>
+        <h1 class="error-title">403</h1>
+        <p class="error-subtitle">Access to this domain is restricted or you do not have permission to view this page.</p>
+        <button class="btn-primary" onclick="window.location.href = '../index.html'">Return to Home</button>
+    </div>
+</body>
+</html>
