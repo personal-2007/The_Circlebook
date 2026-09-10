@@ -58,8 +58,7 @@ const CirclebookRouter = {
             subTabs: [
                 { id: "overview", label: "Overview" },
                 { id: "posts", label: "Posts" },
-                { id: "about", label: "About" },
-                { id: "skills", label: "Skills" }
+                { id: "about", label: "About" }
             ]
         },
         communication: {
@@ -252,6 +251,37 @@ const CirclebookApp = {
         const sidebar = document.querySelector(".app-sidebar");
         if (sidebar) {
             sidebar.classList.toggle("open");
+        }
+    },
+
+    toggleThemeMenu(e) {
+        if (e) e.stopPropagation();
+        const menu = document.getElementById("topbarThemeMenu");
+        if (!menu) return;
+        const isVisible = menu.style.display === "block";
+        this.closeDropdowns();
+        if (!isVisible) {
+            menu.style.display = "block";
+        }
+    },
+
+    toggleSidebarMinimize() {
+        const appShell = document.getElementById("appShell");
+        const sidebar = document.querySelector(".app-sidebar");
+
+        if (appShell) {
+            appShell.classList.toggle("sidebar-collapsed");
+        }
+
+        if (sidebar) {
+            sidebar.classList.toggle("minimized");
+        }
+
+        const toggleBtn = document.querySelector(".sidebar-toggle");
+        if (toggleBtn) {
+            const isCollapsed = appShell ? appShell.classList.contains("sidebar-collapsed") : sidebar?.classList.contains("minimized");
+            toggleBtn.setAttribute("aria-label", isCollapsed ? "Expand menu" : "Minimize menu");
+            toggleBtn.innerHTML = CirclebookIcons.get(isCollapsed ? "chevron-right" : "chevron-left", "", 18);
         }
     },
 

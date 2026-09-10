@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/modules.css">
     <link rel="stylesheet" href="css/responsive.css">
+    <script src="js/icons.js"></script>
 
     <!-- Splash Screen Redirect Check -->
     <script>
@@ -36,6 +37,9 @@
                     <img src="assets/images/circlebook-logo.png" alt="The Circlebook Logo" class="brand-logo-img" />
                     <span>The <strong>Circlebook</strong></span>
                 </a>
+                <button class="sidebar-toggle" type="button" aria-label="Minimize menu" onclick="CirclebookApp.toggleSidebarMinimize()">
+                    <script>document.write(CirclebookIcons.get('chevron-left', '', 18))</script>
+                </button>
             </div>
 
             <nav class="sidebar-nav">
@@ -125,6 +129,29 @@
                     <button class="topbar-btn" title="Notifications" aria-label="Notifications" onclick="CirclebookRouter.navigate('notifications')">
                         <script>document.write(CirclebookIcons.get('bell', '', 18))</script>
                     </button>
+
+                    <div class="topbar-theme-wrapper" style="position: relative;">
+                        <button class="topbar-btn theme-btn" title="Theme" aria-label="Theme menu" onclick="CirclebookApp.toggleThemeMenu(event)">
+                            <span class="theme-btn-label">Theme</span>
+                        </button>
+                        <div class="cb-dropdown-menu theme-menu" id="topbarThemeMenu" style="display: none; min-width: 190px;">
+                            <div class="cb-dropdown-header" style="padding-bottom: 0.5rem;">
+                                <div style="font-weight: 700;">Choose Theme</div>
+                            </div>
+                            <button class="cb-dropdown-item" onclick="CirclebookApp.closeDropdowns(); CirclebookStore.applyTheme('glass-light'); CirclebookRouter.render();">
+                                <span class="theme-swatch theme-light"></span> Glass Light
+                            </button>
+                            <button class="cb-dropdown-item" onclick="CirclebookApp.closeDropdowns(); CirclebookStore.applyTheme('glass-dark'); CirclebookRouter.render();">
+                                <span class="theme-swatch theme-dark"></span> Glass Dark
+                            </button>
+                            <button class="cb-dropdown-item" onclick="CirclebookApp.closeDropdowns(); CirclebookStore.applyTheme('modern-blue'); CirclebookRouter.render();">
+                                <span class="theme-swatch theme-modern-blue"></span> Modern Blue
+                            </button>
+                            <button class="cb-dropdown-item" onclick="CirclebookApp.closeDropdowns(); CirclebookStore.applyTheme('purple-luxe'); CirclebookRouter.render();">
+                                <span class="theme-swatch theme-purple"></span> Purple Luxe
+                            </button>
+                        </div>
+                    </div>
                     
                     <div class="topbar-user-wrapper" style="position: relative;">
                         <div class="topbar-user" onclick="CirclebookApp.toggleProfileMenu(event)" id="topbarUserBtn" aria-expanded="false" role="button" aria-label="User Account Menu">
@@ -204,7 +231,6 @@
     </div>
 
     <!-- JavaScript Scripts -->
-    <script src="js/icons.js"></script>
     <script src="js/state.js"></script>
     <script src="js/views.js"></script>
     <script src="js/app.js"></script>

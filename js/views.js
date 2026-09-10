@@ -502,13 +502,6 @@ const CirclebookViews = {
             <div class="circle-card">
                 <div class="circle-card-title" style="font-weight: 700; font-size: 1rem; margin-bottom: 0.75rem;">About</div>
                 <p style="line-height: 1.6; color: var(--text-primary); font-size: 0.92rem;">${u.about}</p>
-                
-                <div style="margin-top: 1.25rem; padding-top: 1rem; border-top: 1px solid var(--border);">
-                    <strong style="font-size: 0.9rem;">Skills & Competencies</strong>
-                    <div style="margin-top: 0.5rem; display: flex; gap: 0.4rem; flex-wrap: wrap;">
-                        ${u.skills.map(s => `<span class="tag-badge" style="padding: 0.3rem 0.65rem; font-size: 0.82rem;">${s}</span>`).join('')}
-                    </div>
-                </div>
             </div>
         `;
     },
@@ -572,7 +565,7 @@ const CirclebookViews = {
                 ${notifs.length ? notifs.map(n => `
                     <div style="display: flex; gap: 0.85rem; align-items: center; padding: 0.85rem 0; border-bottom: 1px solid var(--border);">
                         <div style="width: 36px; height: 36px; border-radius: 50%; background: var(--background); display: flex; align-items: center; justify-content: center; color: var(--primary-blue);">
-                            ${n.avatar.startsWith('http') ? `<img src="${n.avatar}" style="width: 36px; height: 36px; border-radius: 50%; object-fit: cover;" />` : CirclebookIcons.get('bell', '', 18)}
+                            ${n.avatar.startsWith('http') ? `<img src="${n.avatar}" style="width: 36px; height: 36px; border-radius: 50%; object-fit: cover;" />` : CirclebookIcons.get(n.avatar === 'briefcase' ? 'briefcase' : n.avatar === 'globe' ? 'globe' : 'bell', '', 18)}
                         </div>
                         <div style="flex: 1;">
                             <div style="font-size: 0.88rem; color: var(--text-primary); font-weight: 500;">${n.title}</div>
@@ -696,7 +689,7 @@ const CirclebookViews = {
                         <div class="circle-card" style="margin-bottom: 0;">
                             <div style="display: flex; gap: 0.75rem; align-items: flex-start; margin-bottom: 0.5rem;">
                                 <div style="width: 36px; height: 36px; border-radius: var(--radius-sm); background: var(--background); display: flex; align-items: center; justify-content: center; color: var(--primary-blue);">
-                                    ${CirclebookIcons.get('briefcase', '', 20)}
+                                    ${CirclebookIcons.get(j.logo || 'briefcase', '', 20)}
                                 </div>
                                 <div style="flex: 1;">
                                     <h3 style="font-size: 1rem; font-weight: 700;">${j.title}</h3>

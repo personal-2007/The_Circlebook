@@ -16,7 +16,7 @@
     left: 12px;
     right: 12px;
     height: 62px;
-    background: var(--surface);
+    background: linear-gradient(135deg, var(--surface), rgba(59, 130, 246, 0.10));
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
     border: 1px solid var(--border);
