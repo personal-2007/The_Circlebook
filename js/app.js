@@ -77,8 +77,16 @@ const CirclebookRouter = {
                 { id: "messages", label: "Messages" }
             ]
         },
+        groups: {
+            title: "GROUPS",
+            subTabs: [
+                { id: "discover", label: "Discover" },
+                { id: "joined", label: "Your Groups" },
+                { id: "manage", label: "Manage" }
+            ]
+        },
         communities: {
-            title: "COMMUNITIES",
+            title: "GROUPS",
             subTabs: [
                 { id: "discover", label: "Discover Communities" },
                 { id: "details", label: "Community Feed" }
@@ -91,8 +99,24 @@ const CirclebookRouter = {
                 { id: "my_events", label: "My Events" }
             ]
         },
+        watch: {
+            title: "WATCH",
+            subTabs: [
+                { id: "for_you", label: "For You" },
+                { id: "following", label: "Following" },
+                { id: "live", label: "Live" }
+            ]
+        },
+        marketplace: {
+            title: "MARKETPLACE",
+            subTabs: [
+                { id: "browse", label: "Browse" },
+                { id: "categories", label: "Categories" },
+                { id: "your_listings", label: "Your Listings" }
+            ]
+        },
         career: {
-            title: "CAREER HUB",
+            title: "WATCH",
             subTabs: [
                 { id: "dashboard", label: "Career Dashboard" },
                 { id: "jobs", label: "Job Postings" }

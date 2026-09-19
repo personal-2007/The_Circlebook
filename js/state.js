@@ -162,11 +162,11 @@ const CirclebookStore = {
             authorAvatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=250&q=80",
             timestamp: "2 hours ago",
             category: "General",
-            content: "Welcome to the newly upgraded **Circlebook Master Platform**! We've brought together vintage community aesthetic with modern AI recommendations, career opportunities, and direct circle messaging. How are you liking the new Circle AI assistant?",
+            content: "The Circlebook community is feeling fresh and familiar this week. Clean cards, strong conversations, and better ways to keep up with friends and groups. What would you like to see next in the feed?",
             likes: 42,
             comments: [
-                { id: "c_1", author: "Aarav Sharma", avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=250&q=80", text: "The Smart People Search and AI Career Assistant look incredible!", timestamp: "1 hour ago" },
-                { id: "c_2", author: "Priya Nair", avatar: "https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=250&q=80", text: "The vintage cream theme is so soothing for reading directory entries.", timestamp: "30 mins ago" }
+                { id: "c_1", author: "Aarav Sharma", avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=250&q=80", text: "The people directory feels much more natural to browse now.", timestamp: "1 hour ago" },
+                { id: "c_2", author: "Priya Nair", avatar: "https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=250&q=80", text: "The feed layout feels way easier to read during the day.", timestamp: "30 mins ago" }
             ],
             shares: 12,
             isLiked: true,

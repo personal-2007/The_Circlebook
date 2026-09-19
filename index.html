@@ -21,10 +21,6 @@
 </head>
 <body>
 
-    <!-- Ambient Background Blur Glows -->
-    <div class="ambient-blue-glow"></div>
-    <div class="ambient-purple-glow"></div>
-
     <!-- =========================================================
          MASTER APP SHELL LAYOUT
     ========================================================= -->
@@ -50,16 +46,24 @@
                 </button>
                 <button class="sidebar-link" data-module="mycircle" onclick="CirclebookRouter.navigate('mycircle')">
                     <span class="sidebar-icon"><script>document.write(CirclebookIcons.get('users'))</script></span>
-                    <span>My Circle</span>
+                    <span>People</span>
                     <span class="sidebar-badge" id="sidebarCircleBadge">42</span>
                 </button>
                 <button class="sidebar-link" data-module="discover" onclick="CirclebookRouter.navigate('discover')">
                     <span class="sidebar-icon"><script>document.write(CirclebookIcons.get('discover'))</script></span>
                     <span>Discover</span>
                 </button>
-                <button class="sidebar-link" data-module="communities" onclick="CirclebookRouter.navigate('communities')">
+                <button class="sidebar-link" data-module="groups" onclick="CirclebookRouter.navigate('groups')">
                     <span class="sidebar-icon"><script>document.write(CirclebookIcons.get('communities'))</script></span>
-                    <span>Communities</span>
+                    <span>Groups</span>
+                </button>
+                <button class="sidebar-link" data-module="watch" onclick="CirclebookRouter.navigate('watch')">
+                    <span class="sidebar-icon"><script>document.write(CirclebookIcons.get('play'))</script></span>
+                    <span>Watch</span>
+                </button>
+                <button class="sidebar-link" data-module="marketplace" onclick="CirclebookRouter.navigate('marketplace')">
+                    <span class="sidebar-icon"><script>document.write(CirclebookIcons.get('shopping-bag'))</script></span>
+                    <span>Marketplace</span>
                 </button>
                 <button class="sidebar-link" data-module="events" onclick="CirclebookRouter.navigate('events')">
                     <span class="sidebar-icon"><script>document.write(CirclebookIcons.get('calendar'))</script></span>
@@ -81,7 +85,7 @@
                 <div class="sidebar-section-title">CAREER & TOOLS</div>
                 <button class="sidebar-link" data-module="career" onclick="CirclebookRouter.navigate('career')">
                     <span class="sidebar-icon"><script>document.write(CirclebookIcons.get('briefcase'))</script></span>
-                    <span>Career Hub</span>
+                    <span>Watch</span>
                 </button>
                 <button class="sidebar-link" data-module="ai" onclick="CirclebookRouter.navigate('ai')">
                     <span class="sidebar-icon"><script>document.write(CirclebookIcons.get('sparkles'))</script></span>

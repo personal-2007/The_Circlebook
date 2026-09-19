@@ -194,29 +194,47 @@ const CirclebookViews = {
         return `
             <div class="grid-3">
                 <div style="grid-column: span 2;">
-                    <!-- Create Post Box -->
+                    <div class="circle-card">
+                        <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.9rem; overflow-x: auto; padding-bottom: 0.25rem;">
+                            <div style="display: flex; align-items: center; justify-content: center; width: 54px; height: 54px; border-radius: 50%; background: #EEF2FF; border: 1px solid var(--border); color: var(--primary-blue); flex-shrink: 0;">
+                                ${CirclebookIcons.get('plus', '', 20)}
+                            </div>
+                            <div style="display: flex; gap: 0.75rem; min-width: 0;">
+                                <div style="display: flex; flex-direction: column; align-items: center; gap: 0.35rem; min-width: 68px;">
+                                    <img src="${currentUser.avatar}" style="width: 52px; height: 52px; border-radius: 50%; object-fit: cover; border: 2px solid var(--primary-blue);" alt="Your story" />
+                                    <span style="font-size: 0.72rem; color: var(--text-secondary);">Your Story</span>
+                                </div>
+                                ${CirclebookStore.users.slice(0, 4).map(u => `
+                                    <div style="display: flex; flex-direction: column; align-items: center; gap: 0.35rem; min-width: 68px;">
+                                        <img src="${u.avatar}" style="width: 52px; height: 52px; border-radius: 50%; object-fit: cover; border: 2px solid var(--border);" alt="${u.name} story" />
+                                        <span style="font-size: 0.72rem; color: var(--text-secondary);">${u.name.split(' ')[0]}</span>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="circle-card">
                         <div style="display: flex; gap: 0.75rem; align-items: flex-start; margin-bottom: 0.85rem;">
                             <img src="${currentUser.avatar}" class="post-avatar" alt="Avatar" style="width: 42px; height: 42px; border-radius: 50%; object-fit: cover;" />
-                            <textarea id="newPostInput" class="form-control" rows="2" style="border-radius: var(--radius-sm); resize: none;" placeholder="Share an update, paper, or insight with your circle..."></textarea>
+                            <textarea id="newPostInput" class="form-control" rows="2" style="border-radius: var(--radius-sm); resize: none;" placeholder="What's on your mind?"></textarea>
                         </div>
                         <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border); padding-top: 0.75rem;">
-                            <div style="display: flex; gap: 0.4rem;">
+                            <div style="display: flex; gap: 0.4rem; flex-wrap: wrap;">
                                 <button class="btn-secondary" style="font-size: 0.8rem; padding: 0.35rem 0.65rem; display: flex; align-items: center; gap: 0.35rem;" onclick="CirclebookApp.openCreatePostModal()">
-                                    ${CirclebookIcons.get('image', '', 15)} Media
+                                    ${CirclebookIcons.get('image', '', 15)} Photo
                                 </button>
                                 <button class="btn-secondary" style="font-size: 0.8rem; padding: 0.35rem 0.65rem; display: flex; align-items: center; gap: 0.35rem;" onclick="CirclebookApp.openCreatePostModal()">
-                                    ${CirclebookIcons.get('poll', '', 15)} Poll
+                                    ${CirclebookIcons.get('video', '', 15)} Video
                                 </button>
                                 <button class="btn-secondary" style="font-size: 0.8rem; padding: 0.35rem 0.65rem; display: flex; align-items: center; gap: 0.35rem;" onclick="CirclebookApp.openCreatePostModal()">
                                     ${CirclebookIcons.get('tag', '', 15)} Tag
                                 </button>
                             </div>
-                            <button class="btn-primary" style="padding: 0.4rem 1.1rem; font-size: 0.88rem;" onclick="CirclebookApp.handleCreatePost()">Publish</button>
+                            <button class="btn-primary" style="padding: 0.4rem 1.1rem; font-size: 0.88rem;" onclick="CirclebookApp.handleCreatePost()">Post</button>
                         </div>
                     </div>
 
-                    <!-- Feed Items -->
                     ${posts.length ? posts.map(p => {
                         const isOwn = p.authorId === currentUser.id;
                         return `
@@ -322,31 +340,40 @@ const CirclebookViews = {
                     `}
                 </div>
 
-                <!-- Right Sidebar Widgets -->
                 <div class="right-sidebar-panel">
                     <div class="circle-card">
-                        <div class="circle-card-title" style="font-weight: 700; font-size: 0.95rem; margin-bottom: 0.85rem;">Trending Topics</div>
-                        <div>
-                            <div style="margin-bottom: 0.75rem;">
-                                <strong style="font-size: 0.88rem; color: var(--text-primary);">#Circlebook</strong>
-                                <div style="font-size: 0.78rem; color: var(--text-secondary);">1.2k posts</div>
-                            </div>
-                            <div style="margin-bottom: 0.75rem;">
-                                <strong style="font-size: 0.88rem; color: var(--text-primary);">#DesignSystems</strong>
-                                <div style="font-size: 0.78rem; color: var(--text-secondary);">840 posts</div>
-                            </div>
-                            <div style="margin-bottom: 0.75rem;">
-                                <strong style="font-size: 0.88rem; color: var(--text-primary);">#Engineering</strong>
-                                <div style="font-size: 0.78rem; color: var(--text-secondary);">620 posts</div>
-                            </div>
+                        <div class="circle-card-title" style="font-weight: 700; font-size: 0.95rem; margin-bottom: 0.85rem;">Contacts</div>
+                        <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                            ${CirclebookStore.users.slice(0, 4).map(u => `
+                                <div style="display: flex; align-items: center; justify-content: space-between; gap: 0.6rem;">
+                                    <div style="display: flex; align-items: center; gap: 0.6rem; min-width: 0;">
+                                        <img src="${u.avatar}" style="width: 36px; height: 36px; border-radius: 50%; object-fit: cover;" alt="${u.name}" />
+                                        <div style="min-width: 0;">
+                                            <div style="font-size: 0.82rem; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${u.name}</div>
+                                            <div style="font-size: 0.72rem; color: var(--text-secondary);">${u.headline}</div>
+                                        </div>
+                                    </div>
+                                    <button class="btn-secondary" style="font-size: 0.7rem; padding: 0.25rem 0.55rem; min-height: unset;">Message</button>
+                                </div>
+                            `).join('')}
                         </div>
                     </div>
 
                     <div class="circle-card">
-                        <div class="circle-card-title" style="font-weight: 700; font-size: 0.95rem; margin-bottom: 0.85rem;">Notice Board</div>
-                        <div style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.5;">
-                            • Tech Summit registration is open.<br>
-                            • 3 new communities joined in your domain.
+                        <div class="circle-card-title" style="font-weight: 700; font-size: 0.95rem; margin-bottom: 0.85rem;">Suggestions</div>
+                        <div style="display: flex; flex-direction: column; gap: 0.8rem;">
+                            <div style="font-size: 0.82rem; color: var(--text-secondary);">• Design systems meetup this Saturday</div>
+                            <div style="font-size: 0.82rem; color: var(--text-secondary);">• New product engineering circle</div>
+                            <div style="font-size: 0.82rem; color: var(--text-secondary);">• Community challenge in Bengaluru</div>
+                        </div>
+                    </div>
+
+                    <div class="circle-card">
+                        <div class="circle-card-title" style="font-weight: 700; font-size: 0.95rem; margin-bottom: 0.85rem;">Upcoming</div>
+                        <div style="font-size: 0.82rem; color: var(--text-secondary); line-height: 1.6;">
+                            • Community mixer • Oct 18<br>
+                            • Product design roundtable • Oct 22<br>
+                            • Frontend showcase • Nov 03
                         </div>
                     </div>
                 </div>
@@ -359,32 +386,59 @@ const CirclebookViews = {
     // ---------------------------------------------------------
     discover(subTab = "people") {
         const users = CirclebookStore.users;
+        const groups = CirclebookStore.communities;
+        const events = CirclebookStore.events;
+        const cards = subTab === "groups" ? groups : subTab === "events" ? events : users;
+
         return `
             <div class="circle-card">
                 <div class="circle-card-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
-                    <div class="circle-card-title" style="font-weight: 700; font-size: 1.1rem;">Discover Directory & People</div>
-                    <button class="btn-secondary" style="font-size: 0.8rem; display: flex; align-items: center; gap: 0.35rem;" onclick="CirclebookRouter.navigate('ai', 'people_finder')">
-                        ${CirclebookIcons.get('sparkles', '', 14)} Semantic Search
+                    <div class="circle-card-title" style="font-weight: 700; font-size: 1.1rem;">Discover</div>
+                    <button class="btn-secondary" style="font-size: 0.8rem; display: flex; align-items: center; gap: 0.35rem;" onclick="CirclebookRouter.navigate('ai', 'home')">
+                        ${CirclebookIcons.get('sparkles', '', 14)} Search Help
                     </button>
                 </div>
-                
+
                 <div class="global-search-bar" style="width: 100%; margin-bottom: 1.5rem; display: flex; align-items: center; border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 0.5rem 0.85rem; background: var(--surface);">
                     <span style="color: var(--text-muted); margin-right: 0.5rem; display: flex;">${CirclebookIcons.get('search', '', 16)}</span>
-                    <input type="text" placeholder="Search people by name, skill (e.g., React, Python), location, or university..." style="border: none; outline: none; width: 100%; font-size: 0.9rem;" oninput="CirclebookApp.filterDiscoverPeople(this.value)">
+                    <input type="text" placeholder="Search people, groups, events, and topics..." style="border: none; outline: none; width: 100%; font-size: 0.9rem;" oninput="CirclebookApp.filterDiscoverPeople(this.value)">
                 </div>
 
                 <div class="grid-3" id="discoverGrid">
-                    ${users.map(u => `
+                    ${subTab === "groups" ? cards.map(c => `
+                        <div class="circle-card" style="margin-bottom: 0; overflow: hidden; padding: 0;">
+                            <img src="${c.banner}" style="width: 100%; height: 120px; object-fit: cover;" alt="${c.name}" />
+                            <div style="padding: 1rem;">
+                                <h3 style="font-size: 1rem; font-weight: 700; margin-bottom: 0.35rem;">${c.name}</h3>
+                                <p style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 0.75rem; line-height: 1.45;">${c.description}</p>
+                                <div style="display: flex; justify-content: space-between; align-items: center;">
+                                    <span style="font-size: 0.75rem; color: var(--text-secondary);">${c.membersCount} members</span>
+                                    <button class="btn-primary" style="font-size: 0.75rem; padding: 0.35rem 0.75rem;">Join</button>
+                                </div>
+                            </div>
+                        </div>
+                    `).join('') : subTab === "events" ? cards.map(e => `
+                        <div class="circle-card" style="margin-bottom: 0; overflow: hidden; padding: 0;">
+                            <img src="${e.banner}" style="width: 100%; height: 120px; object-fit: cover;" alt="${e.title}" />
+                            <div style="padding: 1rem;">
+                                <div class="tag-badge" style="font-size: 0.7rem;">${e.type}</div>
+                                <h3 style="font-size: 1rem; font-weight: 700; margin: 0.5rem 0;">${e.title}</h3>
+                                <p style="font-size: 0.78rem; color: var(--text-secondary); line-height: 1.45;">${e.date} • ${e.time}</p>
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 0.8rem;">
+                                    <span style="font-size: 0.75rem; color: var(--text-secondary);">${e.attendingCount} going</span>
+                                    <button class="btn-primary" style="font-size: 0.75rem; padding: 0.35rem 0.75rem;">RSVP</button>
+                                </div>
+                            </div>
+                        </div>
+                    `).join('') : users.map(u => `
                         <div class="circle-card" style="text-align: center; margin-bottom: 0; position: relative;">
                             <img src="${u.avatar}" style="width: 72px; height: 72px; border-radius: 50%; object-fit: cover; margin-bottom: 0.6rem; border: 2px solid var(--border);" alt="${u.name}" />
                             <h3 style="font-size: 1rem; font-weight: 700; margin-bottom: 0.2rem;">${u.name}</h3>
                             <p style="font-size: 0.82rem; color: var(--text-secondary); margin-bottom: 0.4rem; min-height: 2.4em; line-height: 1.4;">${u.headline}</p>
                             <p style="font-size: 0.78rem; color: var(--text-muted); margin-bottom: 0.75rem;">${u.location} • ${u.college}</p>
-                            
                             <div style="margin-bottom: 0.85rem; min-height: 28px; display: flex; gap: 0.3rem; justify-content: center; flex-wrap: wrap;">
                                 ${u.skills.slice(0, 3).map(s => `<span class="tag-badge" style="font-size: 0.72rem;">${s}</span>`).join('')}
                             </div>
-                            
                             <div style="display: flex; gap: 0.4rem; justify-content: center; align-items: center;">
                                 ${u.connectionStatus === 'connected' ? `
                                     <button class="btn-secondary" style="font-size: 0.8rem; padding: 0.35rem 0.75rem; color: var(--success);" disabled>Connected</button>
@@ -585,17 +639,17 @@ const CirclebookViews = {
     },
 
     // ---------------------------------------------------------
-    // 9. COMMUNITIES MODULE
+    // 9. GROUPS MODULE
     // ---------------------------------------------------------
-    communities(subTab = "discover") {
+    groups(subTab = "discover") {
         const comms = CirclebookStore.communities;
         return `
             <div class="circle-card">
                 <div class="circle-card-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
-                    <div class="circle-card-title" style="font-weight: 700; font-size: 1.1rem;">Communities & Discussion Hubs</div>
-                    <button class="btn-primary" style="font-size: 0.85rem;" onclick="const name = prompt('Community Name:'); if(name) CirclebookApp.toast('Community request submitted');">Create Community</button>
+                    <div class="circle-card-title" style="font-weight: 700; font-size: 1.1rem;">Groups</div>
+                    <button class="btn-primary" style="font-size: 0.85rem;" onclick="const name = prompt('Community Name:'); if(name) CirclebookApp.toast('Group created');">Create Group</button>
                 </div>
-                
+
                 <div class="grid-3">
                     ${comms.map(c => `
                         <div class="circle-card" style="margin-bottom: 0; padding: 0; overflow: hidden;">
@@ -614,6 +668,87 @@ const CirclebookViews = {
                             </div>
                         </div>
                     `).join('')}
+                </div>
+            </div>
+        `;
+    },
+
+    communities(subTab = "discover") {
+        return this.groups(subTab);
+    },
+
+    // ---------------------------------------------------------
+    // 9B. WATCH MODULE
+    // ---------------------------------------------------------
+    watch(subTab = "for_you") {
+        return `
+            <div class="circle-card">
+                <div class="circle-card-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
+                    <div class="circle-card-title" style="font-weight: 700; font-size: 1.1rem;">Watch</div>
+                    <button class="btn-primary" style="font-size: 0.85rem;">Live</button>
+                </div>
+                <div class="grid-3">
+                    <div class="circle-card" style="margin-bottom: 0; padding: 0; overflow: hidden;">
+                        <img src="https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=800&q=80" style="width: 100%; height: 180px; object-fit: cover;" alt="Video thumbnail" />
+                        <div style="padding: 1rem;">
+                            <h3 style="font-size: 1rem; font-weight: 700; margin-bottom: 0.3rem;">Designing community-first interfaces</h3>
+                            <p style="font-size: 0.78rem; color: var(--text-secondary);">The Circlebook Studio • 12k views</p>
+                        </div>
+                    </div>
+                    <div class="circle-card" style="margin-bottom: 0; padding: 0; overflow: hidden;">
+                        <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=800&q=80" style="width: 100%; height: 180px; object-fit: cover;" alt="Video thumbnail" />
+                        <div style="padding: 1rem;">
+                            <h3 style="font-size: 1rem; font-weight: 700; margin-bottom: 0.3rem;">How teams build stronger circles</h3>
+                            <p style="font-size: 0.78rem; color: var(--text-secondary);">Circlebook Weekly • 8.4k views</p>
+                        </div>
+                    </div>
+                    <div class="circle-card" style="margin-bottom: 0; padding: 0; overflow: hidden;">
+                        <img src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=800&q=80" style="width: 100%; height: 180px; object-fit: cover;" alt="Video thumbnail" />
+                        <div style="padding: 1rem;">
+                            <h3 style="font-size: 1rem; font-weight: 700; margin-bottom: 0.3rem;">Modern product design habits</h3>
+                            <p style="font-size: 0.78rem; color: var(--text-secondary);">Workspace Notes • 4.8k views</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+    },
+
+    // ---------------------------------------------------------
+    // 9C. MARKETPLACE MODULE
+    // ---------------------------------------------------------
+    marketplace(subTab = "browse") {
+        return `
+            <div class="circle-card">
+                <div class="circle-card-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
+                    <div class="circle-card-title" style="font-weight: 700; font-size: 1.1rem;">Marketplace</div>
+                    <button class="btn-primary" style="font-size: 0.85rem;">Sell</button>
+                </div>
+                <div class="grid-3">
+                    <div class="circle-card" style="margin-bottom: 0; padding: 0; overflow: hidden;">
+                        <img src="https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=800&q=80" style="width: 100%; height: 160px; object-fit: cover;" alt="Marketplace item" />
+                        <div style="padding: 1rem;">
+                            <h3 style="font-size: 1rem; font-weight: 700; margin-bottom: 0.35rem;">Vintage Mechanical Keyboard</h3>
+                            <div style="font-size: 0.9rem; font-weight: 700; color: var(--primary-blue);">₹18,500</div>
+                            <p style="font-size: 0.78rem; color: var(--text-secondary); margin-top: 0.4rem;">Bengaluru • seller: Ankit</p>
+                        </div>
+                    </div>
+                    <div class="circle-card" style="margin-bottom: 0; padding: 0; overflow: hidden;">
+                        <img src="https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=800&q=80" style="width: 100%; height: 160px; object-fit: cover;" alt="Marketplace item" />
+                        <div style="padding: 1rem;">
+                            <h3 style="font-size: 1rem; font-weight: 700; margin-bottom: 0.35rem;">Used Office Desk</h3>
+                            <div style="font-size: 0.9rem; font-weight: 700; color: var(--primary-blue);">₹12,000</div>
+                            <p style="font-size: 0.78rem; color: var(--text-secondary); margin-top: 0.4rem;">Hyderabad • seller: Meera</p>
+                        </div>
+                    </div>
+                    <div class="circle-card" style="margin-bottom: 0; padding: 0; overflow: hidden;">
+                        <img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=800&q=80" style="width: 100%; height: 160px; object-fit: cover;" alt="Marketplace item" />
+                        <div style="padding: 1rem;">
+                            <h3 style="font-size: 1rem; font-weight: 700; margin-bottom: 0.35rem;">Wireless Headphones</h3>
+                            <div style="font-size: 0.9rem; font-weight: 700; color: var(--primary-blue);">₹4,200</div>
+                            <p style="font-size: 0.78rem; color: var(--text-secondary); margin-top: 0.4rem;">Pune • seller: Rahul</p>
+                        </div>
+                    </div>
                 </div>
             </div>
         `;

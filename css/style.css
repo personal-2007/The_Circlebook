@@ -1538,6 +1538,12 @@ select:focus {
    CLASSICAL UI & CONTEXTUAL DROPDOWN SYSTEM
    ========================================================= */
 
+.right-sidebar-panel {
+    position: sticky;
+    top: 88px;
+    align-self: flex-start;
+}
+
 /* SVG Icon helper styling */
 .cb-icon {
     flex-shrink: 0;
