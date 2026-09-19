@@ -3,42 +3,100 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="The Circlebook - know your people. build your circle.">
 
     <title>The Circlebook</title>
 
-    <link rel="stylesheet" href="../css/main.css">
     <link rel="stylesheet" href="../css/system.css">
 </head>
 
 <body>
-
-    <main class="loading-screen">
+    <main class="loading-screen" aria-live="polite" aria-label="Loading The Circlebook">
+        <div class="loading-shape shape-one" aria-hidden="true"></div>
+        <div class="loading-shape shape-two" aria-hidden="true"></div>
+        <div class="loading-shape shape-three" aria-hidden="true"></div>
 
         <div class="loading-content">
-
-            <div class="loading-logo">
-                <img
-                    src="../assets/images/circlebook-logo.png"
-                    alt="The Circlebook Logo"
-                >
+            <div class="loading-logo-wrap">
+                <div class="loading-logo">
+                    <img src="../assets/images/circlebook-logo.png" alt="The Circlebook Logo">
+                </div>
             </div>
 
-            <h1>The Circlebook</h1>
+            <div class="loading-copy">
+                <p class="loading-kicker">The Circlebook</p>
+                <h1>Know your people. Build your circle.</h1>
+            </div>
 
-            <p>Know your people. Build your circle.</p>
-
-            <div class="loading-spinner"></div>
-
+            <div class="loading-status" aria-label="Loading application">
+                <span class="loading-spinner" aria-hidden="true"></span>
+                <span>Loading</span>
+            </div>
         </div>
-
     </main>
 
     <script>
-        setTimeout(() => {
-            sessionStorage.setItem("circlebook_splash_seen", "true");
-            window.location.href = "../index.html";
-        }, 3000);
-    </script>
+        const root = document.documentElement;
+        const loadingScreen = document.querySelector('.loading-screen');
 
+        if (loadingScreen) {
+            loadingScreen.addEventListener('pointermove', (event) => {
+                if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+                const rect = loadingScreen.getBoundingClientRect();
+                const offsetX = (event.clientX - (rect.left + rect.width / 2)) / rect.width;
+                const offsetY = (event.clientY - (rect.top + rect.height / 2)) / rect.height;
+
+                const layers = [
+                    document.querySelector('.shape-one'),
+                    document.querySelector('.shape-two'),
+                    document.querySelector('.shape-three'),
+                    document.querySelector('.loading-logo'),
+                    document.querySelector('.loading-copy')
+                ];
+
+                layers.forEach((layer, index) => {
+                    if (!layer) return;
+                    const depth = [4, 7, 10, 12, 8][index] || 4;
+                    const x = offsetX * depth;
+                    const y = offsetY * depth;
+                    layer.style.transform = `translate3d(${x}px, ${y}px, 0)`;
+                });
+            });
+
+            loadingScreen.addEventListener('pointerleave', () => {
+                const layers = [
+                    document.querySelector('.shape-one'),
+                    document.querySelector('.shape-two'),
+                    document.querySelector('.shape-three'),
+                    document.querySelector('.loading-logo'),
+                    document.querySelector('.loading-copy')
+                ];
+                layers.forEach((layer) => {
+                    if (layer) layer.style.transform = 'translate3d(0, 0, 0)';
+                });
+            });
+        }
+
+        const goToApp = () => {
+            sessionStorage.setItem('circlebook_splash_seen', 'true');
+            window.location.href = '../index.html';
+        };
+
+        const minimumDelay = 850;
+        const startedAt = performance.now();
+
+        const finishLoading = () => {
+            const elapsed = performance.now() - startedAt;
+            const remaining = Math.max(0, minimumDelay - elapsed);
+            window.setTimeout(goToApp, remaining);
+        };
+
+        if (document.readyState === 'complete') {
+            finishLoading();
+        } else {
+            window.addEventListener('load', finishLoading, { once: true });
+        }
+    </script>
 </body>
 </html>

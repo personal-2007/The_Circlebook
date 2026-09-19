@@ -278,17 +278,6 @@ const CirclebookApp = {
         }
     },
 
-    toggleThemeMenu(e) {
-        if (e) e.stopPropagation();
-        const menu = document.getElementById("topbarThemeMenu");
-        if (!menu) return;
-        const isVisible = menu.style.display === "block";
-        this.closeDropdowns();
-        if (!isVisible) {
-            menu.style.display = "block";
-        }
-    },
-
     toggleSidebarMinimize() {
         const appShell = document.getElementById("appShell");
         const sidebar = document.querySelector(".app-sidebar");
