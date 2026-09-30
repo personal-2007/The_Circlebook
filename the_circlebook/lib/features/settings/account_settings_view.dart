@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../services/auth_service.dart';
 import '../../theme/app_theme.dart';
 
 class AccountSettingsView extends StatefulWidget {
@@ -10,10 +11,20 @@ class AccountSettingsView extends StatefulWidget {
 }
 
 class _AccountSettingsViewState extends State<AccountSettingsView> {
-  final _usernameController = TextEditingController(text: 'aarav_sharma');
-  final _emailController = TextEditingController(text: 'aarav@circlebook.org');
-  final _phoneController = TextEditingController(text: '+91 98765 43210');
-  final String _accountStatus = 'Verified Scholar / Active';
+  late final TextEditingController _usernameController;
+  late final TextEditingController _emailController;
+  late final TextEditingController _phoneController;
+
+  @override
+  void initState() {
+    super.initState();
+    final user = AuthService.currentUser;
+    _usernameController = TextEditingController(
+      text: user != null ? user.handle.replaceAll('@', '') : '',
+    );
+    _emailController = TextEditingController();
+    _phoneController = TextEditingController();
+  }
 
   @override
   void dispose() {
@@ -25,6 +36,9 @@ class _AccountSettingsViewState extends State<AccountSettingsView> {
 
   @override
   Widget build(BuildContext context) {
+    final user = AuthService.currentUser;
+    final accountStatus = user != null ? 'Active Member' : 'Guest / Not Authenticated';
+
     return Scaffold(
       appBar: AppBar(title: const Text('Account Information')),
       body: ListView(
@@ -79,8 +93,10 @@ class _AccountSettingsViewState extends State<AccountSettingsView> {
             child: ListTile(
               leading: const Icon(Icons.verified_user_outlined, color: AppTheme.primary),
               title: const Text('Account Status'),
-              subtitle: Text(_accountStatus),
-              trailing: const Icon(Icons.check_circle_rounded, color: AppTheme.success),
+              subtitle: Text(accountStatus),
+              trailing: user != null
+                  ? const Icon(Icons.check_circle_rounded, color: AppTheme.success)
+                  : const Icon(Icons.info_outline_rounded, color: AppTheme.warning),
             ),
           ),
           const SizedBox(height: 12),
@@ -88,7 +104,7 @@ class _AccountSettingsViewState extends State<AccountSettingsView> {
             child: ListTile(
               leading: const Icon(Icons.lock_reset_rounded, color: AppTheme.secondary),
               title: const Text('Change Password'),
-              subtitle: const Text('Last changed 4 months ago'),
+              subtitle: const Text('Update your password securely'),
               trailing: const Icon(Icons.chevron_right_rounded),
               onTap: () {
                 showDialog(

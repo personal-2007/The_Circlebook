@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../services/auth_service.dart';
 import '../../../theme/app_theme.dart';
 
 /// Creator Tools Screen (under More -> Tools)
@@ -26,9 +27,9 @@ class CreatorToolsScreen extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: const [
-                      _MetricItem(label: 'Total Impressions', value: '48.2K'),
-                      _MetricItem(label: 'Avg Read Time', value: '3m 14s'),
-                      _MetricItem(label: 'Circle Growth', value: '+14%'),
+                      _MetricItem(label: 'Total Impressions', value: '0'),
+                      _MetricItem(label: 'Avg Read Time', value: '0m'),
+                      _MetricItem(label: 'Circle Growth', value: '0%'),
                     ],
                   ),
                 ],
@@ -40,7 +41,7 @@ class CreatorToolsScreen extends StatelessWidget {
             child: ListTile(
               leading: const Icon(Icons.newspaper_outlined, color: AppTheme.primary),
               title: const Text('Editorial & Longform Drafts'),
-              subtitle: const Text('3 drafts in progress'),
+              subtitle: const Text('No drafts in progress'),
               trailing: const Icon(Icons.chevron_right_rounded),
               onTap: () {},
             ),
@@ -67,6 +68,11 @@ class ProfessionalToolsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final user = AuthService.currentUser;
+    final affiliationText = user != null && user.college.isNotEmpty
+        ? user.college
+        : 'No verified affiliation added yet';
+
     return Scaffold(
       appBar: AppBar(title: const Text('Professional Tools')),
       body: ListView(
@@ -76,7 +82,7 @@ class ProfessionalToolsScreen extends StatelessWidget {
             child: ListTile(
               leading: const Icon(Icons.badge_outlined, color: AppTheme.primary),
               title: const Text('Verified Credentials & Affiliations'),
-              subtitle: const Text('IIT Bombay • Senior Frontend Engineer'),
+              subtitle: Text(affiliationText),
               trailing: const Icon(Icons.verified_rounded, color: AppTheme.primary),
             ),
           ),
@@ -85,7 +91,7 @@ class ProfessionalToolsScreen extends StatelessWidget {
             child: ListTile(
               leading: const Icon(Icons.handshake_outlined, color: AppTheme.primary),
               title: const Text('Collaboration Inquiries'),
-              subtitle: const Text('2 open research / consulting requests'),
+              subtitle: const Text('No open collaboration requests'),
               trailing: const Icon(Icons.chevron_right_rounded),
               onTap: () {},
             ),
@@ -95,7 +101,7 @@ class ProfessionalToolsScreen extends StatelessWidget {
             child: ListTile(
               leading: const Icon(Icons.stars_outlined, color: AppTheme.purple),
               title: const Text('Skill Endorsements & Graph'),
-              subtitle: const Text('Peer-verified endorsements across 6 domains'),
+              subtitle: const Text('Peer-verified endorsements across verified domains'),
               trailing: const Icon(Icons.chevron_right_rounded),
               onTap: () {},
             ),
@@ -128,9 +134,9 @@ class AnalyticsScreen extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: const [
-                      _MetricItem(label: 'Profile Visits', value: '1,280'),
-                      _MetricItem(label: 'Post Views', value: '24.6K'),
-                      _MetricItem(label: 'Engagements', value: '3,410'),
+                      _MetricItem(label: 'Profile Visits', value: '0'),
+                      _MetricItem(label: 'Post Views', value: '0'),
+                      _MetricItem(label: 'Engagements', value: '0'),
                     ],
                   ),
                 ],
@@ -140,19 +146,16 @@ class AnalyticsScreen extends StatelessWidget {
           const SizedBox(height: 14),
           Card(
             child: Padding(
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.all(20),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text('Audience Distribution by Circle', style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w700)),
                   const SizedBox(height: 12),
-                  const _ProgressBarRow(label: 'Frontend & UI Guild', percentage: 0.42),
-                  const SizedBox(height: 10),
-                  const _ProgressBarRow(label: 'Vintage Typography Society', percentage: 0.28),
-                  const SizedBox(height: 10),
-                  const _ProgressBarRow(label: 'AI & Systems Research', percentage: 0.18),
-                  const SizedBox(height: 10),
-                  const _ProgressBarRow(label: 'Other Academic Networks', percentage: 0.12),
+                  Text(
+                    'No circle distribution metrics yet. Insights will appear once members engage with your publications.',
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(fontSize: 12.5),
+                  ),
                 ],
               ),
             ),
@@ -175,34 +178,6 @@ class _MetricItem extends StatelessWidget {
         Text(value, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w800, color: AppTheme.primary)),
         const SizedBox(height: 4),
         Text(label, style: Theme.of(context).textTheme.bodySmall),
-      ],
-    );
-  }
-}
-
-class _ProgressBarRow extends StatelessWidget {
-  const _ProgressBarRow({required this.label, required this.percentage});
-  final String label;
-  final double percentage;
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(label, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w500)),
-            Text('${(percentage * 100).toInt()}%', style: Theme.of(context).textTheme.bodySmall),
-          ],
-        ),
-        const SizedBox(height: 4),
-        LinearProgressIndicator(
-          value: percentage,
-          backgroundColor: Theme.of(context).colorScheme.surfaceContainerHighest,
-          valueColor: const AlwaysStoppedAnimation(AppTheme.primary),
-        ),
       ],
     );
   }

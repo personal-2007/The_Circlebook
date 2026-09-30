@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../../data/mock_data.dart';
+import '../../repositories/notification_repository.dart';
+import '../../services/auth_service.dart';
 import '../../theme/app_theme.dart';
 import '../create/create_post_screen.dart';
 import '../discover/discover_screen.dart';
@@ -33,16 +34,33 @@ class CirclebookShell extends StatefulWidget {
 class _CirclebookShellState extends State<CirclebookShell> {
   late int _mobileIndex;
   late int _desktopIndex;
-
-  // Unread badge count for notifications
-  int get _unreadNotificationCount =>
-      MockData.notifications.where((n) => n.isUnread).length;
+  int _unreadNotificationCount = 0;
 
   @override
   void initState() {
     super.initState();
     _mobileIndex = widget.initialIndex.clamp(0, 4);
     _desktopIndex = widget.initialIndex.clamp(0, 6);
+    _loadUnreadNotifications();
+  }
+
+  Future<void> _loadUnreadNotifications() async {
+    try {
+      final notifs = await NotificationRepository().getNotifications();
+      if (mounted) {
+        setState(() {
+          _unreadNotificationCount = notifs.where((n) => n.isUnread).length;
+        });
+      }
+    } catch (_) {}
+  }
+
+  String _getUserInitials() {
+    final user = AuthService.currentUser;
+    if (user == null || user.name.isEmpty) return 'U';
+    final parts = user.name.trim().split(RegExp(r'\s+'));
+    if (parts.length == 1) return parts[0][0].toUpperCase();
+    return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
   }
 
   void _handleMobileTab(int index) {
@@ -279,7 +297,7 @@ class _CirclebookShellState extends State<CirclebookShell> {
                               radius: 16,
                               backgroundColor: theme.colorScheme.primaryContainer,
                               child: Text(
-                                'AS',
+                                _getUserInitials(),
                                 style: TextStyle(
                                   fontSize: 11,
                                   fontWeight: FontWeight.w700,
@@ -366,7 +384,7 @@ class _CirclebookShellState extends State<CirclebookShell> {
                     radius: 14,
                     backgroundColor: theme.colorScheme.primaryContainer,
                     child: Text(
-                      'AS',
+                      _getUserInitials(),
                       style: TextStyle(
                         fontSize: 10,
                         fontWeight: FontWeight.w700,

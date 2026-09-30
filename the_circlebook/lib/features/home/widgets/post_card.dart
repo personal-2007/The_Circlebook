@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 
 import '../../../models/circlebook_models.dart';
+import '../../../repositories/post_repository.dart';
+import '../../../services/auth_service.dart';
 import '../../../theme/app_theme.dart';
 
 class PostCard extends StatefulWidget {
   const PostCard({
     required this.post,
-    this.currentUserId = 'usr_001',
+    this.currentUserId = '',
     this.onDelete,
     this.onHide,
     super.key,
@@ -450,43 +452,57 @@ class _CommentsSheet extends StatefulWidget {
 
 class _CommentsSheetState extends State<_CommentsSheet> {
   final _commentController = TextEditingController();
-  final List<CircleComment> _comments = [
-    const CircleComment(
-      id: 'c_1',
-      postId: 'post_101',
-      authorName: 'Priya Nair',
-      authorHandle: '@priya_nair',
-      content: 'I really love how calm the interface feels. No blinking distractions!',
-      timestamp: '1h ago',
-      likes: 5,
-    ),
-    const CircleComment(
-      id: 'c_2',
-      postId: 'post_101',
-      authorName: 'Aarav Sharma',
-      authorHandle: '@aarav_sharma',
-      content: 'The user-controlled algorithm sorting is what makes it stand out for me.',
-      timestamp: '45m ago',
-      likes: 8,
-      isAuthor: true,
-    ),
-  ];
+  final PostRepository _postRepository = PostRepository();
+  List<CircleComment> _comments = [];
+  bool _isLoading = true;
 
-  void _addComment() {
+  @override
+  void initState() {
+    super.initState();
+    _loadComments();
+  }
+
+  Future<void> _loadComments() async {
+    try {
+      final comments = await _postRepository.getComments(widget.postId);
+      if (mounted) {
+        setState(() {
+          _comments = comments;
+          _isLoading = false;
+        });
+      }
+    } catch (_) {
+      if (mounted) {
+        setState(() => _isLoading = false);
+      }
+    }
+  }
+
+  void _addComment() async {
     final text = _commentController.text.trim();
     if (text.isEmpty) return;
+    final currentUser = AuthService.currentUser;
+    final authorName = currentUser?.name ?? 'Member';
+    final authorHandle = currentUser?.handle ?? '@member';
+
+    final tempComment = CircleComment(
+      id: 'c_${DateTime.now().millisecondsSinceEpoch}',
+      postId: widget.postId,
+      authorName: authorName,
+      authorHandle: authorHandle,
+      content: text,
+      timestamp: 'Just now',
+      isAuthor: true,
+    );
+
     setState(() {
-      _comments.add(CircleComment(
-        id: 'c_${DateTime.now().millisecondsSinceEpoch}',
-        postId: widget.postId,
-        authorName: 'Aarav Sharma',
-        authorHandle: '@aarav_sharma',
-        content: text,
-        timestamp: 'Just now',
-        isAuthor: true,
-      ));
+      _comments.add(tempComment);
       _commentController.clear();
     });
+
+    try {
+      await _postRepository.addComment(widget.postId, text);
+    } catch (_) {}
   }
 
   void _handleCommentAction(String action, CircleComment comment) {
@@ -565,11 +581,28 @@ class _CommentsSheetState extends State<_CommentsSheet> {
               ),
               const Divider(),
               Expanded(
-                child: ListView.separated(
-                  controller: scrollController,
-                  itemCount: _comments.length,
-                  separatorBuilder: (context, index) => const SizedBox(height: 8),
-                  itemBuilder: (context, index) {
+                child: _isLoading
+                    ? const Center(
+                        child: SizedBox(
+                          width: 24,
+                          height: 24,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        ),
+                      )
+                    : _comments.isEmpty
+                        ? Center(
+                            child: Text(
+                              'No comments yet.',
+                              style: theme.textTheme.bodyMedium?.copyWith(
+                                color: theme.textTheme.bodySmall?.color,
+                              ),
+                            ),
+                          )
+                        : ListView.separated(
+                            controller: scrollController,
+                            itemCount: _comments.length,
+                            separatorBuilder: (context, index) => const SizedBox(height: 8),
+                            itemBuilder: (context, index) {
                     final c = _comments[index];
                     return Padding(
                       padding: const EdgeInsets.symmetric(vertical: 6),

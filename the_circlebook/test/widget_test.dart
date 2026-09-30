@@ -2,8 +2,18 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:http/http.dart' as http;
+import 'package:http/testing.dart';
 
 import 'package:the_circlebook/app.dart';
+import 'package:the_circlebook/repositories/community_repository.dart';
+import 'package:the_circlebook/repositories/message_repository.dart';
+import 'package:the_circlebook/repositories/notification_repository.dart';
+import 'package:the_circlebook/repositories/post_repository.dart';
+import 'package:the_circlebook/repositories/user_repository.dart';
+import 'package:the_circlebook/services/api_service.dart';
+import 'package:the_circlebook/services/auth_service.dart';
+import 'fixtures/test_fixtures.dart';
 
 class _TestHttpOverrides extends HttpOverrides {
   @override
@@ -16,10 +26,26 @@ class _TestHttpOverrides extends HttpOverrides {
 void main() {
   setUpAll(() {
     HttpOverrides.global = _TestHttpOverrides();
+    ApiService.setClient(MockClient((request) async {
+      return http.Response('[]', 200, headers: {'content-type': 'application/json'});
+    }));
+  });
+
+  setUp(() {
+    AuthService.setTestUser(TestFixtures.testUser);
+    PostRepository.setTestPosts(TestFixtures.testPosts);
+    NotificationRepository.setTestNotifications(TestFixtures.testNotifications);
+    MessageRepository.setTestMessages(TestFixtures.testMessages);
+    CommunityRepository.setTestFixtures(
+      groups: TestFixtures.testGroups,
+      events: TestFixtures.testEvents,
+    );
+    UserRepository.setTestUsers([TestFixtures.testUser]);
   });
 
   testWidgets('The Circlebook app renders the desktop/tablet shell by default in 800x600', (tester) async {
     await tester.pumpWidget(const TheCirclebookApp());
+    await tester.pump();
 
     expect(find.text('The Circlebook'), findsWidgets);
     expect(find.text('Home'), findsOneWidget);
@@ -161,6 +187,7 @@ void main() {
 
   testWidgets('Posts have contextual 3-dot menus and user-controlled feed algorithm', (tester) async {
     await tester.pumpWidget(const TheCirclebookApp());
+    await tester.pump();
 
     // User-controlled algorithm chips
     expect(find.text('Relevant (For You)'), findsOneWidget);

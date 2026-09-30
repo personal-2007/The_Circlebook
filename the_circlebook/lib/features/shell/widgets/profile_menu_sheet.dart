@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../../data/mock_data.dart';
+import '../../../services/auth_service.dart';
 import '../../../services/storage_service.dart';
 import '../../../theme/app_theme.dart';
 
@@ -38,7 +38,12 @@ class ProfileMenuSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final user = MockData.currentUser;
+    final user = AuthService.currentUser;
+    final userName = user?.name ?? 'Member';
+    final userHandle = user?.handle ?? '@member';
+    final userInitials = userName.trim().isNotEmpty
+        ? userName.trim().split(RegExp(r'\s+')).map((p) => p[0]).take(2).join().toUpperCase()
+        : 'U';
 
     return SafeArea(
       child: Padding(
@@ -56,7 +61,7 @@ class ProfileMenuSheet extends StatelessWidget {
                     radius: 24,
                     backgroundColor: theme.colorScheme.primaryContainer,
                     child: Text(
-                      user.name.split(' ').map((p) => p[0]).take(2).join(),
+                      userInitials,
                       style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.w700,
@@ -70,11 +75,11 @@ class ProfileMenuSheet extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          user.name,
+                          userName,
                           style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700),
                         ),
                         Text(
-                          user.handle,
+                          userHandle,
                           style: TextStyle(fontSize: 12, color: theme.colorScheme.primary),
                         ),
                       ],
@@ -101,11 +106,7 @@ class ProfileMenuSheet extends StatelessWidget {
               title: const Text('Edit Profile'),
               onTap: () {
                 Navigator.pop(context);
-                if (onEditProfile != null) {
-                  onEditProfile!();
-                } else {
-                  Navigator.of(context).pushNamed('/app/profile');
-                }
+                onEditProfile?.call();
               },
             ),
 
@@ -147,6 +148,7 @@ class ProfileMenuSheet extends StatelessWidget {
               title: const Text('Log Out', style: TextStyle(color: AppTheme.danger, fontWeight: FontWeight.w600)),
               onTap: () async {
                 Navigator.pop(context);
+                await AuthService.logout();
                 await StorageService.logout();
                 if (context.mounted) {
                   Navigator.of(context).pushNamedAndRemoveUntil('/welcome', (r) => false);

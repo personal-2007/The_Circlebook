@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 
-import '../../data/mock_data.dart';
 import '../../models/circlebook_models.dart';
+import '../../repositories/community_repository.dart';
+import '../../repositories/user_repository.dart';
 import '../../theme/app_theme.dart';
+import '../../widgets/error_state_view.dart';
+import '../../widgets/loading_state_view.dart';
 
 class DiscoverScreen extends StatefulWidget {
   const DiscoverScreen({super.key});
@@ -12,8 +15,51 @@ class DiscoverScreen extends StatefulWidget {
 }
 
 class _DiscoverScreenState extends State<DiscoverScreen> {
-  final List<CircleCommunity> _communities = List.from(MockData.communities);
-  final List<CircleEvent> _events = List.from(MockData.events);
+  final CommunityRepository _communityRepository = CommunityRepository();
+  final UserRepository _userRepository = UserRepository();
+
+  List<CircleCommunity> _communities = [];
+  List<CircleEvent> _events = [];
+  List<CircleUser> _people = [];
+  bool _isLoading = true;
+  String? _errorMessage;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadDiscoverData();
+  }
+
+  Future<void> _loadDiscoverData() async {
+    setState(() {
+      _isLoading = true;
+      _errorMessage = null;
+    });
+
+    try {
+      final results = await Future.wait([
+        _communityRepository.getGroups(),
+        _communityRepository.getEvents(),
+        _userRepository.getPeople(),
+      ]);
+
+      if (mounted) {
+        setState(() {
+          _communities = results[0] as List<CircleCommunity>;
+          _events = results[1] as List<CircleEvent>;
+          _people = results[2] as List<CircleUser>;
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _errorMessage = e.toString();
+          _isLoading = false;
+        });
+      }
+    }
+  }
 
   void _handleGroupMenuAction(String action, CircleCommunity group) {
     switch (action) {
@@ -94,329 +140,379 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
-    return ListView(
-      padding: const EdgeInsets.fromLTRB(16, 12, 16, 32),
-      children: [
-        // Smart Search Trigger Banner
-        Card(
-          child: InkWell(
-            borderRadius: BorderRadius.circular(14),
-            onTap: () => Navigator.of(context).pushNamed('/app/search'),
-            child: Padding(
-              padding: const EdgeInsets.all(14),
-              child: Row(
-                children: [
-                  Icon(Icons.search_rounded, color: theme.colorScheme.primary),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Smart Search & Discovery',
-                          style: theme.textTheme.titleMedium?.copyWith(
-                            fontWeight: FontWeight.w700,
-                            fontSize: 14,
+    if (_isLoading) {
+      return const LoadingStateView(message: 'Discovering circles and colloquia...');
+    }
+
+    if (_errorMessage != null) {
+      return ErrorStateView(onRetry: _loadDiscoverData);
+    }
+
+    return RefreshIndicator(
+      onRefresh: _loadDiscoverData,
+      child: ListView(
+        physics: const AlwaysScrollableScrollPhysics(),
+        padding: const EdgeInsets.fromLTRB(16, 12, 16, 32),
+        children: [
+          // Smart Search Trigger Banner
+          Card(
+            child: InkWell(
+              borderRadius: BorderRadius.circular(14),
+              onTap: () => Navigator.of(context).pushNamed('/app/search'),
+              child: Padding(
+                padding: const EdgeInsets.all(14),
+                child: Row(
+                  children: [
+                    Icon(Icons.search_rounded, color: theme.colorScheme.primary),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Smart Search & Discovery',
+                            style: theme.textTheme.titleMedium?.copyWith(
+                              fontWeight: FontWeight.w700,
+                              fontSize: 14,
+                            ),
                           ),
-                        ),
-                        Text(
-                          'Explore people, papers, events, and communities',
-                          style: theme.textTheme.bodySmall,
-                        ),
-                      ],
+                          Text(
+                            'Explore people, papers, events, and communities',
+                            style: theme.textTheme.bodySmall,
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                  const Icon(Icons.arrow_forward_rounded, size: 18),
-                ],
+                    const Icon(Icons.arrow_forward_rounded, size: 18),
+                  ],
+                ),
               ),
             ),
           ),
-        ),
-        const SizedBox(height: 20),
+          const SizedBox(height: 20),
 
-        // People Recommendations
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              'Recommended Connections',
-              style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700),
-            ),
-            TextButton(
-              onPressed: () => Navigator.of(context).pushNamed('/app/people'),
-              child: const Text('See All'),
-            ),
-          ],
-        ),
-        const SizedBox(height: 8),
-        SizedBox(
-          height: 180,
-          child: ListView.separated(
-            scrollDirection: Axis.horizontal,
-            itemCount: MockData.suggestedPeople.length,
-            separatorBuilder: (context, index) => const SizedBox(width: 12),
-            itemBuilder: (context, index) {
-              final person = MockData.suggestedPeople[index];
-              return Container(
-                width: 160,
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: theme.cardColor,
-                  borderRadius: BorderRadius.circular(14),
-                  border: Border.all(color: theme.dividerColor),
-                ),
-                child: Column(
-                  children: [
-                    CircleAvatar(
-                      radius: 26,
-                      backgroundColor: theme.colorScheme.primaryContainer,
-                      child: Text(
-                        person.name.split(' ').map((p) => p[0]).take(2).join(),
-                        style: TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w700,
-                          color: theme.colorScheme.primary,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      person.name,
-                      style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 13),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    Text(
-                      person.headline,
-                      style: theme.textTheme.bodySmall?.copyWith(fontSize: 11),
-                      textAlign: TextAlign.center,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    const Spacer(),
-                    FilledButton.tonal(
-                      onPressed: () {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text('Connection sent to ${person.name}')),
-                        );
-                      },
-                      style: FilledButton.styleFrom(
-                        minimumSize: const Size(double.infinity, 30),
-                        padding: EdgeInsets.zero,
-                      ),
-                      child: const Text('Connect', style: TextStyle(fontSize: 11.5)),
-                    ),
-                  ],
-                ),
-              );
-            },
+          // People Recommendations
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'Recommended Connections',
+                style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700),
+              ),
+              TextButton(
+                onPressed: () => Navigator.of(context).pushNamed('/app/people'),
+                child: const Text('See All'),
+              ),
+            ],
           ),
-        ),
-        const SizedBox(height: 24),
+          const SizedBox(height: 8),
+          if (_people.isEmpty)
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 24),
+              child: Center(
+                child: Text(
+                  'No people found.',
+                  style: theme.textTheme.bodyMedium?.copyWith(color: theme.textTheme.bodySmall?.color),
+                ),
+              ),
+            )
+          else
+            SizedBox(
+              height: 180,
+              child: ListView.separated(
+                scrollDirection: Axis.horizontal,
+                itemCount: _people.length,
+                separatorBuilder: (context, index) => const SizedBox(width: 12),
+                itemBuilder: (context, index) {
+                  final person = _people[index];
+                  return Container(
+                    width: 160,
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: theme.cardColor,
+                      borderRadius: BorderRadius.circular(14),
+                      border: Border.all(color: theme.dividerColor),
+                    ),
+                    child: Column(
+                      children: [
+                        CircleAvatar(
+                          radius: 26,
+                          backgroundColor: theme.colorScheme.primaryContainer,
+                          child: Text(
+                            person.name.trim().isNotEmpty
+                                ? person.name.trim().split(RegExp(r'\s+')).map((p) => p[0]).take(2).join().toUpperCase()
+                                : 'U',
+                            style: TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w700,
+                              color: theme.colorScheme.primary,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          person.name,
+                          style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 13),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        Text(
+                          person.headline,
+                          style: theme.textTheme.bodySmall?.copyWith(fontSize: 11),
+                          textAlign: TextAlign.center,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        const Spacer(),
+                        FilledButton.tonal(
+                          onPressed: () {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text('Connection sent to ${person.name}')),
+                            );
+                          },
+                          style: FilledButton.styleFrom(
+                            minimumSize: const Size(double.infinity, 30),
+                            padding: EdgeInsets.zero,
+                          ),
+                          child: const Text('Connect', style: TextStyle(fontSize: 11.5)),
+                        ),
+                      ],
+                    ),
+                  );
+                },
+              ),
+            ),
+          const SizedBox(height: 24),
 
-        // Community Recommendations (with contextual 3-dot group menu)
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              'Recommended Communities',
-              style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700),
-            ),
-            TextButton(
-              onPressed: () => Navigator.of(context).pushNamed('/app/more/groups'),
-              child: const Text('Explore Groups'),
-            ),
-          ],
-        ),
-        const SizedBox(height: 8),
-        ..._communities.map((comm) {
-          return Card(
-            margin: const EdgeInsets.only(bottom: 12),
-            child: Padding(
-              padding: const EdgeInsets.all(14),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
+          // Community Recommendations
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'Recommended Communities',
+                style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700),
+              ),
+              TextButton(
+                onPressed: () => Navigator.of(context).pushNamed('/app/more/groups'),
+                child: const Text('Explore Groups'),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          if (_communities.isEmpty)
+            Card(
+              child: Padding(
+                padding: const EdgeInsets.all(24),
+                child: Center(
+                  child: Text(
+                    'No groups yet.',
+                    style: theme.textTheme.bodyMedium?.copyWith(color: theme.textTheme.bodySmall?.color),
+                  ),
+                ),
+              ),
+            )
+          else
+            ..._communities.map((comm) {
+              return Card(
+                margin: const EdgeInsets.only(bottom: 12),
+                child: Padding(
+                  padding: const EdgeInsets.all(14),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Container(
-                        width: 36,
-                        height: 36,
-                        decoration: BoxDecoration(
-                          color: theme.colorScheme.primaryContainer,
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        alignment: Alignment.center,
-                        child: Text(
-                          comm.name[0],
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w700,
-                            color: theme.colorScheme.primary,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              comm.name,
-                              style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 14.5),
+                      Row(
+                        children: [
+                          Container(
+                            width: 36,
+                            height: 36,
+                            decoration: BoxDecoration(
+                              color: theme.colorScheme.primaryContainer,
+                              borderRadius: BorderRadius.circular(10),
                             ),
-                            Text(
-                              '${comm.memberCount} members • ${comm.category}',
-                              style: theme.textTheme.labelMedium?.copyWith(fontSize: 11.5),
-                            ),
-                          ],
-                        ),
-                      ),
-                      // Contextual Three-Dot Menu: Group (Notifications, Share, Leave, Report)
-                      PopupMenuButton<String>(
-                        icon: const Icon(Icons.more_vert_rounded, size: 18),
-                        tooltip: 'Group options',
-                        onSelected: (val) => _handleGroupMenuAction(val, comm),
-                        itemBuilder: (context) => [
-                          PopupMenuItem(
-                            value: 'notifications',
-                            child: Row(
-                              children: [
-                                Icon(comm.notificationsEnabled ? Icons.notifications_off_outlined : Icons.notifications_active_outlined, size: 18),
-                                const SizedBox(width: 10),
-                                Text(comm.notificationsEnabled ? 'Mute Notifications' : 'Enable Notifications'),
-                              ],
-                            ),
-                          ),
-                          const PopupMenuItem(
-                            value: 'share',
-                            child: Row(
-                              children: [
-                                Icon(Icons.share_outlined, size: 18),
-                                SizedBox(width: 10),
-                                Text('Share Group'),
-                              ],
-                            ),
-                          ),
-                          if (comm.isJoined)
-                            const PopupMenuItem(
-                              value: 'leave',
-                              child: Row(
-                                children: [
-                                  Icon(Icons.exit_to_app_rounded, size: 18),
-                                  SizedBox(width: 10),
-                                  Text('Leave Group'),
-                                ],
+                            alignment: Alignment.center,
+                            child: Text(
+                              comm.name.isNotEmpty ? comm.name[0] : 'G',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w700,
+                                color: theme.colorScheme.primary,
                               ),
                             ),
-                          const PopupMenuItem(
-                            value: 'report',
-                            child: Row(
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Icon(Icons.flag_outlined, size: 18, color: AppTheme.danger),
-                                SizedBox(width: 10),
-                                Text('Report Group', style: TextStyle(color: AppTheme.danger)),
+                                Text(
+                                  comm.name,
+                                  style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 14.5),
+                                ),
+                                Text(
+                                  '${comm.memberCount} members • ${comm.category}',
+                                  style: theme.textTheme.labelMedium?.copyWith(fontSize: 11.5),
+                                ),
                               ],
+                            ),
+                          ),
+                          PopupMenuButton<String>(
+                            icon: const Icon(Icons.more_vert_rounded, size: 18),
+                            tooltip: 'Group options',
+                            onSelected: (val) => _handleGroupMenuAction(val, comm),
+                            itemBuilder: (context) => [
+                              PopupMenuItem(
+                                value: 'notifications',
+                                child: Row(
+                                  children: [
+                                    Icon(comm.notificationsEnabled ? Icons.notifications_off_outlined : Icons.notifications_active_outlined, size: 18),
+                                    const SizedBox(width: 10),
+                                    Text(comm.notificationsEnabled ? 'Mute Notifications' : 'Enable Notifications'),
+                                  ],
+                                ),
+                              ),
+                              const PopupMenuItem(
+                                value: 'share',
+                                child: Row(
+                                  children: [
+                                    Icon(Icons.share_outlined, size: 18),
+                                    SizedBox(width: 10),
+                                    Text('Share Group'),
+                                  ],
+                                ),
+                              ),
+                              if (comm.isJoined)
+                                const PopupMenuItem(
+                                  value: 'leave',
+                                  child: Row(
+                                    children: [
+                                      Icon(Icons.exit_to_app_rounded, size: 18),
+                                      SizedBox(width: 10),
+                                      Text('Leave Group'),
+                                    ],
+                                  ),
+                                ),
+                              const PopupMenuItem(
+                                value: 'report',
+                                child: Row(
+                                  children: [
+                                    Icon(Icons.flag_outlined, size: 18, color: AppTheme.danger),
+                                    SizedBox(width: 10),
+                                    Text('Report Group', style: TextStyle(color: AppTheme.danger)),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 10),
+                      Text(comm.description, style: theme.textTheme.bodyMedium?.copyWith(fontSize: 13)),
+                      const SizedBox(height: 12),
+                      FilledButton.tonal(
+                        onPressed: () {
+                          final index = _communities.indexWhere((c) => c.id == comm.id);
+                          if (index != -1) {
+                            setState(() {
+                              _communities[index] = _communities[index].copyWith(isJoined: !_communities[index].isJoined);
+                            });
+                          }
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text(comm.isJoined ? 'Left ${comm.name}' : 'Joined ${comm.name}!')),
+                          );
+                        },
+                        style: FilledButton.styleFrom(minimumSize: const Size(90, 34)),
+                        child: Text(comm.isJoined ? 'Joined' : 'Join'),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            }),
+          const SizedBox(height: 20),
+
+          // Event Recommendations
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'Upcoming Events',
+                style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700),
+              ),
+              TextButton(
+                onPressed: () => Navigator.of(context).pushNamed('/app/more/events'),
+                child: const Text('All Events'),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          if (_events.isEmpty)
+            Card(
+              child: Padding(
+                padding: const EdgeInsets.all(24),
+                child: Center(
+                  child: Text(
+                    'No events yet.',
+                    style: theme.textTheme.bodyMedium?.copyWith(color: theme.textTheme.bodySmall?.color),
+                  ),
+                ),
+              ),
+            )
+          else
+            ..._events.map((event) {
+              return Card(
+                margin: const EdgeInsets.only(bottom: 12),
+                child: Padding(
+                  padding: const EdgeInsets.all(14),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        event.title,
+                        style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 14.5),
+                      ),
+                      const SizedBox(height: 6),
+                      Row(
+                        children: [
+                          Icon(Icons.calendar_today_outlined, size: 14, color: theme.colorScheme.primary),
+                          const SizedBox(width: 6),
+                          Text(event.date, style: const TextStyle(fontSize: 12.5)),
+                          const SizedBox(width: 14),
+                          Icon(Icons.location_on_outlined, size: 14, color: theme.textTheme.bodySmall?.color),
+                          const SizedBox(width: 4),
+                          Expanded(
+                            child: Text(
+                              event.location,
+                              style: theme.textTheme.bodySmall,
+                              overflow: TextOverflow.ellipsis,
                             ),
                           ),
                         ],
                       ),
-                    ],
-                  ),
-                  const SizedBox(height: 10),
-                  Text(comm.description, style: theme.textTheme.bodyMedium?.copyWith(fontSize: 13)),
-                  const SizedBox(height: 12),
-                  FilledButton.tonal(
-                    onPressed: () {
-                      final index = _communities.indexWhere((c) => c.id == comm.id);
-                      if (index != -1) {
-                        setState(() {
-                          _communities[index] = _communities[index].copyWith(isJoined: !_communities[index].isJoined);
-                        });
-                      }
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text(comm.isJoined ? 'Left ${comm.name}' : 'Joined ${comm.name}!')),
-                      );
-                    },
-                    style: FilledButton.styleFrom(minimumSize: const Size(90, 34)),
-                    child: Text(comm.isJoined ? 'Joined' : 'Join'),
-                  ),
-                ],
-              ),
-            ),
-          );
-        }),
-        const SizedBox(height: 20),
-
-        // Event Recommendations
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              'Upcoming Events',
-              style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700),
-            ),
-            TextButton(
-              onPressed: () => Navigator.of(context).pushNamed('/app/more/events'),
-              child: const Text('All Events'),
-            ),
-          ],
-        ),
-        const SizedBox(height: 8),
-        ..._events.map((event) {
-          return Card(
-            margin: const EdgeInsets.only(bottom: 12),
-            child: Padding(
-              padding: const EdgeInsets.all(14),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    event.title,
-                    style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 14.5),
-                  ),
-                  const SizedBox(height: 6),
-                  Row(
-                    children: [
-                      Icon(Icons.calendar_today_outlined, size: 14, color: theme.colorScheme.primary),
-                      const SizedBox(width: 6),
-                      Text(event.date, style: const TextStyle(fontSize: 12.5)),
-                      const SizedBox(width: 14),
-                      Icon(Icons.location_on_outlined, size: 14, color: theme.textTheme.bodySmall?.color),
-                      const SizedBox(width: 4),
-                      Expanded(
-                        child: Text(
-                          event.location,
-                          style: theme.textTheme.bodySmall,
-                          overflow: TextOverflow.ellipsis,
-                        ),
+                      const SizedBox(height: 8),
+                      Text(event.description, style: theme.textTheme.bodySmall),
+                      const SizedBox(height: 12),
+                      FilledButton.tonal(
+                        onPressed: () {
+                          final index = _events.indexWhere((e) => e.id == event.id);
+                          if (index != -1) {
+                            setState(() {
+                              _events[index] = _events[index].copyWith(isAttending: !_events[index].isAttending);
+                            });
+                          }
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text(event.isAttending ? 'RSVP cancelled' : 'RSVP confirmed!')),
+                          );
+                        },
+                        style: FilledButton.styleFrom(minimumSize: const Size(90, 34)),
+                        child: Text(event.isAttending ? 'Attending' : 'RSVP'),
                       ),
                     ],
                   ),
-                  const SizedBox(height: 8),
-                  Text(event.description, style: theme.textTheme.bodySmall),
-                  const SizedBox(height: 12),
-                  FilledButton.tonal(
-                    onPressed: () {
-                      final index = _events.indexWhere((e) => e.id == event.id);
-                      if (index != -1) {
-                        setState(() {
-                          _events[index] = _events[index].copyWith(isAttending: !_events[index].isAttending);
-                        });
-                      }
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text(event.isAttending ? 'RSVP cancelled' : 'RSVP confirmed!')),
-                      );
-                    },
-                    style: FilledButton.styleFrom(minimumSize: const Size(90, 34)),
-                    child: Text(event.isAttending ? 'Attending' : 'RSVP'),
-                  ),
-                ],
-              ),
-            ),
-          );
-        }),
-      ],
+                ),
+              );
+            }),
+        ],
+      ),
     );
   }
 }

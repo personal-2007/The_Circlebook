@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 
-import '../../data/mock_data.dart';
 import '../../models/circlebook_models.dart';
+import '../../repositories/message_repository.dart';
 import '../../theme/app_theme.dart';
+import '../../widgets/empty_state_view.dart';
+import '../../widgets/error_state_view.dart';
+import '../../widgets/loading_state_view.dart';
 
 class MessagesScreen extends StatefulWidget {
   const MessagesScreen({super.key});
@@ -12,8 +15,41 @@ class MessagesScreen extends StatefulWidget {
 }
 
 class _MessagesScreenState extends State<MessagesScreen> {
-  final List<CircleMessage> _messages = List.from(MockData.messages);
+  final MessageRepository _messageRepository = MessageRepository();
+  List<CircleMessage> _messages = [];
+  bool _isLoading = true;
+  String? _errorMessage;
   String _searchQuery = '';
+
+  @override
+  void initState() {
+    super.initState();
+    _loadMessages();
+  }
+
+  Future<void> _loadMessages() async {
+    setState(() {
+      _isLoading = true;
+      _errorMessage = null;
+    });
+
+    try {
+      final list = await _messageRepository.getMessages();
+      if (mounted) {
+        setState(() {
+          _messages = list;
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _errorMessage = e.toString();
+          _isLoading = false;
+        });
+      }
+    }
+  }
 
   void _handleMessageMenuAction(String action, CircleMessage msg) {
     switch (action) {
@@ -45,7 +81,7 @@ class _MessagesScreenState extends State<MessagesScreen> {
                 onPressed: () {
                   Navigator.pop(ctx);
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Search complete. 2 matches found.')),
+                    const SnackBar(content: Text('Search complete.')),
                   );
                 },
                 child: const Text('Search'),
@@ -58,6 +94,7 @@ class _MessagesScreenState extends State<MessagesScreen> {
         setState(() {
           _messages.removeWhere((m) => m.id == msg.id);
         });
+        _messageRepository.archiveConversation(msg.id);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Conversation with ${msg.senderName} archived.')),
         );
@@ -109,187 +146,186 @@ class _MessagesScreenState extends State<MessagesScreen> {
           m.preview.toLowerCase().contains(q);
     }).toList();
 
-    return ListView(
-      padding: const EdgeInsets.fromLTRB(16, 12, 16, 32),
-      children: [
-        // Search bar
-        TextField(
-          onChanged: (val) => setState(() => _searchQuery = val),
-          decoration: InputDecoration(
-            hintText: 'Search conversations...',
-            prefixIcon: const Icon(Icons.search_rounded, size: 20),
-            suffixIcon: _searchQuery.isNotEmpty
-                ? IconButton(
-                    icon: const Icon(Icons.clear_rounded, size: 18),
-                    onPressed: () => setState(() => _searchQuery = ''),
-                  )
-                : null,
-          ),
-        ),
-        const SizedBox(height: 14),
-
-        if (filtered.isEmpty) ...[
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 40),
-            child: Center(
-              child: Text(
-                'No conversations found',
-                style: theme.textTheme.bodyMedium?.copyWith(
-                  color: theme.textTheme.bodySmall?.color,
-                ),
-              ),
+    return RefreshIndicator(
+      onRefresh: _loadMessages,
+      child: ListView(
+        physics: const AlwaysScrollableScrollPhysics(),
+        padding: const EdgeInsets.fromLTRB(16, 12, 16, 32),
+        children: [
+          // Search bar
+          TextField(
+            onChanged: (val) => setState(() => _searchQuery = val),
+            decoration: InputDecoration(
+              hintText: 'Search conversations...',
+              prefixIcon: const Icon(Icons.search_rounded, size: 20),
+              suffixIcon: _searchQuery.isNotEmpty
+                  ? IconButton(
+                      icon: const Icon(Icons.clear_rounded, size: 18),
+                      onPressed: () => setState(() => _searchQuery = ''),
+                    )
+                  : null,
             ),
           ),
-        ] else ...[
-          ...filtered.map((msg) {
-            return Card(
-              margin: const EdgeInsets.only(bottom: 10),
-              child: ListTile(
-                onTap: () => _openConversation(msg),
-                contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
-                leading: Stack(
-                  children: [
-                    CircleAvatar(
-                      radius: 22,
-                      backgroundColor: theme.colorScheme.primaryContainer,
-                      child: Text(
-                        msg.senderName.split(' ').map((p) => p[0]).take(2).join(),
-                        style: TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w700,
-                          color: theme.colorScheme.primary,
-                        ),
-                      ),
-                    ),
-                    if (msg.isOnline)
-                      Positioned(
-                        right: 0,
-                        bottom: 0,
-                        child: Container(
-                          width: 12,
-                          height: 12,
-                          decoration: BoxDecoration(
-                            color: AppTheme.success,
-                            shape: BoxShape.circle,
-                            border: Border.all(
-                              color: theme.cardColor,
-                              width: 2,
-                            ),
-                          ),
-                        ),
-                      ),
-                  ],
-                ),
-                title: Row(
-                  children: [
-                    Expanded(
-                      child: Text(
-                        msg.senderName,
-                        style: theme.textTheme.titleMedium?.copyWith(
-                          fontWeight: msg.unread > 0 ? FontWeight.w700 : FontWeight.w600,
-                          fontSize: 14.5,
-                        ),
-                      ),
-                    ),
-                    if (msg.isMuted) ...[
-                      Icon(Icons.volume_off_outlined, size: 15, color: theme.textTheme.bodySmall?.color),
-                      const SizedBox(width: 6),
-                    ],
-                    Text(
-                      msg.time,
-                      style: theme.textTheme.labelMedium?.copyWith(fontSize: 11),
-                    ),
-                  ],
-                ),
-                subtitle: Padding(
-                  padding: const EdgeInsets.only(top: 3),
-                  child: Row(
+          const SizedBox(height: 14),
+
+          if (_isLoading)
+            const LoadingStateView(message: 'Loading messages...')
+          else if (_errorMessage != null)
+            ErrorStateView(onRetry: _loadMessages)
+          else if (filtered.isEmpty)
+            EmptyStateView(
+              title: 'No messages yet.',
+              message: _searchQuery.isNotEmpty
+                  ? 'No conversations found matching "$_searchQuery".'
+                  : 'Direct conversations with your circles will appear here.',
+              icon: Icons.chat_bubble_outline_rounded,
+            )
+          else ...[
+            ...filtered.map((msg) {
+              return Card(
+                margin: const EdgeInsets.only(bottom: 10),
+                child: ListTile(
+                  onTap: () => _openConversation(msg),
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
+                  leading: Stack(
                     children: [
-                      Expanded(
+                      CircleAvatar(
+                        radius: 22,
+                        backgroundColor: theme.colorScheme.primaryContainer,
                         child: Text(
-                          msg.preview,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
+                          msg.senderName.trim().isNotEmpty
+                              ? msg.senderName.trim().split(RegExp(r'\s+')).map((p) => p[0]).take(2).join().toUpperCase()
+                              : 'U',
                           style: TextStyle(
-                            fontSize: 13,
-                            color: msg.unread > 0 ? theme.textTheme.bodyLarge?.color : theme.textTheme.bodySmall?.color,
-                            fontWeight: msg.unread > 0 ? FontWeight.w600 : FontWeight.w400,
+                            fontSize: 12,
+                            fontWeight: FontWeight.w700,
+                            color: theme.colorScheme.primary,
                           ),
                         ),
                       ),
-                      if (msg.unread > 0)
-                        Container(
-                          margin: const EdgeInsets.only(left: 8),
-                          padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
-                          decoration: BoxDecoration(
-                            color: AppTheme.primary,
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: Text(
-                            '${msg.unread}',
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 11,
-                              fontWeight: FontWeight.w700,
+                      if (msg.isOnline)
+                        Positioned(
+                          right: 0,
+                          bottom: 0,
+                          child: Container(
+                            width: 11,
+                            height: 11,
+                            decoration: BoxDecoration(
+                              color: AppTheme.success,
+                              shape: BoxShape.circle,
+                              border: Border.all(color: theme.colorScheme.surface, width: 2),
                             ),
                           ),
                         ),
                     ],
                   ),
+                  title: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Expanded(
+                        child: Text(
+                          msg.senderName,
+                          style: theme.textTheme.titleMedium?.copyWith(
+                            fontWeight: msg.unread > 0 ? FontWeight.w800 : FontWeight.w600,
+                            fontSize: 14.5,
+                          ),
+                        ),
+                      ),
+                      Text(
+                        msg.time,
+                        style: theme.textTheme.labelMedium?.copyWith(fontSize: 11),
+                      ),
+                    ],
+                  ),
+                  subtitle: Padding(
+                    padding: const EdgeInsets.only(top: 3),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            msg.preview,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              fontSize: 13,
+                              color: msg.unread > 0 ? theme.textTheme.bodyLarge?.color : theme.textTheme.bodySmall?.color,
+                              fontWeight: msg.unread > 0 ? FontWeight.w600 : FontWeight.w400,
+                            ),
+                          ),
+                        ),
+                        if (msg.unread > 0)
+                          Container(
+                            margin: const EdgeInsets.only(left: 8),
+                            padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+                            decoration: BoxDecoration(
+                              color: AppTheme.primary,
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: Text(
+                              '${msg.unread}',
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 11,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                          ),
+                      ],
+                    ),
+                  ),
+                  trailing: PopupMenuButton<String>(
+                    icon: const Icon(Icons.more_vert_rounded, size: 18),
+                    tooltip: 'Conversation options',
+                    onSelected: (val) => _handleMessageMenuAction(val, msg),
+                    itemBuilder: (context) => [
+                      PopupMenuItem(
+                        value: 'mute',
+                        child: Row(
+                          children: [
+                            Icon(msg.isMuted ? Icons.volume_up_outlined : Icons.volume_off_outlined, size: 18),
+                            const SizedBox(width: 10),
+                            Text(msg.isMuted ? 'Unmute' : 'Mute'),
+                          ],
+                        ),
+                      ),
+                      const PopupMenuItem(
+                        value: 'search',
+                        child: Row(
+                          children: [
+                            Icon(Icons.search_rounded, size: 18),
+                            SizedBox(width: 10),
+                            Text('Search conversation'),
+                          ],
+                        ),
+                      ),
+                      const PopupMenuItem(
+                        value: 'archive',
+                        child: Row(
+                          children: [
+                            Icon(Icons.archive_outlined, size: 18),
+                            SizedBox(width: 10),
+                            Text('Archive'),
+                          ],
+                        ),
+                      ),
+                      const PopupMenuItem(
+                        value: 'report',
+                        child: Row(
+                          children: [
+                            Icon(Icons.flag_outlined, size: 18, color: AppTheme.danger),
+                            SizedBox(width: 10),
+                            Text('Report', style: TextStyle(color: AppTheme.danger)),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-                // Contextual Three-Dot Menu: Mute, Search conversation, Archive, Report
-                trailing: PopupMenuButton<String>(
-                  icon: const Icon(Icons.more_vert_rounded, size: 18),
-                  tooltip: 'Conversation options',
-                  onSelected: (val) => _handleMessageMenuAction(val, msg),
-                  itemBuilder: (context) => [
-                    PopupMenuItem(
-                      value: 'mute',
-                      child: Row(
-                        children: [
-                          Icon(msg.isMuted ? Icons.volume_up_outlined : Icons.volume_off_outlined, size: 18),
-                          const SizedBox(width: 10),
-                          Text(msg.isMuted ? 'Unmute' : 'Mute'),
-                        ],
-                      ),
-                    ),
-                    const PopupMenuItem(
-                      value: 'search',
-                      child: Row(
-                        children: [
-                          Icon(Icons.search_rounded, size: 18),
-                          SizedBox(width: 10),
-                          Text('Search conversation'),
-                        ],
-                      ),
-                    ),
-                    const PopupMenuItem(
-                      value: 'archive',
-                      child: Row(
-                        children: [
-                          Icon(Icons.archive_outlined, size: 18),
-                          SizedBox(width: 10),
-                          Text('Archive'),
-                        ],
-                      ),
-                    ),
-                    const PopupMenuItem(
-                      value: 'report',
-                      child: Row(
-                        children: [
-                          Icon(Icons.flag_outlined, size: 18, color: AppTheme.danger),
-                          SizedBox(width: 10),
-                          Text('Report', style: TextStyle(color: AppTheme.danger)),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            );
-          }),
+              );
+            }),
+          ],
         ],
-      ],
+      ),
     );
   }
 }
@@ -309,10 +345,7 @@ class _ChatDetailView extends StatefulWidget {
 
 class _ChatDetailViewState extends State<_ChatDetailView> {
   final _textController = TextEditingController();
-  final List<String> _chatMessages = [
-    'Hello Aarav, hope your week is off to a great start.',
-    'I reviewed your proposal on the modular navigation hierarchy. Looks very coherent.',
-  ];
+  final List<String> _chatMessages = [];
 
   void _send() {
     final text = _textController.text.trim();
@@ -321,6 +354,7 @@ class _ChatDetailViewState extends State<_ChatDetailView> {
       _chatMessages.add(text);
       _textController.clear();
     });
+    MessageRepository().sendMessage(widget.message.id, text);
   }
 
   @override
@@ -342,7 +376,9 @@ class _ChatDetailViewState extends State<_ChatDetailView> {
               radius: 18,
               backgroundColor: theme.colorScheme.primaryContainer,
               child: Text(
-                widget.message.senderName[0],
+                widget.message.senderName.trim().isNotEmpty
+                    ? widget.message.senderName.trim().split(RegExp(r'\s+')).map((p) => p[0]).take(2).join().toUpperCase()
+                    : 'U',
                 style: TextStyle(
                   fontSize: 12,
                   fontWeight: FontWeight.w700,
@@ -370,27 +406,26 @@ class _ChatDetailViewState extends State<_ChatDetailView> {
           ],
         ),
         actions: [
+          IconButton(
+            icon: const Icon(Icons.videocam_outlined),
+            tooltip: 'Video consultation',
+            onPressed: () {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Video session request created.')),
+              );
+            },
+          ),
           PopupMenuButton<String>(
             icon: const Icon(Icons.more_vert_rounded),
-            tooltip: 'Conversation menu',
             onSelected: widget.onMenuAction,
             itemBuilder: (context) => [
               PopupMenuItem(
                 value: 'mute',
-                child: Text(widget.message.isMuted ? 'Unmute' : 'Mute'),
+                child: Text(widget.message.isMuted ? 'Unmute' : 'Mute conversation'),
               ),
-              const PopupMenuItem(
-                value: 'search',
-                child: Text('Search conversation'),
-              ),
-              const PopupMenuItem(
-                value: 'archive',
-                child: Text('Archive'),
-              ),
-              const PopupMenuItem(
-                value: 'report',
-                child: Text('Report', style: TextStyle(color: AppTheme.danger)),
-              ),
+              const PopupMenuItem(value: 'search', child: Text('Search in conversation')),
+              const PopupMenuItem(value: 'archive', child: Text('Archive conversation')),
+              const PopupMenuItem(value: 'report', child: Text('Report sender', style: TextStyle(color: AppTheme.danger))),
             ],
           ),
         ],
@@ -398,37 +433,44 @@ class _ChatDetailViewState extends State<_ChatDetailView> {
       body: Column(
         children: [
           Expanded(
-            child: ListView.builder(
-              padding: const EdgeInsets.all(16),
-              itemCount: _chatMessages.length,
-              itemBuilder: (context, index) {
-                final isMe = index >= 2;
-                return Align(
-                  alignment: isMe ? Alignment.centerRight : Alignment.centerLeft,
-                  child: Container(
-                    margin: const EdgeInsets.only(bottom: 10),
-                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-                    constraints: BoxConstraints(
-                      maxWidth: MediaQuery.of(context).size.width * 0.75,
-                    ),
-                    decoration: BoxDecoration(
-                      color: isMe ? AppTheme.primary : theme.colorScheme.surfaceContainerHighest,
-                      borderRadius: BorderRadius.circular(14),
-                    ),
-                    child: Text(
-                      _chatMessages[index],
-                      style: TextStyle(
-                        fontSize: 13.5,
-                        color: isMe ? Colors.white : theme.textTheme.bodyLarge?.color,
+            child: _chatMessages.isEmpty
+                ? Center(
+                    child: Padding(
+                      padding: const EdgeInsets.all(24),
+                      child: Text(
+                        'No messages yet. Send a message to start the conversation.',
+                        textAlign: TextAlign.center,
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                          color: theme.textTheme.bodySmall?.color,
+                        ),
                       ),
                     ),
+                  )
+                : ListView.builder(
+                    padding: const EdgeInsets.all(16),
+                    itemCount: _chatMessages.length,
+                    itemBuilder: (context, index) {
+                      final text = _chatMessages[index];
+                      return Align(
+                        alignment: Alignment.centerRight,
+                        child: Container(
+                          margin: const EdgeInsets.only(bottom: 10),
+                          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                          decoration: BoxDecoration(
+                            color: AppTheme.primary,
+                            borderRadius: BorderRadius.circular(14),
+                          ),
+                          child: Text(
+                            text,
+                            style: const TextStyle(color: Colors.white, fontSize: 13.5),
+                          ),
+                        ),
+                      );
+                    },
                   ),
-                );
-              },
-            ),
           ),
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
             decoration: BoxDecoration(
               color: theme.colorScheme.surface,
               border: Border(top: BorderSide(color: theme.dividerColor)),
@@ -440,18 +482,16 @@ class _ChatDetailViewState extends State<_ChatDetailView> {
                     child: TextField(
                       controller: _textController,
                       decoration: const InputDecoration(
-                        hintText: 'Type a message...',
+                        hintText: 'Type your message...',
                         contentPadding: EdgeInsets.symmetric(horizontal: 14, vertical: 10),
                       ),
+                      onSubmitted: (_) => _send(),
                     ),
                   ),
                   const SizedBox(width: 8),
-                  FilledButton(
+                  IconButton.filled(
                     onPressed: _send,
-                    style: FilledButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                    ),
-                    child: const Icon(Icons.send_rounded, size: 18),
+                    icon: const Icon(Icons.send_rounded, size: 18),
                   ),
                 ],
               ),

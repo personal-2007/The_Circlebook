@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 
-import '../../data/mock_data.dart';
 import '../../models/circlebook_models.dart';
+import '../../repositories/user_repository.dart';
 import '../../theme/app_theme.dart';
+import '../../widgets/empty_state_view.dart';
+import '../../widgets/error_state_view.dart';
+import '../../widgets/loading_state_view.dart';
 
 class PeopleScreen extends StatefulWidget {
   const PeopleScreen({super.key});
@@ -12,9 +15,45 @@ class PeopleScreen extends StatefulWidget {
 }
 
 class _PeopleScreenState extends State<PeopleScreen> {
+  final UserRepository _userRepository = UserRepository();
   int _selectedFilter = 0; // 0: Suggested, 1: Your Circles, 2: Requests
-  final List<CircleUser> _people = List.from(MockData.suggestedPeople);
+  List<CircleUser> _people = [];
+  bool _isLoading = true;
+  String? _errorMessage;
   String _searchQuery = '';
+
+  @override
+  void initState() {
+    super.initState();
+    _loadPeople();
+  }
+
+  Future<void> _loadPeople() async {
+    setState(() {
+      _isLoading = true;
+      _errorMessage = null;
+    });
+
+    try {
+      final list = await _userRepository.getPeople(
+        query: _searchQuery.isNotEmpty ? _searchQuery : null,
+        filter: _selectedFilter,
+      );
+      if (mounted) {
+        setState(() {
+          _people = list;
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _errorMessage = e.toString();
+          _isLoading = false;
+        });
+      }
+    }
+  }
 
   void _handleProfileMenu(String action, CircleUser person) {
     switch (action) {
@@ -43,6 +82,7 @@ class _PeopleScreenState extends State<PeopleScreen> {
         setState(() {
           _people.removeWhere((p) => p.id == person.id);
         });
+        _userRepository.blockUser(person.id);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('${person.name} has been blocked.')),
         );
@@ -89,228 +129,262 @@ class _PeopleScreenState extends State<PeopleScreen> {
         if (!matches) return false;
       }
       if (_selectedFilter == 1) return p.isConnected;
-      if (_selectedFilter == 2) return !p.isConnected && p.id == 'usr_005';
+      if (_selectedFilter == 2) return !p.isConnected;
       return true;
     }).toList();
 
-    return ListView(
-      padding: const EdgeInsets.fromLTRB(16, 12, 16, 32),
-      children: [
-        // Search bar
-        TextField(
-          onChanged: (val) => setState(() => _searchQuery = val),
-          decoration: InputDecoration(
-            hintText: 'Search people by name, skill, or role...',
-            prefixIcon: const Icon(Icons.search_rounded, size: 20),
-            suffixIcon: _searchQuery.isNotEmpty
-                ? IconButton(
-                    icon: const Icon(Icons.clear_rounded, size: 18),
-                    onPressed: () => setState(() => _searchQuery = ''),
-                  )
-                : null,
+    final connectedCount = _people.where((p) => p.isConnected).length;
+    final requestsCount = _people.where((p) => !p.isConnected).length;
+
+    return RefreshIndicator(
+      onRefresh: _loadPeople,
+      child: ListView(
+        physics: const AlwaysScrollableScrollPhysics(),
+        padding: const EdgeInsets.fromLTRB(16, 12, 16, 32),
+        children: [
+          // Search bar
+          TextField(
+            onChanged: (val) {
+              setState(() => _searchQuery = val);
+              if (val.isEmpty || val.length >= 3) {
+                _loadPeople();
+              }
+            },
+            decoration: InputDecoration(
+              hintText: 'Search people by name, skill, or role...',
+              prefixIcon: const Icon(Icons.search_rounded, size: 20),
+              suffixIcon: _searchQuery.isNotEmpty
+                  ? IconButton(
+                      icon: const Icon(Icons.clear_rounded, size: 18),
+                      onPressed: () {
+                        setState(() => _searchQuery = '');
+                        _loadPeople();
+                      },
+                    )
+                  : null,
+            ),
           ),
-        ),
-        const SizedBox(height: 14),
+          const SizedBox(height: 14),
 
-        // Tabs
-        Row(
-          children: [
-            _FilterTab(
-              label: 'Suggested',
-              isSelected: _selectedFilter == 0,
-              onTap: () => setState(() => _selectedFilter = 0),
-            ),
-            const SizedBox(width: 8),
-            _FilterTab(
-              label: 'Your Circles (42)',
-              isSelected: _selectedFilter == 1,
-              onTap: () => setState(() => _selectedFilter = 1),
-            ),
-            const SizedBox(width: 8),
-            _FilterTab(
-              label: 'Requests (1)',
-              isSelected: _selectedFilter == 2,
-              onTap: () => setState(() => _selectedFilter = 2),
-            ),
-          ],
-        ),
-        const SizedBox(height: 16),
-
-        if (filteredList.isEmpty) ...[
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 40),
-            child: Center(
-              child: Text(
-                'No connections found matching "$_searchQuery"',
-                style: theme.textTheme.bodyMedium?.copyWith(
-                  color: theme.textTheme.bodySmall?.color,
-                ),
+          // Tabs with dynamic counts
+          Row(
+            children: [
+              _FilterTab(
+                label: 'Suggested',
+                isSelected: _selectedFilter == 0,
+                onTap: () {
+                  setState(() => _selectedFilter = 0);
+                  _loadPeople();
+                },
               ),
-            ),
+              const SizedBox(width: 8),
+              _FilterTab(
+                label: connectedCount > 0 ? 'Your Circles ($connectedCount)' : 'Your Circles',
+                isSelected: _selectedFilter == 1,
+                onTap: () {
+                  setState(() => _selectedFilter = 1);
+                  _loadPeople();
+                },
+              ),
+              const SizedBox(width: 8),
+              _FilterTab(
+                label: requestsCount > 0 ? 'Requests ($requestsCount)' : 'Requests',
+                isSelected: _selectedFilter == 2,
+                onTap: () {
+                  setState(() => _selectedFilter = 2);
+                  _loadPeople();
+                },
+              ),
+            ],
           ),
-        ] else ...[
-          ...filteredList.map((person) {
-            return Card(
-              margin: const EdgeInsets.only(bottom: 12),
-              child: Padding(
-                padding: const EdgeInsets.all(14),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    CircleAvatar(
-                      radius: 24,
-                      backgroundColor: theme.colorScheme.primaryContainer,
-                      child: Text(
-                        person.name.split(' ').map((p) => p[0]).take(2).join(),
-                        style: TextStyle(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w700,
-                          color: theme.colorScheme.primary,
+          const SizedBox(height: 16),
+
+          if (_isLoading)
+            const LoadingStateView(message: 'Loading people...')
+          else if (_errorMessage != null)
+            ErrorStateView(onRetry: _loadPeople)
+          else if (filteredList.isEmpty) ...[
+            if (_selectedFilter == 1)
+              const EmptyStateView(
+                title: 'No connections yet.',
+                message: 'Discover people in your field to build your verified circles.',
+                icon: Icons.people_outline_rounded,
+              )
+            else if (_selectedFilter == 2)
+              const EmptyStateView(
+                title: 'No connection requests.',
+                message: 'When members send you connection requests, they will appear here.',
+                icon: Icons.person_add_disabled_outlined,
+              )
+            else
+              EmptyStateView(
+                title: 'No people found.',
+                message: _searchQuery.isNotEmpty
+                    ? 'No members matching "$_searchQuery".'
+                    : 'No member recommendations available right now.',
+                icon: Icons.person_search_rounded,
+              ),
+          ] else ...[
+            ...filteredList.map((person) {
+              return Card(
+                margin: const EdgeInsets.only(bottom: 12),
+                child: Padding(
+                  padding: const EdgeInsets.all(14),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      CircleAvatar(
+                        radius: 24,
+                        backgroundColor: theme.colorScheme.primaryContainer,
+                        child: Text(
+                          person.name.trim().isNotEmpty
+                              ? person.name.trim().split(RegExp(r'\s+')).map((p) => p[0]).take(2).join().toUpperCase()
+                              : 'U',
+                          style: TextStyle(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w700,
+                            color: theme.colorScheme.primary,
+                          ),
                         ),
                       ),
-                    ),
-                    const SizedBox(width: 14),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              Expanded(
-                                child: Text(
-                                  person.name,
-                                  style: theme.textTheme.titleMedium?.copyWith(
-                                    fontWeight: FontWeight.w700,
-                                    fontSize: 15,
+                      const SizedBox(width: 14),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: Text(
+                                    person.name,
+                                    style: theme.textTheme.titleMedium?.copyWith(
+                                      fontWeight: FontWeight.w700,
+                                      fontSize: 15,
+                                    ),
                                   ),
                                 ),
-                              ),
-                              // Contextual 3-dot menu for Profile (Share, Block, Restrict, Report)
-                              Semantics(
-                                label: 'Options for ${person.name}',
-                                button: true,
-                                child: PopupMenuButton<String>(
-                                  icon: const Icon(Icons.more_vert_rounded, size: 18),
-                                  tooltip: 'Profile actions',
-                                  onSelected: (val) => _handleProfileMenu(val, person),
-                                  itemBuilder: (context) => [
-                                    const PopupMenuItem(
-                                      value: 'share',
-                                      child: Row(
-                                        children: [
-                                          Icon(Icons.share_outlined, size: 18),
-                                          SizedBox(width: 10),
-                                          Text('Share Profile'),
-                                        ],
+                                Semantics(
+                                  label: 'Options for ${person.name}',
+                                  button: true,
+                                  child: PopupMenuButton<String>(
+                                    icon: const Icon(Icons.more_vert_rounded, size: 18),
+                                    tooltip: 'Profile actions',
+                                    onSelected: (val) => _handleProfileMenu(val, person),
+                                    itemBuilder: (context) => [
+                                      const PopupMenuItem(
+                                        value: 'share',
+                                        child: Row(
+                                          children: [
+                                            Icon(Icons.share_outlined, size: 18),
+                                            SizedBox(width: 10),
+                                            Text('Share Profile'),
+                                          ],
+                                        ),
                                       ),
-                                    ),
-                                    const PopupMenuItem(
-                                      value: 'restrict',
-                                      child: Row(
-                                        children: [
-                                          Icon(Icons.shield_outlined, size: 18),
-                                          SizedBox(width: 10),
-                                          Text('Restrict'),
-                                        ],
+                                      const PopupMenuItem(
+                                        value: 'restrict',
+                                        child: Row(
+                                          children: [
+                                            Icon(Icons.shield_outlined, size: 18),
+                                            SizedBox(width: 10),
+                                            Text('Restrict'),
+                                          ],
+                                        ),
                                       ),
-                                    ),
-                                    const PopupMenuItem(
-                                      value: 'block',
-                                      child: Row(
-                                        children: [
-                                          Icon(Icons.block_rounded, size: 18, color: AppTheme.danger),
-                                          SizedBox(width: 10),
-                                          Text('Block', style: TextStyle(color: AppTheme.danger)),
-                                        ],
+                                      const PopupMenuItem(
+                                        value: 'block',
+                                        child: Row(
+                                          children: [
+                                            Icon(Icons.block_rounded, size: 18, color: AppTheme.danger),
+                                            SizedBox(width: 10),
+                                            Text('Block', style: TextStyle(color: AppTheme.danger)),
+                                          ],
+                                        ),
                                       ),
-                                    ),
-                                    const PopupMenuItem(
-                                      value: 'report',
-                                      child: Row(
-                                        children: [
-                                          Icon(Icons.flag_outlined, size: 18, color: AppTheme.danger),
-                                          SizedBox(width: 10),
-                                          Text('Report', style: TextStyle(color: AppTheme.danger)),
-                                        ],
+                                      const PopupMenuItem(
+                                        value: 'report',
+                                        child: Row(
+                                          children: [
+                                            Icon(Icons.flag_outlined, size: 18, color: AppTheme.danger),
+                                            SizedBox(width: 10),
+                                            Text('Report', style: TextStyle(color: AppTheme.danger)),
+                                          ],
+                                        ),
                                       ),
-                                    ),
-                                  ],
+                                    ],
+                                  ),
                                 ),
-                              ),
-                            ],
-                          ),
-                          Text(
-                            person.handle,
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: theme.colorScheme.primary,
+                              ],
                             ),
-                          ),
-                          const SizedBox(height: 4),
-                          Text(
-                            person.headline,
-                            style: theme.textTheme.bodyMedium?.copyWith(fontSize: 13),
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                          const SizedBox(height: 8),
-                          Wrap(
-                            spacing: 6,
-                            children: person.skills.take(2).map((s) {
-                              return Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                                decoration: BoxDecoration(
-                                  color: theme.colorScheme.surfaceContainerHighest,
-                                  borderRadius: BorderRadius.circular(6),
-                                ),
-                                child: Text(s, style: const TextStyle(fontSize: 11)),
-                              );
-                            }).toList(),
-                          ),
-                          const SizedBox(height: 12),
-                          Row(
-                            children: [
-                              FilledButton.tonal(
-                                onPressed: () {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content: Text(
-                                        person.isConnected
-                                            ? 'Disconnected from ${person.name}'
-                                            : 'Connection invitation sent to ${person.name}',
-                                      ),
-                                    ),
-                                  );
-                                },
-                                style: FilledButton.styleFrom(
-                                  minimumSize: const Size(90, 34),
-                                  padding: const EdgeInsets.symmetric(horizontal: 14),
-                                ),
-                                child: Text(person.isConnected ? 'Connected' : 'Connect'),
+                            Text(
+                              person.handle,
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: theme.colorScheme.primary,
+                                fontWeight: FontWeight.w500,
                               ),
-                              const SizedBox(width: 8),
-                              OutlinedButton(
-                                onPressed: () {
-                                  Navigator.of(context).pushNamed('/app/messages');
-                                },
-                                style: OutlinedButton.styleFrom(
-                                  minimumSize: const Size(80, 34),
-                                  padding: const EdgeInsets.symmetric(horizontal: 12),
-                                ),
-                                child: const Text('Message'),
+                            ),
+                            const SizedBox(height: 4),
+                            if (person.headline.isNotEmpty)
+                              Text(
+                                person.headline,
+                                style: theme.textTheme.bodyMedium?.copyWith(fontSize: 13),
+                              ),
+                            if (person.college.isNotEmpty) ...[
+                              const SizedBox(height: 4),
+                              Row(
+                                children: [
+                                  Icon(Icons.school_outlined, size: 14, color: theme.textTheme.bodySmall?.color),
+                                  const SizedBox(width: 4),
+                                  Expanded(
+                                    child: Text(
+                                      person.college,
+                                      style: theme.textTheme.bodySmall?.copyWith(fontSize: 11.5),
+                                    ),
+                                  ),
+                                ],
                               ),
                             ],
-                          ),
-                        ],
+                            const SizedBox(height: 10),
+                            Row(
+                              children: [
+                                if (person.isConnected)
+                                  OutlinedButton.icon(
+                                    onPressed: () {},
+                                    icon: const Icon(Icons.check_rounded, size: 16),
+                                    label: const Text('Connected'),
+                                    style: OutlinedButton.styleFrom(
+                                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                                      textStyle: const TextStyle(fontSize: 12),
+                                    ),
+                                  )
+                                else
+                                  FilledButton.icon(
+                                    onPressed: () {
+                                      ScaffoldMessenger.of(context).showSnackBar(
+                                        SnackBar(content: Text('Connection request sent to ${person.name}.')),
+                                      );
+                                    },
+                                    icon: const Icon(Icons.person_add_rounded, size: 16),
+                                    label: const Text('Connect'),
+                                    style: FilledButton.styleFrom(
+                                      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
+                                      textStyle: const TextStyle(fontSize: 12),
+                                    ),
+                                  ),
+                              ],
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-            );
-          }),
+              );
+            }),
+          ],
         ],
-      ],
+      ),
     );
   }
 }
@@ -330,15 +404,18 @@ class _FilterTab extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return InkWell(
-      borderRadius: BorderRadius.circular(8),
       onTap: onTap,
+      borderRadius: BorderRadius.circular(20),
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
         decoration: BoxDecoration(
-          color: isSelected ? theme.colorScheme.primaryContainer : Colors.transparent,
-          borderRadius: BorderRadius.circular(8),
+          color: isSelected
+              ? theme.colorScheme.primaryContainer
+              : theme.colorScheme.surfaceContainerHighest.withAlpha(120),
+          borderRadius: BorderRadius.circular(20),
           border: Border.all(
-            color: isSelected ? theme.colorScheme.primary : theme.dividerColor,
+            color: isSelected ? theme.colorScheme.primary : Colors.transparent,
+            width: 1,
           ),
         ),
         child: Text(

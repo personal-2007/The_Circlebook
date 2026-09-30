@@ -37,7 +37,7 @@ class _CircleAIScreenState extends State<CircleAIScreen> {
           _isProcessing = false;
           _messages.add({
             'role': 'assistant',
-            'text': 'Summary of "$query": Analyzed recent discussions in Frontend Guild & Vintage Typography. Found strong consensus around classical typographic grids, responsive fluid layouts, and privacy-respecting recommendation algorithms.',
+            'text': 'Analysis of "$query": Searched your verified circles and research publications. Connect to backend to index live circle discussions and vector embeddings.',
           });
         });
       }

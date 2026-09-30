@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
 
-import '../../data/mock_data.dart';
+import '../../models/circlebook_models.dart';
+import '../../repositories/community_repository.dart';
+import '../../repositories/post_repository.dart';
+import '../../repositories/user_repository.dart';
+import '../../widgets/empty_state_view.dart';
+import '../../widgets/loading_state_view.dart';
 
 class SearchScreen extends StatefulWidget {
   const SearchScreen({super.key});
@@ -11,15 +16,18 @@ class SearchScreen extends StatefulWidget {
 
 class _SearchScreenState extends State<SearchScreen> {
   final _searchController = TextEditingController();
+  final UserRepository _userRepository = UserRepository();
+  final CommunityRepository _communityRepository = CommunityRepository();
+  final PostRepository _postRepository = PostRepository();
+
   int _activeCategory = 0; // 0: All, 1: People, 2: Communities, 3: Events, 4: Posts
   String _query = '';
+  bool _isLoading = false;
 
-  final List<String> _recentSearches = [
-    'Design Systems',
-    'AI & Vector Search',
-    'IIT Bombay alumni',
-    'Open Source meetups',
-  ];
+  List<CircleUser> _matchingPeople = [];
+  List<CircleCommunity> _matchingCommunities = [];
+  List<CircleEvent> _matchingEvents = [];
+  List<CirclePost> _matchingPosts = [];
 
   @override
   void dispose() {
@@ -27,37 +35,75 @@ class _SearchScreenState extends State<SearchScreen> {
     super.dispose();
   }
 
+  Future<void> _performSearch(String val) async {
+    final q = val.trim();
+    setState(() {
+      _query = q;
+    });
+
+    if (q.isEmpty) {
+      setState(() {
+        _matchingPeople = [];
+        _matchingCommunities = [];
+        _matchingEvents = [];
+        _matchingPosts = [];
+        _isLoading = false;
+      });
+      return;
+    }
+
+    setState(() => _isLoading = true);
+
+    try {
+      final results = await Future.wait([
+        _userRepository.getPeople(query: q),
+        _communityRepository.getGroups(),
+        _communityRepository.getEvents(),
+        _postRepository.getFeed(),
+      ]);
+
+      if (mounted) {
+        final people = results[0] as List<CircleUser>;
+        final groups = (results[1] as List<CircleCommunity>).where((c) {
+          final lq = q.toLowerCase();
+          return c.name.toLowerCase().contains(lq) ||
+              c.description.toLowerCase().contains(lq) ||
+              c.category.toLowerCase().contains(lq);
+        }).toList();
+        final events = (results[2] as List<CircleEvent>).where((e) {
+          final lq = q.toLowerCase();
+          return e.title.toLowerCase().contains(lq) ||
+              e.location.toLowerCase().contains(lq) ||
+              e.description.toLowerCase().contains(lq);
+        }).toList();
+        final posts = (results[3] as List<CirclePost>).where((p) {
+          final lq = q.toLowerCase();
+          return p.content.toLowerCase().contains(lq) ||
+              p.tags.any((t) => t.toLowerCase().contains(lq));
+        }).toList();
+
+        setState(() {
+          _matchingPeople = people;
+          _matchingCommunities = groups;
+          _matchingEvents = events;
+          _matchingPosts = posts;
+          _isLoading = false;
+        });
+      }
+    } catch (_) {
+      if (mounted) {
+        setState(() => _isLoading = false);
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-
-    final matchingPeople = MockData.suggestedPeople.where((p) {
-      if (_query.isEmpty) return true;
-      final q = _query.toLowerCase();
-      return p.name.toLowerCase().contains(q) ||
-          p.headline.toLowerCase().contains(q) ||
-          p.skills.any((s) => s.toLowerCase().contains(q));
-    }).toList();
-
-    final matchingCommunities = MockData.communities.where((c) {
-      if (_query.isEmpty) return true;
-      final q = _query.toLowerCase();
-      return c.name.toLowerCase().contains(q) ||
-          c.description.toLowerCase().contains(q) ||
-          c.category.toLowerCase().contains(q);
-    }).toList();
-
-    final matchingEvents = MockData.events.where((e) {
-      if (_query.isEmpty) return true;
-      final q = _query.toLowerCase();
-      return e.title.toLowerCase().contains(q) || e.location.toLowerCase().contains(q);
-    }).toList();
-
-    final matchingPosts = MockData.posts.where((p) {
-      if (_query.isEmpty) return true;
-      final q = _query.toLowerCase();
-      return p.content.toLowerCase().contains(q) || p.tags.any((t) => t.toLowerCase().contains(q));
-    }).toList();
+    final hasAnyResults = _matchingPeople.isNotEmpty ||
+        _matchingCommunities.isNotEmpty ||
+        _matchingEvents.isNotEmpty ||
+        _matchingPosts.isNotEmpty;
 
     return Scaffold(
       appBar: AppBar(
@@ -65,7 +111,7 @@ class _SearchScreenState extends State<SearchScreen> {
         title: TextField(
           controller: _searchController,
           autofocus: true,
-          onChanged: (val) => setState(() => _query = val),
+          onChanged: _performSearch,
           decoration: InputDecoration(
             hintText: 'Search people, skills, groups...',
             border: InputBorder.none,
@@ -77,7 +123,7 @@ class _SearchScreenState extends State<SearchScreen> {
                     icon: const Icon(Icons.clear_rounded, size: 20),
                     onPressed: () {
                       _searchController.clear();
-                      setState(() => _query = '');
+                      _performSearch('');
                     },
                   )
                 : null,
@@ -117,7 +163,7 @@ class _SearchScreenState extends State<SearchScreen> {
                 ),
                 const SizedBox(width: 8),
                 _CategoryChip(
-                  label: 'Discussions',
+                  label: 'Posts',
                   isSelected: _activeCategory == 4,
                   onSelected: () => setState(() => _activeCategory = 4),
                 ),
@@ -126,129 +172,105 @@ class _SearchScreenState extends State<SearchScreen> {
           ),
           const SizedBox(height: 16),
 
-          if (_query.isEmpty) ...[
-            Text('Recent Searches', style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700)),
-            const SizedBox(height: 8),
-            Wrap(
-              spacing: 8,
-              runSpacing: 8,
-              children: _recentSearches.map((s) {
-                return ActionChip(
-                  avatar: const Icon(Icons.history_rounded, size: 16),
-                  label: Text(s),
-                  onPressed: () {
-                    _searchController.text = s;
-                    setState(() => _query = s);
-                  },
-                );
-              }).toList(),
-            ),
-            const SizedBox(height: 24),
-            Text('Trending Topics in Your Circles', style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700)),
-            const SizedBox(height: 8),
-            ...['#DesignSystems', '#VectorSearch', '#PrivacyFirst', '#OpenSource'].map((topic) {
-              return ListTile(
-                dense: true,
-                contentPadding: EdgeInsets.zero,
-                leading: const Icon(Icons.trending_up_rounded, size: 20),
-                title: Text(topic, style: const TextStyle(fontWeight: FontWeight.w600)),
-                subtitle: const Text('Highlighted in 14 recent circle posts'),
-                onTap: () {
-                  _searchController.text = topic;
-                  setState(() => _query = topic);
-                },
-              );
-            }),
-          ] else ...[
-            // People Results
-            if ((_activeCategory == 0 || _activeCategory == 1) && matchingPeople.isNotEmpty) ...[
-              Text('People (${matchingPeople.length})', style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700)),
-              const SizedBox(height: 8),
-              ...matchingPeople.map((person) {
+          if (_isLoading)
+            const LoadingStateView(message: 'Searching circles...')
+          else if (_query.isEmpty)
+            const EmptyStateView(
+              title: 'Search The Circlebook',
+              message: 'Type a query to search across members, subject guilds, events, and discussions.',
+              icon: Icons.search_rounded,
+            )
+          else if (!hasAnyResults)
+            EmptyStateView(
+              title: 'No results found.',
+              message: 'No matches found for "$_query".',
+              icon: Icons.search_off_rounded,
+            )
+          else ...[
+            // 1. People matches
+            if ((_activeCategory == 0 || _activeCategory == 1) && _matchingPeople.isNotEmpty) ...[
+              _SearchSectionHeader(title: 'People (${_matchingPeople.length})', icon: Icons.person_search_rounded),
+              ..._matchingPeople.map((person) {
                 return Card(
                   margin: const EdgeInsets.only(bottom: 8),
                   child: ListTile(
                     leading: CircleAvatar(
                       backgroundColor: theme.colorScheme.primaryContainer,
-                      child: Text(person.name[0], style: TextStyle(fontWeight: FontWeight.w700, color: theme.colorScheme.primary)),
+                      child: Text(
+                        person.name.trim().isNotEmpty
+                            ? person.name.trim().split(RegExp(r'\s+')).map((p) => p[0]).take(2).join().toUpperCase()
+                            : 'U',
+                        style: TextStyle(fontWeight: FontWeight.w700, color: theme.colorScheme.primary, fontSize: 12),
+                      ),
                     ),
                     title: Text(person.name, style: const TextStyle(fontWeight: FontWeight.w700)),
-                    subtitle: Text(person.headline, maxLines: 1, overflow: TextOverflow.ellipsis),
-                    trailing: FilledButton.tonal(
-                      onPressed: () {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text('Connected to ${person.name}')),
-                        );
-                      },
-                      style: FilledButton.styleFrom(minimumSize: const Size(70, 32)),
-                      child: const Text('Connect', style: TextStyle(fontSize: 12)),
-                    ),
+                    subtitle: Text('${person.handle} • ${person.headline}', maxLines: 1, overflow: TextOverflow.ellipsis),
+                    trailing: const Icon(Icons.chevron_right_rounded, size: 18),
+                    onTap: () => Navigator.of(context).pushNamed('/app/people'),
                   ),
                 );
               }),
-              const SizedBox(height: 16),
+              const SizedBox(height: 14),
             ],
 
-            // Communities Results
-            if ((_activeCategory == 0 || _activeCategory == 2) && matchingCommunities.isNotEmpty) ...[
-              Text('Communities (${matchingCommunities.length})', style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700)),
-              const SizedBox(height: 8),
-              ...matchingCommunities.map((c) {
+            // 2. Communities matches
+            if ((_activeCategory == 0 || _activeCategory == 2) && _matchingCommunities.isNotEmpty) ...[
+              _SearchSectionHeader(title: 'Communities (${_matchingCommunities.length})', icon: Icons.groups_rounded),
+              ..._matchingCommunities.map((comm) {
                 return Card(
                   margin: const EdgeInsets.only(bottom: 8),
                   child: ListTile(
-                    leading: Icon(Icons.groups_rounded, color: theme.colorScheme.primary),
-                    title: Text(c.name, style: const TextStyle(fontWeight: FontWeight.w700)),
-                    subtitle: Text('${c.memberCount} members • ${c.category}'),
-                    trailing: OutlinedButton(
-                      onPressed: () {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text('Joined ${c.name}')),
-                        );
-                      },
-                      style: OutlinedButton.styleFrom(minimumSize: const Size(60, 32)),
-                      child: const Text('Join', style: TextStyle(fontSize: 12)),
+                    leading: Container(
+                      width: 36,
+                      height: 36,
+                      decoration: BoxDecoration(
+                        color: theme.colorScheme.primaryContainer,
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      alignment: Alignment.center,
+                      child: Text(
+                        comm.name.isNotEmpty ? comm.name[0] : 'G',
+                        style: TextStyle(fontWeight: FontWeight.w700, color: theme.colorScheme.primary),
+                      ),
                     ),
+                    title: Text(comm.name, style: const TextStyle(fontWeight: FontWeight.w700)),
+                    subtitle: Text('${comm.memberCount} members • ${comm.category}'),
+                    trailing: const Icon(Icons.chevron_right_rounded, size: 18),
+                    onTap: () => Navigator.of(context).pushNamed('/app/more/groups'),
                   ),
                 );
               }),
-              const SizedBox(height: 16),
+              const SizedBox(height: 14),
             ],
 
-            // Events Results
-            if ((_activeCategory == 0 || _activeCategory == 3) && matchingEvents.isNotEmpty) ...[
-              Text('Events (${matchingEvents.length})', style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700)),
-              const SizedBox(height: 8),
-              ...matchingEvents.map((e) {
+            // 3. Events matches
+            if ((_activeCategory == 0 || _activeCategory == 3) && _matchingEvents.isNotEmpty) ...[
+              _SearchSectionHeader(title: 'Events (${_matchingEvents.length})', icon: Icons.event_rounded),
+              ..._matchingEvents.map((evt) {
                 return Card(
                   margin: const EdgeInsets.only(bottom: 8),
                   child: ListTile(
-                    leading: Icon(Icons.event_available_rounded, color: theme.colorScheme.secondary),
-                    title: Text(e.title, style: const TextStyle(fontWeight: FontWeight.w700)),
-                    subtitle: Text('${e.date} • ${e.location}'),
+                    leading: const Icon(Icons.calendar_today_rounded),
+                    title: Text(evt.title, style: const TextStyle(fontWeight: FontWeight.w700)),
+                    subtitle: Text('${evt.date} • ${evt.location}'),
+                    trailing: const Icon(Icons.chevron_right_rounded, size: 18),
+                    onTap: () => Navigator.of(context).pushNamed('/app/more/events'),
                   ),
                 );
               }),
-              const SizedBox(height: 16),
+              const SizedBox(height: 14),
             ],
 
-            // Posts Results
-            if ((_activeCategory == 0 || _activeCategory == 4) && matchingPosts.isNotEmpty) ...[
-              Text('Discussions (${matchingPosts.length})', style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700)),
-              const SizedBox(height: 8),
-              ...matchingPosts.map((p) {
+            // 4. Posts matches
+            if ((_activeCategory == 0 || _activeCategory == 4) && _matchingPosts.isNotEmpty) ...[
+              _SearchSectionHeader(title: 'Posts (${_matchingPosts.length})', icon: Icons.article_outlined),
+              ..._matchingPosts.map((post) {
                 return Card(
                   margin: const EdgeInsets.only(bottom: 8),
-                  child: Padding(
-                    padding: const EdgeInsets.all(12),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(p.authorName, style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 13)),
-                        const SizedBox(height: 4),
-                        Text(p.content, maxLines: 2, overflow: TextOverflow.ellipsis),
-                      ],
-                    ),
+                  child: ListTile(
+                    title: Text(post.content, maxLines: 2, overflow: TextOverflow.ellipsis),
+                    subtitle: Text('By ${post.authorName} • ${post.timestamp}'),
+                    trailing: const Icon(Icons.chevron_right_rounded, size: 18),
                   ),
                 );
               }),
@@ -274,15 +296,51 @@ class _CategoryChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    return ChoiceChip(
-      label: Text(label),
-      selected: isSelected,
-      onSelected: (_) => onSelected(),
-      selectedColor: theme.colorScheme.primaryContainer,
-      labelStyle: TextStyle(
-        fontSize: 12.5,
-        fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
-        color: isSelected ? theme.colorScheme.primary : theme.textTheme.bodyMedium?.color,
+    return InkWell(
+      onTap: onSelected,
+      borderRadius: BorderRadius.circular(20),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+        decoration: BoxDecoration(
+          color: isSelected
+              ? theme.colorScheme.primaryContainer
+              : theme.colorScheme.surfaceContainerHighest.withAlpha(120),
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(
+            color: isSelected ? theme.colorScheme.primary : Colors.transparent,
+          ),
+        ),
+        child: Text(
+          label,
+          style: TextStyle(
+            fontSize: 12,
+            fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
+            color: isSelected ? theme.colorScheme.primary : theme.textTheme.bodyMedium?.color,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _SearchSectionHeader extends StatelessWidget {
+  const _SearchSectionHeader({required this.title, required this.icon});
+  final String title;
+  final IconData icon;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8, top: 4),
+      child: Row(
+        children: [
+          Icon(icon, size: 16, color: Theme.of(context).colorScheme.primary),
+          const SizedBox(width: 6),
+          Text(
+            title,
+            style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 13),
+          ),
+        ],
       ),
     );
   }

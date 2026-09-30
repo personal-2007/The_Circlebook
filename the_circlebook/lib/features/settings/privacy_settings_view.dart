@@ -15,8 +15,8 @@ class _PrivacySettingsViewState extends State<PrivacySettingsView> {
   String _messagingPrivacy = 'Circles & Mutual Connections';
   bool _allowFriendRequests = true;
   bool _dataPermissionsTelemetry = false;
-  final List<String> _blockedUsers = ['usr_blocked_1 (@spammer_99)'];
-  final List<String> _restrictedUsers = ['usr_restricted_1 (@distracting_user)'];
+  final List<String> _blockedUsers = [];
+  final List<String> _restrictedUsers = [];
 
   @override
   Widget build(BuildContext context) {
@@ -130,10 +130,15 @@ class _PrivacySettingsViewState extends State<PrivacySettingsView> {
                       context: context,
                       builder: (ctx) => AlertDialog(
                         title: const Text('Blocked Accounts'),
-                        content: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: _blockedUsers.map((u) => ListTile(title: Text(u))).toList(),
-                        ),
+                        content: _blockedUsers.isEmpty
+                            ? const Padding(
+                                padding: EdgeInsets.symmetric(vertical: 8),
+                                child: Text('No blocked accounts.'),
+                              )
+                            : Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: _blockedUsers.map((u) => ListTile(title: Text(u))).toList(),
+                              ),
                         actions: [
                           TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Close')),
                         ],
@@ -152,10 +157,15 @@ class _PrivacySettingsViewState extends State<PrivacySettingsView> {
                       context: context,
                       builder: (ctx) => AlertDialog(
                         title: const Text('Restricted Accounts'),
-                        content: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: _restrictedUsers.map((u) => ListTile(title: Text(u))).toList(),
-                        ),
+                        content: _restrictedUsers.isEmpty
+                            ? const Padding(
+                                padding: EdgeInsets.symmetric(vertical: 8),
+                                child: Text('No restricted accounts.'),
+                              )
+                            : Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: _restrictedUsers.map((u) => ListTile(title: Text(u))).toList(),
+                              ),
                         actions: [
                           TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Close')),
                         ],

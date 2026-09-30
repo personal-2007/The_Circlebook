@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 
-import '../../data/mock_data.dart';
 import '../../models/circlebook_models.dart';
+import '../../repositories/post_repository.dart';
+import '../../services/auth_service.dart';
 
 class CreatePostScreen extends StatefulWidget {
   const CreatePostScreen({
@@ -17,9 +18,11 @@ class CreatePostScreen extends StatefulWidget {
 
 class _CreatePostScreenState extends State<CreatePostScreen> {
   final _contentController = TextEditingController();
+  final PostRepository _postRepository = PostRepository();
   String _selectedAudience = 'Circles Only'; // 'Public', 'Circles Only', 'Only Me'
   final List<String> _selectedTags = ['#Community'];
   bool _hasMedia = false;
+  bool _isPublishing = false;
 
   final List<String> _availableTags = [
     '#Community',
@@ -30,7 +33,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
     '#OpenSource',
   ];
 
-  void _publishPost() {
+  Future<void> _publishPost() async {
     final text = _contentController.text.trim();
     if (text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -39,12 +42,20 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
       return;
     }
 
+    setState(() => _isPublishing = true);
+
+    final user = AuthService.currentUser;
+    final authorId = user?.id ?? 'usr_${DateTime.now().millisecondsSinceEpoch}';
+    final authorName = user?.name ?? 'Member';
+    final authorHandle = user?.handle ?? '@member';
+    final authorAvatarUrl = user?.avatarUrl ?? '';
+
     final newPost = CirclePost(
       id: 'post_${DateTime.now().millisecondsSinceEpoch}',
-      authorId: MockData.currentUser.id,
-      authorName: MockData.currentUser.name,
-      authorHandle: MockData.currentUser.handle,
-      authorAvatarUrl: MockData.currentUser.avatarUrl,
+      authorId: authorId,
+      authorName: authorName,
+      authorHandle: authorHandle,
+      authorAvatarUrl: authorAvatarUrl,
       timestamp: 'Just now',
       content: text,
       likes: 0,
@@ -53,6 +64,19 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
       tags: List.from(_selectedTags),
       isLiked: false,
     );
+
+    try {
+      await _postRepository.createPost(
+        content: text,
+        tags: List.from(_selectedTags),
+        audience: _selectedAudience,
+      );
+    } catch (_) {
+      // Allow optimistic UI update
+    }
+
+    if (!mounted) return;
+    setState(() => _isPublishing = false);
 
     widget.onPostCreated?.call(newPost);
     ScaffoldMessenger.of(context).showSnackBar(
@@ -128,7 +152,10 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final user = MockData.currentUser;
+    final user = AuthService.currentUser;
+    final userName = user?.name ?? 'Member';
+    final userHandle = user?.handle ?? '@member';
+    final userInitials = userName.trim().split(RegExp(r'\s+')).map((p) => p.isNotEmpty ? p[0] : '').take(2).join().toUpperCase();
 
     return Scaffold(
       appBar: AppBar(
@@ -137,8 +164,14 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
           Padding(
             padding: const EdgeInsets.only(right: 12),
             child: FilledButton(
-              onPressed: _publishPost,
-              child: const Text('Publish'),
+              onPressed: _isPublishing ? null : _publishPost,
+              child: _isPublishing
+                  ? const SizedBox(
+                      width: 18,
+                      height: 18,
+                      child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                    )
+                  : const Text('Publish'),
             ),
           ),
         ],
@@ -153,7 +186,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                 radius: 22,
                 backgroundColor: theme.colorScheme.primaryContainer,
                 child: Text(
-                  user.name.split(' ').map((p) => p[0]).take(2).join(),
+                  userInitials.isNotEmpty ? userInitials : 'U',
                   style: TextStyle(
                     fontSize: 13,
                     fontWeight: FontWeight.w700,
@@ -162,75 +195,117 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                 ),
               ),
               const SizedBox(width: 12),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    user.name,
-                    style: theme.textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.w700,
-                      fontSize: 14.5,
-                    ),
-                  ),
-                  const SizedBox(height: 2),
-                  InkWell(
-                    borderRadius: BorderRadius.circular(6),
-                    onTap: _showAudiencePicker,
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                      decoration: BoxDecoration(
-                        color: theme.colorScheme.surfaceContainerHighest,
-                        borderRadius: BorderRadius.circular(6),
-                        border: Border.all(color: theme.dividerColor),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      userName,
+                      style: theme.textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.w700,
+                        fontSize: 15,
                       ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(
-                            _selectedAudience == 'Public'
-                                ? Icons.public_rounded
-                                : _selectedAudience == 'Circles Only'
-                                    ? Icons.group_rounded
-                                    : Icons.lock_outline_rounded,
-                            size: 13,
+                    ),
+                    const SizedBox(height: 2),
+                    Row(
+                      children: [
+                        Text(
+                          userHandle,
+                          style: TextStyle(
+                            fontSize: 12,
                             color: theme.colorScheme.primary,
                           ),
-                          const SizedBox(width: 5),
-                          Text(
-                            _selectedAudience,
-                            style: TextStyle(
-                              fontSize: 11.5,
-                              fontWeight: FontWeight.w600,
-                              color: theme.colorScheme.primary,
+                        ),
+                        const SizedBox(width: 8),
+                        InkWell(
+                          onTap: _showAudiencePicker,
+                          borderRadius: BorderRadius.circular(12),
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                            decoration: BoxDecoration(
+                              color: theme.colorScheme.surfaceContainerHighest,
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(color: theme.dividerColor),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(
+                                  _selectedAudience == 'Public'
+                                      ? Icons.public_rounded
+                                      : _selectedAudience == 'Circles Only'
+                                          ? Icons.group_rounded
+                                          : Icons.lock_outline_rounded,
+                                  size: 13,
+                                  color: theme.colorScheme.primary,
+                                ),
+                                const SizedBox(width: 4),
+                                Text(
+                                  _selectedAudience,
+                                  style: TextStyle(
+                                    fontSize: 11,
+                                    fontWeight: FontWeight.w600,
+                                    color: theme.colorScheme.primary,
+                                  ),
+                                ),
+                                const Icon(Icons.arrow_drop_down, size: 16),
+                              ],
                             ),
                           ),
-                          const SizedBox(width: 3),
-                          const Icon(Icons.arrow_drop_down, size: 16),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ],
           ),
           const SizedBox(height: 16),
 
-          // Content TextField
+          // Main text composer
           TextField(
             controller: _contentController,
             maxLines: 8,
             minLines: 4,
             decoration: const InputDecoration(
-              hintText: 'Share an insight, research question, or perspective...',
+              hintText: 'What thoughts, papers, or observations would you like to share with your circle?',
               border: InputBorder.none,
               enabledBorder: InputBorder.none,
               focusedBorder: InputBorder.none,
-              fillColor: Colors.transparent,
               filled: false,
             ),
           ),
+          const SizedBox(height: 16),
 
+          // Topic / Tag selector chips
+          Text(
+            'Select Topics / Tags:',
+            style: theme.textTheme.labelMedium?.copyWith(fontWeight: FontWeight.w600),
+          ),
+          const SizedBox(height: 8),
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: _availableTags.map((tag) {
+              final isSelected = _selectedTags.contains(tag);
+              return FilterChip(
+                label: Text(tag, style: const TextStyle(fontSize: 12)),
+                selected: isSelected,
+                onSelected: (selected) {
+                  setState(() {
+                    if (selected) {
+                      _selectedTags.add(tag);
+                    } else {
+                      _selectedTags.remove(tag);
+                    }
+                  });
+                },
+              );
+            }).toList(),
+          ),
+          const SizedBox(height: 20),
+
+          // Attached media preview
           if (_hasMedia) ...[
             Container(
               height: 160,
@@ -248,7 +323,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                       children: [
                         Icon(Icons.image_outlined, size: 40, color: theme.colorScheme.primary),
                         const SizedBox(height: 6),
-                        const Text('Attachment attached (sample_figure.png)', style: TextStyle(fontSize: 12)),
+                        const Text('Attachment attached', style: TextStyle(fontSize: 12)),
                       ],
                     ),
                   ),
@@ -266,66 +341,36 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
             const SizedBox(height: 16),
           ],
 
-          const Divider(),
-          const SizedBox(height: 12),
-
-          // Tag Selector
-          Text(
-            'Add Topic Tags:',
-            style: theme.textTheme.titleSmall,
-          ),
-          const SizedBox(height: 8),
-          Wrap(
-            spacing: 8,
-            runSpacing: 8,
-            children: _availableTags.map((tag) {
-              final isSelected = _selectedTags.contains(tag);
-              return FilterChip(
-                label: Text(tag),
-                selected: isSelected,
-                onSelected: (val) {
-                  setState(() {
-                    if (val) {
-                      _selectedTags.add(tag);
-                    } else {
-                      _selectedTags.remove(tag);
-                    }
-                  });
-                },
-              );
-            }).toList(),
-          ),
-          const SizedBox(height: 24),
-
-          // Attachment actions
+          // Formatting & Media toolbar
           Card(
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
               child: Row(
                 children: [
-                  const Text('Attach:'),
+                  Text(
+                    'Attach to post:',
+                    style: theme.textTheme.bodySmall?.copyWith(fontWeight: FontWeight.w600),
+                  ),
                   const Spacer(),
                   IconButton(
-                    icon: const Icon(Icons.image_outlined),
-                    tooltip: 'Attach Image',
-                    onPressed: () => setState(() => _hasMedia = !_hasMedia),
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.poll_outlined),
-                    tooltip: 'Create Poll',
+                    icon: const Icon(Icons.photo_library_outlined, size: 20),
+                    tooltip: 'Add Image / Diagram',
                     onPressed: () {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Poll attachment module ready.')),
-                      );
+                      setState(() => _hasMedia = !_hasMedia);
                     },
                   ),
                   IconButton(
-                    icon: const Icon(Icons.article_outlined),
-                    tooltip: 'Attach Article / PDF',
+                    icon: const Icon(Icons.link_rounded, size: 20),
+                    tooltip: 'Insert Paper / DOI Link',
                     onPressed: () {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Document attachment selected.')),
-                      );
+                      _contentController.text += ' https://';
+                    },
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.tag_rounded, size: 20),
+                    tooltip: 'Add Topic Tag',
+                    onPressed: () {
+                      _contentController.text += ' #';
                     },
                   ),
                 ],

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../services/storage_service.dart';
+import '../../services/auth_service.dart';
 
 class SignupScreen extends StatefulWidget {
   const SignupScreen({super.key});
@@ -17,12 +17,38 @@ class _SignupScreenState extends State<SignupScreen> {
   bool _isLoading = false;
 
   Future<void> _handleSignup() async {
+    final name = _nameController.text.trim();
+    final handle = _handleController.text.trim();
+    final email = _emailController.text.trim();
+    final password = _passwordController.text;
+
+    if (name.isEmpty || handle.isEmpty || email.isEmpty || password.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please fill out all fields.')),
+      );
+      return;
+    }
+
     setState(() => _isLoading = true);
-    await Future.delayed(const Duration(milliseconds: 300));
-    await StorageService.saveLoggedIn(true);
-    if (!mounted) return;
-    setState(() => _isLoading = false);
-    Navigator.of(context).pushNamedAndRemoveUntil('/app', (route) => false);
+    try {
+      await AuthService.register(
+        name: name,
+        handle: handle,
+        email: email,
+        password: password,
+      );
+      if (!mounted) return;
+      Navigator.of(context).pushNamedAndRemoveUntil('/app', (route) => false);
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(e.toString().replaceAll('Exception: ', ''))),
+      );
+    } finally {
+      if (mounted) {
+        setState(() => _isLoading = false);
+      }
+    }
   }
 
   @override
