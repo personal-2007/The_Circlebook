@@ -70,31 +70,34 @@ class _AppearanceSettingsViewState extends State<AppearanceSettingsView> {
           Card(
             child: Column(
               children: [
-                RadioListTile<ThemeMode>(
-                  secondary: const Icon(Icons.wb_sunny_outlined, color: AppTheme.warning),
+                ListTile(
+                  leading: const Icon(Icons.wb_sunny_outlined, color: AppTheme.warning),
                   title: const Text('Light'),
                   subtitle: const Text('Crisp white background with classical typography'),
-                  value: ThemeMode.light,
-                  groupValue: _currentMode,
-                  onChanged: (val) => _updateMode(val!),
+                  trailing: _currentMode == ThemeMode.light
+                      ? const Icon(Icons.radio_button_checked, color: AppTheme.primary)
+                      : const Icon(Icons.radio_button_off),
+                  onTap: () => _updateMode(ThemeMode.light),
                 ),
                 const Divider(height: 1),
-                RadioListTile<ThemeMode>(
-                  secondary: const Icon(Icons.nightlight_outlined, color: AppTheme.purple),
+                ListTile(
+                  leading: const Icon(Icons.nightlight_outlined, color: AppTheme.purple),
                   title: const Text('Dark'),
                   subtitle: const Text('Deep navy slate with high-contrast text'),
-                  value: ThemeMode.dark,
-                  groupValue: _currentMode,
-                  onChanged: (val) => _updateMode(val!),
+                  trailing: _currentMode == ThemeMode.dark
+                      ? const Icon(Icons.radio_button_checked, color: AppTheme.primary)
+                      : const Icon(Icons.radio_button_off),
+                  onTap: () => _updateMode(ThemeMode.dark),
                 ),
                 const Divider(height: 1),
-                RadioListTile<ThemeMode>(
-                  secondary: const Icon(Icons.brightness_auto_outlined, color: AppTheme.primary),
+                ListTile(
+                  leading: const Icon(Icons.brightness_auto_outlined, color: AppTheme.primary),
                   title: const Text('System Default'),
                   subtitle: const Text('Synchronize with device appearance'),
-                  value: ThemeMode.system,
-                  groupValue: _currentMode,
-                  onChanged: (val) => _updateMode(val!),
+                  trailing: _currentMode == ThemeMode.system
+                      ? const Icon(Icons.radio_button_checked, color: AppTheme.primary)
+                      : const Icon(Icons.radio_button_off),
+                  onTap: () => _updateMode(ThemeMode.system),
                 ),
               ],
             ),

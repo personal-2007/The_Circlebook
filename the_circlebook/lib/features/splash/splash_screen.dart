@@ -15,37 +15,33 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
+  Timer? _timer;
+
   @override
   void initState() {
     super.initState();
     _initializeApp();
   }
 
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
+
   Future<void> _initializeApp() async {
-    final startTime = DateTime.now();
-
-    // Parallel initialization
-    await Future.wait([
-      StorageService.init(),
-      // Minimum display time for visual smoothness (350ms, no artificial 3-second delay)
-      Future.delayed(const Duration(milliseconds: 350)),
-    ]);
-
+    await StorageService.init();
     if (!mounted) return;
 
-    final isLoggedIn = StorageService.loadLoggedIn();
-    final elapsed = DateTime.now().difference(startTime).inMilliseconds;
-    if (elapsed < 350) {
-      await Future.delayed(Duration(milliseconds: 350 - elapsed));
-    }
-
-    if (!mounted) return;
-
-    if (isLoggedIn) {
-      Navigator.of(context).pushReplacementNamed('/app');
-    } else {
-      Navigator.of(context).pushReplacementNamed('/welcome');
-    }
+    _timer = Timer(const Duration(milliseconds: 300), () {
+      if (!mounted) return;
+      final isLoggedIn = StorageService.loadLoggedIn();
+      if (isLoggedIn) {
+        Navigator.of(context).pushReplacementNamed('/app');
+      } else {
+        Navigator.of(context).pushReplacementNamed('/welcome');
+      }
+    });
   }
 
   @override
