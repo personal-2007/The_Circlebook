@@ -4,8 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:the_circlebook/app.dart';
-import 'package:the_circlebook/features/more/more_screen.dart';
-import 'package:the_circlebook/features/settings/settings_screen.dart';
 
 class _TestHttpOverrides extends HttpOverrides {
   @override
@@ -72,6 +70,13 @@ void main() {
   });
 
   testWidgets('More Menu organizes secondary features into 6 required sections', (tester) async {
+    tester.view.physicalSize = const Size(800, 2200);
+    tester.view.devicePixelRatio = 1.0;
+    addTearDown(() {
+      tester.view.resetPhysicalSize();
+      tester.view.resetDevicePixelRatio();
+    });
+
     await tester.pumpWidget(const MaterialApp(
       home: MoreScreen(),
     ));
@@ -112,6 +117,13 @@ void main() {
   });
 
   testWidgets('Settings screen contains all 8 required account-level sections', (tester) async {
+    tester.view.physicalSize = const Size(800, 2200);
+    tester.view.devicePixelRatio = 1.0;
+    addTearDown(() {
+      tester.view.resetPhysicalSize();
+      tester.view.resetDevicePixelRatio();
+    });
+
     await tester.pumpWidget(MaterialApp(
       home: SettingsScreen(
         onThemeModeChanged: (_) {},

@@ -327,7 +327,12 @@ class _CirclebookShellState extends State<CirclebookShell> {
                   child: const Icon(Icons.people_alt_rounded, color: Colors.white, size: 16),
                 ),
                 const SizedBox(width: 10),
-                Text(_getMobileTitle()),
+                Flexible(
+                  child: Text(
+                    _getMobileTitle(),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
               ],
             ),
             actions: [

@@ -201,11 +201,14 @@ class _PostCardState extends State<PostCard> {
                       ),
                       Row(
                         children: [
-                          Text(
-                            widget.post.authorHandle,
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: theme.colorScheme.primary,
+                          Flexible(
+                            child: Text(
+                              widget.post.authorHandle,
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: theme.colorScheme.primary,
+                              ),
+                              overflow: TextOverflow.ellipsis,
                             ),
                           ),
                           const SizedBox(width: 6),
@@ -234,7 +237,7 @@ class _PostCardState extends State<PostCard> {
                           children: [
                             Icon(_isSaved ? Icons.bookmark_rounded : Icons.bookmark_border_rounded, size: 18),
                             const SizedBox(width: 10),
-                            Text(_isSaved ? 'Unsave Post' : 'Save Post'),
+                            Expanded(child: Text(_isSaved ? 'Unsave Post' : 'Save Post')),
                           ],
                         ),
                       ),
@@ -245,7 +248,7 @@ class _PostCardState extends State<PostCard> {
                             children: [
                               Icon(Icons.edit_outlined, size: 18),
                               SizedBox(width: 10),
-                              Text('Edit Post'),
+                              Expanded(child: Text('Edit Post')),
                             ],
                           ),
                         ),
@@ -255,7 +258,7 @@ class _PostCardState extends State<PostCard> {
                           children: [
                             Icon(Icons.visibility_off_outlined, size: 18),
                             SizedBox(width: 10),
-                            Text('Hide from feed'),
+                            Expanded(child: Text('Hide from feed')),
                           ],
                         ),
                       ),
@@ -265,7 +268,7 @@ class _PostCardState extends State<PostCard> {
                           children: [
                             Icon(_notificationsOn ? Icons.notifications_off_outlined : Icons.notifications_active_outlined, size: 18),
                             const SizedBox(width: 10),
-                            Text(_notificationsOn ? 'Turn off notifications' : 'Turn on notifications'),
+                            Expanded(child: Text(_notificationsOn ? 'Turn off notifications' : 'Turn on notifications')),
                           ],
                         ),
                       ),
