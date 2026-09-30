@@ -1,9 +1,12 @@
 # Environment
 .env
-.env.local
+.env.*
+*.env
+backend/.env
 
 # Dependencies
 node_modules/
+**/node_modules/
 package-lock.json
 
 # IDE & OS
